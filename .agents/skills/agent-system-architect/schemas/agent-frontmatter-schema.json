@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentFrontmatterSchema",
+  "description": "Validation schema for YAML frontmatter in .agents/agents/*.md",
+  "type": "object",
+  "required": [
+    "name",
+    "role",
+    "description",
+    "mode",
+    "allowed_tools"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Unique agent identifier in kebab-case, matching the filename stem."
+    },
+    "role": {
+      "type": "string",
+      "minLength": 5,
+      "description": "Formal technical role title (e.g., Presentation Layer Architect)."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Comprehensive role summary, boundaries, and mandate."
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "subagent",
+        "worker",
+        "reviewer",
+        "orchestrator"
+      ],
+      "description": "Operating execution mode of the agent persona."
+    },
+    "allowed_tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "description": "Explicit list of allowed tool names."
+    },
+    "forbidden_tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Explicit list of forbidden tool names."
+    }
+  },
+  "additionalProperties": false
+}

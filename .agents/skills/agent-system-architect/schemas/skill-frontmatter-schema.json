@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SkillFrontmatterSchema",
+  "description": "Validation schema for YAML frontmatter in .agents/skills/<skill-name>/SKILL.md",
+  "type": "object",
+  "required": [
+    "name",
+    "description"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Unique skill identifier in kebab-case."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 30,
+      "description": "Comprehensive description including clear trigger and non-trigger boundaries."
+    },
+    "license": {
+      "type": "string",
+      "default": "Apache-2.0"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^v?[0-9]+\\.[0-9]+(\\.[0-9]+)?$"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "architecture",
+            "data",
+            "presentation",
+            "localization",
+            "theme",
+            "devops",
+            "meta",
+            "testing"
+          ]
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}
+

@@ -1,0 +1,22 @@
+{
+  "@@locale": "en",
+  "appTitle": "Universal Multiplatform Blueprint",
+  "catalogTitle": "Item Catalog",
+  "createNewItem": "Create New Item",
+  "searchPlaceholder": "Search by title or code...",
+  "deleteItem": "Delete Item",
+  "itemSavedSuccessfully": "Item saved successfully",
+  "errorTitle": "Error",
+  "unexpectedErrorOccurred": "An unexpected error occurred. Please try again.",
+  "noDataTitle": "No Items Found",
+  "noDataMessage": "There are currently no items matching your criteria.",
+  "retry": "Retry",
+  "accept": "Accept",
+  "cancel": "Cancel",
+  "save": "Save",
+  "loadingMessage": "Loading, please wait...",
+  "fieldRequiredError": "This field is required.",
+  "fieldTooShortError": "Input is too short.",
+  "fieldTooLongError": "Input exceeds maximum length.",
+  "fieldInvalidPatternError": "Invalid format or characters."
+}

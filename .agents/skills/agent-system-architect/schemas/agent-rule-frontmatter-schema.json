@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentAndRuleFrontmatterSchema",
+  "description": "Composite validation schema for YAML frontmatter in .agents/agents/*.md and .agents/rules/*.md",
+  "oneOf": [
+    { "$ref": "#/$defs/AgentFrontmatter" },
+    { "$ref": "#/$defs/RuleFrontmatter" }
+  ],
+  "$defs": {
+    "AgentFrontmatter": {
+      "type": "object",
+      "required": [
+        "name",
+        "role",
+        "description",
+        "mode",
+        "allowed_tools"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "role": {
+          "type": "string",
+          "minLength": 5
+        },
+        "description": {
+          "type": "string",
+          "minLength": 20
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["subagent", "worker", "reviewer", "orchestrator"]
+        },
+        "allowed_tools": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "forbidden_tools": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "RuleFrontmatter": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "category",
+        "severity",
+        "scope"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^RULE-[A-Z0-9]+-[0-9]{3}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 5
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "architecture",
+            "presentation",
+            "data",
+            "domain",
+            "theme",
+            "l10n",
+            "lint",
+            "quality",
+            "testing"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["blocking", "critical", "warning"]
+        },
+        "scope": {
+          "type": "object",
+          "required": ["include"],
+          "properties": {
+            "include": {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 1
+            },
+            "exclude": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions": {
+    "AgentFrontmatter": {
+      "$ref": "#/$defs/AgentFrontmatter"
+    },
+    "RuleFrontmatter": {
+      "$ref": "#/$defs/RuleFrontmatter"
+    }
+  }
+}

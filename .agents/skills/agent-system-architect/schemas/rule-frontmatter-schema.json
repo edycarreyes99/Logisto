@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RuleFrontmatterSchema",
+  "description": "Validation schema for YAML frontmatter in .agents/rules/*.md",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "category",
+    "severity",
+    "scope"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^RULE-[A-Z0-9]+-[0-9]{3}$",
+      "description": "Standardized uppercase rule identifier, e.g., RULE-ARCH-001, RULE-UI-002, RULE-L10N-001."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5,
+      "description": "Short imperative rule summary."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "architecture",
+        "presentation",
+        "data",
+        "domain",
+        "theme",
+        "l10n",
+        "lint",
+        "quality",
+        "testing"
+      ],
+      "description": "Architectural category governing this rule."
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "blocking",
+        "critical",
+        "warning"
+      ],
+      "description": "Enforcement severity level."
+    },
+    "scope": {
+      "type": "object",
+      "required": [
+        "include"
+      ],
+      "properties": {
+        "include": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "Glob patterns of files governed by this rule."
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Glob patterns of files excluded from this rule."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

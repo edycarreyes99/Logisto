@@ -1,0 +1,22 @@
+{
+  "@@locale": "es",
+  "appTitle": "Plano Universal Multiplataforma",
+  "catalogTitle": "Catálogo de Artículos",
+  "createNewItem": "Crear Nuevo Artículo",
+  "searchPlaceholder": "Buscar por título o código...",
+  "deleteItem": "Eliminar Artículo",
+  "itemSavedSuccessfully": "Artículo guardado exitosamente",
+  "errorTitle": "Error",
+  "unexpectedErrorOccurred": "Ocurrió un error inesperado. Por favor intente de nuevo.",
+  "noDataTitle": "No se encontraron artículos",
+  "noDataMessage": "Actualmente no existen artículos que coincidan con su criterio.",
+  "retry": "Reintentar",
+  "accept": "Aceptar",
+  "cancel": "Cancelar",
+  "save": "Guardar",
+  "loadingMessage": "Cargando, por favor espere...",
+  "fieldRequiredError": "Este campo es requerido.",
+  "fieldTooShortError": "El texto es demasiado corto.",
+  "fieldTooLongError": "El texto excede la longitud máxima.",
+  "fieldInvalidPatternError": "Formato o caracteres no válidos."
+}
