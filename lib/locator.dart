@@ -1,8 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'data/firestore/database_seeder.dart';
 import 'data/firestore/firestore_client.dart';
 import 'data/preferences/app_preferences.dart';
+import 'data/services/firebase_auth_service.dart';
+import 'domain/services/auth_service.dart';
 import 'data/repositories/account_payable_repository.dart';
 import 'data/repositories/account_receivable_repository.dart';
 import 'data/repositories/audit_log_repository.dart';
@@ -75,6 +76,9 @@ Future<void> setupLocator({
   final appPrefs = await AppPreferences.getInstance(preferences: preferences);
   locator.registerSingleton<AppPreferences>(appPrefs);
 
+  // Enterprise Authentication Service (Firebase Authentication)
+  locator.registerLazySingleton<AuthService>(() => FirebaseAuthService());
+
   // Cloud Firestore infrastructure client
   final client = firestoreClient ?? FirestoreClient();
   locator.registerLazySingleton<FirestoreClient>(() => client);
@@ -145,25 +149,22 @@ Future<void> setupLocator({
     () => FirestoreUserRepository(client: locator<FirestoreClient>()),
   );
 
-  // Database Seeder
-  locator.registerLazySingleton<DatabaseSeeder>(
-    () => DatabaseSeeder(client: locator<FirestoreClient>()),
-  );
-
   // Application session and feature providers
   locator.registerLazySingleton<BusinessContextProvider>(
     () => BusinessContextProvider(preferences: locator<AppPreferences>()),
   );
   locator.registerLazySingleton<NavigationProvider>(() => NavigationProvider());
   locator.registerLazySingleton<LoginProvider>(
-    () => LoginProvider(preferences: locator<AppPreferences>()),
+    () => LoginProvider(
+      preferences: locator<AppPreferences>(),
+      authService: locator.isRegistered<AuthService>() ? locator<AuthService>() : null,
+    ),
   );
   locator.registerLazySingleton<OnboardingProvider>(
     () => OnboardingProvider(
       preferences: locator<AppPreferences>(),
       orgRepository: locator<OrganizationRepository>(),
       buRepository: locator<BusinessUnitRepository>(),
-      seeder: locator<DatabaseSeeder>(),
     ),
   );
   locator.registerLazySingleton<BusinessUnitSelectorProvider>(
