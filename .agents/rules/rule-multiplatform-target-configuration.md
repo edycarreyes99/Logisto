@@ -31,8 +31,9 @@ The application architecture MUST compile, run, and persist state seamlessly acr
 Multiplatform Target Minimum Invariants:
 1. **Android:** Minimum SDK version MUST be `minSdkVersion 21` or higher in `android/app/build.gradle`. Firestore persistence utilizes local SQLite storage.
 2. **iOS & macOS:** Minimum deployment target MUST be iOS 15.0+ (aligned with Xcode 16 toolchain) and macOS 12.0+ (supporting Intel x86_64 and Apple Silicon arm64). Local persistence utilizes disk SQLite cache.
-3. **Windows:** Supports Flutter desktop with C++ SDK Firestore implementation. Persistence uses local disk cache.
-4. **Web:** Persistence is backed by IndexedDB. `Settings(persistenceEnabled: true)` enables multi-tab offline synchronization.
+3. **Windows:** Supports Flutter desktop with C++ SDK Firestore implementation. Persistence uses local disk cache. Authentication flows support Email/Password natively and interactive OAuth flows (Google, Apple, Microsoft) via `desktop_webview_auth` and local loopback redirects aligned with `flutterfire_desktop` patterns.
+4. **Web:** Persistence is backed by IndexedDB. `Settings(persistenceEnabled: true)` enables multi-tab offline synchronization. Interactive OAuth flows utilize standard browser popup/redirect handlers.
+5. **Universal Desktop Authentication:** All desktop platforms (Windows and macOS) configure auth providers via `FirebaseUIAuth.configureProviders(...)` and register loopback redirect handlers without requiring mobile webviews.
 
 Developer Tooling Automation Standard:
 Automated developer setup is orchestrated exclusively via `tool/dev_setup.dart`. The script MUST execute the canonical 7-step sequence:

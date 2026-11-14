@@ -30,15 +30,15 @@ While the application supports smartphones, tablets, laptops, and desktop workst
 1. **Tier 1 (Primary Production Target): Laptops (1280x720 to 1920x1080)**
    - Viewport widths from 1280px and heights from 720px.
    - Comprehensive multi-column dashboard layouts (`BsCol` spans 3 to 4 columns).
-   - High information density, fully expanded horizontal `BsNavbar`, sticky action controls, and complete data tables (`BsTable`).
+   - High information density, fully expanded top navigation `AppBar`, action controls, and complete data tables (`DataTable`).
 2. **Tier 2 (Secondary Target): Tablets (768px to 1024px)**
    - iPad and Android tablets in both Portrait (768x1024) and Landscape (1024x768).
    - 2 to 3 column card distributions (`BsColConfig(md: 6, lg: 4)`).
-   - Touch targets meeting minimum 44x44px boundaries.
+   - Touch targets meeting minimum 48x48px boundaries.
 3. **Tier 3 (Mobile Adaptation): Smartphones (360px to 800px)**
    - Compact devices in Portrait (360x800) and Landscape (800x360).
    - Single-column card stacking (`BsColConfig(xs: 12)`).
-   - Collapsible hamburger navbar (`BsNavbarToggler` and `BsNavbarCollapse`).
+   - Responsive navigation drawer (`NavigationDrawer` / `NavigationBar`).
    - Scrollable containers preventing vertical landscape clipping.
 
 ---

@@ -23,6 +23,8 @@ In addition to this master system checklist, each specialized engineering discip
 10. **Test Automation & 100% Coverage Gate:** [../../automated-test-suite-runner/references/test-coverage-validation-checklist.md](../../automated-test-suite-runner/references/test-coverage-validation-checklist.md)
 11. **Defensive Error Scenario Matrix:** [../../automated-test-suite-runner/references/error-scenario-matrix.md](../../automated-test-suite-runner/references/error-scenario-matrix.md)
 12. **Monolithic Blueprint Decomposition Matrix:** [agents-md-decomposition-matrix.md](agents-md-decomposition-matrix.md)
+13. **Firebase UI & Adaptive Presentation:** [../../firebase-ui-integrator/references/firebase-ui-validation-checklist.md](../../firebase-ui-integrator/references/firebase-ui-validation-checklist.md)
+14. **Firebase UI Wireframe Matrix:** [../../firebase-ui-integrator/references/firebase-ui-wireframe-matrix.md](../../firebase-ui-integrator/references/firebase-ui-wireframe-matrix.md)
 
 ---
 
@@ -123,7 +125,7 @@ flutter test --coverage
 
 ### Phase 9: Adaptive Dual-Theme Design System (Light & Dark)
 - [ ] First-class, pixel-perfect support for both Light and Dark themes via `AppTheme.lightTheme()` and `AppTheme.darkTheme()` ([RULE-UI-004](../../../rules/rule-adaptive-dual-theme.md)).
-- [ ] Integration with `bootstrap_ui_flutter` theme extensions (`BsThemeData.lightTheme`, `BsThemeData.darkTheme`).
+- [ ] Integration with Flutter Material Design 3 ThemeData (`useMaterial3: true`) and ColorScheme tokens.
 - [ ] All visual tokens (colors, surfaces, borders, text colors) resolve dynamically through `AppColors` helpers (e.g., `AppColors.surfaceOf(context)`, `AppColors.textPrimaryOf(context)`).
 - [ ] Zero hardcoded hex color literals (`Color(0xFF...)`) in presentation screens or widgets.
 - [ ] Modular spacing scale adheres to standard 8px rhythm base defined in `lib/theme/app_spacing.dart`.
@@ -136,6 +138,8 @@ flutter test --coverage
 - [ ] Multi-column layouts define standard breakpoint columns: `xs` (<576px), `sm` (>=576px), `md` (>=768px), `lg` (>=992px), `xl` (>=1200px), `xxl` (>=1400px).
 - [ ] Zero manual screen width calculations or ad-hoc `MediaQuery.of(context).size.width` branching for layout decisions.
 - [ ] Grid containers respect safe area paddings and horizontal gutter margins across device orientations.
+- [ ] Views provide adaptive representation per [RULE-UI-007](../../../rules/rule-adaptive-view-representation.md): data tables (`DataTable` in `Card`) for desktop (`lg`, `xl`, `xxl` >=992px) vs card lists (`ListTile` / `Card`) for mobile/tablet (`xs`, `sm`, `md` <992px).
+- [ ] Exclusive implementation of Flutter Material Design 3 visual components and zero prohibited non-grid Bootstrap UI or Cupertino widgets ([RULE-UI-006](../../../rules/rule-bootstrap-exclusive-components.md)).
 
 ### Phase 11: Short & Decomposed Widget Architecture Standard
 - [ ] Widget `build` methods do not exceed 40 lines of executable code ([RULE-UI-001](../../../rules/rule-short-decomposed-widgets.md)).
@@ -178,6 +182,7 @@ flutter test --coverage
 - [ ] All parameterized keys have matching variable names and types across both ARB files.
 - [ ] Strings are resolved exclusively through `AppLocalizations.of(context)` or `notificationService.l10n`.
 - [ ] Zero hardcoded user-facing strings or raw literals in presentation widgets, dialogs, toasts, or error messages.
+- [ ] Firebase UI localizations delegate registered: `FirebaseUILocalizations.delegate` included in `MaterialApp` with full Spanish and English parity.
 - [ ] `flutter gen-l10n` executes cleanly without warnings.
 
 ### Phase 15: App Startup, Session Lifecycle & Warmup Bootstrapper

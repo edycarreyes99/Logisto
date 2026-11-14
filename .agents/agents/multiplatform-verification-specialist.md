@@ -40,7 +40,7 @@ The Multiplatform & Responsive Verification Specialist acts as the adversarial a
   - `xl` Primary Laptop Benchmark (1280 x 720) [Mandatory Primary Target]
   - `xl` Standard Laptop / Desktop (1280 x 800)
   - `xxl` Ultra-wide Desktop (1920 x 1080)
-- Auditing that presentation code strictly obeys `RULE-UI-006` (zero Material and zero Cupertino visual widgets).
+- Auditing that presentation code strictly obeys `RULE-UI-006` (Flutter Material Design 3 visual components, Bootstrap responsive grid only, zero prohibited Bootstrap visual components or Cupertino widgets).
 - Auditing that all responsive layouts derive from `bootstrap_ui_flutter` (`RULE-UI-002`).
 - Asserting that laptop viewports (1280x720+) display full multi-column dashboard density and expanded navigation bars, while mobile and tablet viewports adapt cleanly without content clipping.
 
@@ -57,7 +57,7 @@ The Multiplatform & Responsive Verification Specialist acts as the adversarial a
 1. **No Weakening of Tests:** Never delete, modify, or skip a test to disguise layout overflow or platform failures.
 2. **Universal 5-Platform Parity:** Application code must compile without errors for Web, Windows, macOS (Intel & Apple Silicon), Android, and iOS (`RULE-ARCH-007`).
 3. **100% Responsive & Dual Orientation:** Zero `RenderFlex overflowed` exceptions across all 6 breakpoints in portrait and landscape (`RULE-QUAL-002`).
-4. **Zero Material & Zero Cupertino UI:** Presentation widgets must exclusively consume `bootstrap_ui_flutter` (`RULE-UI-006`).
+4. **Material Design 3 Exclusivity & Bootstrap Grid:** Presentation widgets must exclusively consume Flutter Material Design 3 for visual elements and `bootstrap_ui_flutter` exclusively for responsive 12-column grids (`RULE-UI-006`).
 5. **Zero Emojis:** Strictly zero Unicode emoji characters across all code, tests, and documentation.
 
 ---
@@ -85,12 +85,12 @@ flutter build web --wasm-dry-run
 dart tool/dev_setup.dart
 ```
 
-### Phase 2: Anti-Material and Design System Audit
-Scan presentation files for prohibited Material or Cupertino visual components:
+### Phase 2: Anti-Bootstrap Non-Grid and Design System Audit
+Scan presentation files for prohibited Bootstrap non-grid visual components:
 ```bash
-# Audit for prohibited Material visual controls
+# Audit for prohibited Bootstrap non-grid visual controls
 rg --glob 'lib/presentation/**' --glob 'lib/core/widgets/**' \
-  '\b(Scaffold|AppBar|ElevatedButton|TextButton|OutlinedButton|FloatingActionButton|ListTile|AlertDialog|SnackBar|Drawer)\b'
+  '\b(BsCard|BsButton|BsModal|showBsModal|BsInput|BsSelect|BsCheckbox|BsRadio|BsSwitch|BsRange|BsNavbar|BsTable|BsListGroup|BsOffcanvas|BsToast|BsAlert|BsSpinner|BsProgress|BsBadge)\b'
 
 # Audit for prohibited Cupertino controls
 rg --glob 'lib/presentation/**' --glob 'lib/core/widgets/**' \

@@ -1,6 +1,6 @@
 ---
 id: RULE-UI-006
-title: Exclusive Bootstrap UI Flutter Component Enforcement and Material Cupertino Prohibition
+title: Exclusive Flutter Material Design 3 Component Enforcement with Bootstrap Responsive Grid
 category: presentation
 severity: blocking
 scope:
@@ -11,7 +11,7 @@ scope:
     - "test/**"
 ---
 
-# Exclusive Bootstrap UI Flutter Component Enforcement and Material Cupertino Prohibition
+# Exclusive Flutter Material Design 3 Component Enforcement with Bootstrap Responsive Grid
 
 > Rule ID: RULE-UI-006  
 > Severity: blocking  
@@ -22,136 +22,178 @@ scope:
 
 ## 1. Architectural Invariant
 
-All presentation screens, decomposed sub-widgets, and project-prefixed controls MUST EXCLUSIVELY consume visual UI components, helpers, and utilities from `bootstrap_ui_flutter` (`package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart`).
+All presentation screens, decomposed sub-widgets, and reusable controls MUST EXCLUSIVELY consume visual UI components, helpers, and styling from Flutter Material Design 3 (`package:flutter/material.dart`, `ThemeData(useMaterial3: true)`).
 
-The direct importation, instantiation, or consumption of visual user interface widgets from Flutter Material Design (`package:flutter/material.dart`) or Cupertino (`package:flutter/cupertino.dart`) is STRICTLY PROHIBITED in the presentation layer.
+From `bootstrap_ui_flutter` (`package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart`), ONLY the 12-column responsive grid layout system (`BsContainer`, `BsRow`, `BsCol`, `BsColConfig`, `BsBreakpoints`) is permitted to ensure 100% responsive multiplatform layout across all device types and screen sizes.
+
+The direct importation, instantiation, or consumption of visual, non-grid components from `bootstrap_ui_flutter` or Cupertino (`package:flutter/cupertino.dart`) is STRICTLY PROHIBITED in the presentation layer.
 
 ### 1.1. Prohibited Visual Component Catalog:
 Under no circumstances shall presentation code instantiate:
-1. **Material Containers & Surfaces:** `Scaffold`, `AppBar`, `Card`, `Drawer`, `BottomNavigationBar`, `NavigationBar`, `NavigationRail`, `BottomSheet`, `SnackBar`, `Banner`.
-2. **Material Buttons:** `ElevatedButton`, `FilledButton`, `TextButton`, `OutlinedButton`, `FloatingActionButton`, `IconButton` (from Material), `SegmentedButton`.
-3. **Material Inputs & Selection:** `TextField`, `TextFormField`, `DropdownButton`, `DropdownButtonFormField`, `Checkbox`, `Radio`, `Switch`, `Slider`, `RangeSlider`.
-4. **Material Dialogs & Indicators:** `AlertDialog`, `SimpleDialog`, `Dialog`, `CircularProgressIndicator`, `LinearProgressIndicator`, `Tooltip`, `Divider`.
-5. **Material Lists & Tiles:** `ListTile`, `ExpansionTile`, `Chip`, `InputChip`.
-6. **Cupertino Visual Controls:** `CupertinoButton`, `CupertinoNavigationBar`, `CupertinoTabBar`, `CupertinoActivityIndicator`, `CupertinoActionSheet`, `CupertinoAlertDialog`, `CupertinoTextField`, `CupertinoSwitch`, `CupertinoSlider`, `CupertinoSegmentedControl`.
-7. **Platform Raw Icons:** Raw Material `Icons` or Cupertino `CupertinoIcons` must be replaced by `BsIcon` using `BsIcons`.
+1. **Bootstrap Visual Cards & Surfaces:** `BsCard`, `BsCardHeader`, `BsCardBody`, `BsCardFooter`, `BsCardImage`, `BsCardGroup`.
+2. **Bootstrap Buttons:** `BsButton`, `BsButtonGroup`, `BsCloseButton`.
+3. **Bootstrap Form Inputs & Selection:** `BsInput`, `BsSelect`, `BsSelectBox`, `BsCheckbox`, `BsRadio`, `BsSwitch`, `BsRange`, `BsInputGroup`.
+4. **Bootstrap Dialogs & Overlays:** `BsModal`, `showBsModal`, `BsModalHeader`, `BsModalBody`, `BsModalFooter`, `BsOffcanvas`, `showBsOffcanvas`.
+5. **Bootstrap Navigation & Bars:** `BsNavbar`, `BsNavbarBrand`, `BsNavbarNav`, `BsNavbarItem`, `BsNavbarLink`, `BsNavbarCollapse`, `BsNavbarToggler`, `BsNav`, `BsTabContent`, `BsTabPane`.
+6. **Bootstrap Feedback & Status:** `BsBadge`, `BsAlert`, `BsToast`, `BsToastManager`, `BsSpinner`, `BsProgress`, `BsProgressBar`, `BsTooltip`.
+7. **Bootstrap Tables & Lists:** `BsTable`, `BsTableHead`, `BsTableBody`, `BsTableRow`, `BsTableCell`, `BsListGroup`, `BsListGroupItem`, `BsAccordion`, `BsAccordionItem`.
+8. **Cupertino Visual Controls:** `CupertinoButton`, `CupertinoNavigationBar`, `CupertinoTabBar`, `CupertinoActivityIndicator`, `CupertinoActionSheet`, `CupertinoAlertDialog`, `CupertinoTextField`, `CupertinoSwitch`, `CupertinoSlider`, `CupertinoSegmentedControl`.
+9. **Bootstrap Theme & Extension Tokens:** `BsThemeData`, `context.bs`. The application theme and design tokens MUST derive exclusively from Flutter Material Design 3 (`ThemeData` with `useMaterial3: true`).
 
-### 1.2. Permitted Foundational Flutter Primitives:
-The following non-visual structural primitives from the Flutter framework remain permitted:
-- Base primitives: `Widget`, `StatelessWidget`, `StatefulWidget`, `State`, `BuildContext`, `Key`, `GlobalKey`.
-- Layout primitives: `SizedBox`, `Padding`, `Center`, `Align`, `Expanded`, `Flexible`, `Stack`, `Positioned`, `SingleChildScrollView`, `Column`, `Row`, `Wrap`.
-- Event & State primitives: `GestureDetector`, `InkWell`, `AnimatedBuilder`, `ListenableBuilder`, `ValueListenableBuilder`.
-- Geometry & Paint primitives: `EdgeInsets`, `BorderRadius`, `Color`, `BoxDecoration`, `CrossAxisAlignment`, `MainAxisAlignment`, `Alignment`.
+### 1.2. Permitted Foundational Flutter & Grid Primitives:
+1. **Permitted Bootstrap UI Flutter Primitives (Grid & Breakpoints ONLY):**
+   - `BsContainer`, `BsContainer.fluid`
+   - `BsRow`
+   - `BsCol`, `BsColConfig`, `ColSize`
+   - `BsBreakpoints`
+2. **Permitted Material Design 3 & Flutter Visual Primitives:**
+   - Surfaces & Scaffold: `Scaffold`, `AppBar`, `Card`, `Material`, `Surface`, `Drawer`, `NavigationDrawer`, `NavigationRail`, `NavigationBar`.
+   - Buttons: `FilledButton`, `ElevatedButton`, `OutlinedButton`, `TextButton`, `IconButton`, `FloatingActionButton`, `SegmentedButton`.
+   - Inputs & Form: `TextField`, `TextFormField`, `DropdownButtonFormField`, `DropdownMenu`, `Checkbox`, `Radio`, `Switch`, `Slider`.
+   - Dialogs & Feedback: `AlertDialog`, `SimpleDialog`, `Dialog`, `ModalBottomSheet`, `SnackBar`, `MaterialBanner`, `CircularProgressIndicator`, `LinearProgressIndicator`, `Tooltip`.
+   - Content & Indicators: `Badge`, `Chip`, `InputChip`, `FilterChip`, `ActionChip`, `Divider`, `DataTable`, `PaginatedDataTable`, `ListTile`, `ListView`.
+   - Base Flutter Primitives: `Widget`, `StatelessWidget`, `StatefulWidget`, `State`, `BuildContext`, `Key`, `GlobalKey`, `SizedBox`, `Padding`, `Center`, `Align`, `Expanded`, `Flexible`, `Stack`, `Positioned`, `SingleChildScrollView`, `Column`, `Row`, `Wrap`, `GestureDetector`, `InkWell`, `AnimatedBuilder`, `ListenableBuilder`.
 
 ### 1.3. Mandatory Canonical Replacements:
-| Prohibited Material / Cupertino Widget | Mandatory Bootstrap UI Flutter Replacement |
-| :--- | :--- |
-| `Scaffold` | `BsContainer.fluid` with `BsNavbar` header and page body |
-| `AppBar` | `BsNavbar` (`BsNavbarBrand`, `BsNavbarNav`, `BsNavbarLink`, `BsNavbarCollapse`) |
-| `ElevatedButton` / `CupertinoButton` | `BsButton` (`variant: BsButtonVariant`, `size: BsButtonSize`, `outline: true`) |
-| `Card` | `BsCard` (`header: BsCardHeader`, `body: BsCardBody`, `footer: BsCardFooter`) |
-| `AlertDialog` / `CupertinoAlertDialog` | `BsModal` / `showBsModal` (`BsModalHeader`, `BsModalBody`, `BsModalFooter`) |
-| `Drawer` | `BsOffcanvas` / `showBsOffcanvas` (`placement: .start` or `.end`) |
-| `BottomNavigationBar` / `CupertinoTabBar` | `BsNav` (`BsTabContent`, `BsTabPane`, `variant: .pills`) |
-| `SnackBar` | `BsToast` / `BsToastManager.show` or `BsAlert` |
-| `CircularProgressIndicator` | `BsSpinner.border()` or `BsSpinner.grow()` |
-| `LinearProgressIndicator` | `BsProgress` (`BsProgressBar`) |
-| `TextField` / `TextFormField` | `BsInput` (`placeholder`, `size: BsInputSize`, `validator`, `disabled`) |
-| `DropdownButton` / `DropdownButtonFormField` | `BsSelect<T>` or `BsDropdown` (`BsDropdownMenu`, `BsDropdownItem`) |
-| `Checkbox` | `BsCheckbox` |
-| `Radio` | `BsRadio` |
-| `Switch` / `CupertinoSwitch` | `BsCheckbox` (`isSwitch: true`) |
-| `Slider` / `CupertinoSlider` | `BsRange` |
-| `Divider` | `BsVerticalRule` (horizontal) or utility `.borderBottom()` |
-| `Tooltip` | `BsTooltip` |
-| `Icons` / `CupertinoIcons` | `BsIcon` with `BsIcons` |
-| `ListTile` | `BsListGroup` with `BsListGroupItem` |
-| `ExpansionTile` | `BsAccordion` with `BsAccordionItem` |
+| Prohibited Bootstrap Widget | Mandatory Material Design 3 Replacement | Permitted Bootstrap Grid |
+| :--- | :--- | :--- |
+| `BsNavbar` | `AppBar` / Material 3 Header / `NavigationDrawer` | None (Use M3 AppBar/Drawer) |
+| `BsButton` | `FilledButton`, `ElevatedButton`, `OutlinedButton`, `TextButton` | None |
+| `BsCard` | `Card`, `Card.outlined`, `Card.filled` | Wrap inside `BsCol` |
+| `BsModal` / `showBsModal` | `showDialog` with `AlertDialog` / `Dialog` | None |
+| `BsOffcanvas` | `NavigationDrawer` / `Drawer` / `ModalBottomSheet` | None |
+| `BsNav` / `BsTabContent` | `TabBar` / `TabBarView` / `NavigationBar` | None |
+| `BsAlert` / `BsToast` | `SnackBar` via `ScaffoldMessenger`, `MaterialBanner` | None |
+| `BsSpinner` | `CircularProgressIndicator` | None |
+| `BsProgress` | `LinearProgressIndicator` | None |
+| `BsInput` | `TextField`, `TextFormField` | None |
+| `BsSelect` / `BsDropdown` | `DropdownButtonFormField`, `DropdownMenu` | None |
+| `BsCheckbox` | `Checkbox`, `CheckboxListTile` | None |
+| `BsRadio` | `Radio`, `RadioListTile` | None |
+| `BsBadge` | `Badge`, `Chip` | None |
+| `BsTable` | `DataTable`, `PaginatedDataTable`, `Table` | Wrap inside `BsCol` |
+| `BsListGroup` | `ListView`, `Column` with `ListTile` or `Card` | Wrap inside `BsCol` |
+| `BsVerticalRule` | `Divider`, `VerticalDivider` | None |
+
+### 1.4. Firebase UI Packages Integration & Reconciliation Invariant:
+When consuming official Firebase UI libraries (`firebase_ui_firestore`, `firebase_ui_auth`), presentation code MUST adhere to these guardrails:
+1. **Headless Query Decoupling (`firebase_ui_firestore`):**
+   - Engineers MUST use `FirestoreQueryBuilder<T>` to manage pagination, real-time streaming, loading, and error handling headlessly. The UI builder MUST render presentation exclusively using Material Design 3 components: `DataTable` or `Card` on desktop viewports and `ListTile` or `Card` on mobile and tablet viewports (RULE-UI-007), inside responsive `BsContainer`, `BsRow`, and `BsCol` layouts.
+   - When `FirestoreListView<T>` is consumed, its `itemBuilder`, `emptyBuilder`, `errorBuilder`, and `loadingBuilder` callbacks MUST return Material Design 3 widgets (`Card`, `ListTile`, `CircularProgressIndicator`), strictly prohibiting Bootstrap visual components.
+2. **Federated Authentication Theming & Builders (`firebase_ui_auth`):**
+   - Pre-built authentication screens (`SignInScreen`, `RegisterScreen`, `ProfileScreen`) are permitted as specialized federated auth handlers, provided:
+     a) Ambient Flutter `ThemeData` is configured with `useMaterial3: true` and semantic `ColorScheme` tokens (`AppColors`, `ThemeData.light`, `ThemeData.dark`).
+     b) All customizable visual builder hooks (`headerBuilder`, `sideBuilder`, `footerBuilder`, `subtitleBuilder`) MUST strictly consume Material Design 3 components (`Card`, `FilledButton`, `Text`, `Badge`) placed within responsive Bootstrap grid structures (`BsContainer`, `BsRow`, `BsCol`).
+     c) Desktop wide layout MUST utilize `sideBuilder` to implement a responsive split-screen wireframe, while mobile layout utilizes `headerBuilder`.
 
 ---
 
 ## 2. Rationale & Failure Impact
 
-- **True Design System Unity:** Mixing Material Design and Cupertino visual styles creates disjointed, inconsistent user experiences across operating systems. Enforcing a single design language powered by `bootstrap_ui_flutter` ensures pixel-perfect UI consistency across Web, Windows, macOS, Android, and iOS.
-- **Responsive 12-Column Cohesion:** Material and Cupertino widgets carry built-in platform margin assumptions and fixed constraints that fight against the Bootstrap 12-column responsive grid engine (`BsContainer`, `BsRow`, `BsCol`).
-- **Failure Impact:** Inadvertent use of Material buttons, dialogs, or drawers reintroduces Material 3 elevation, ink ripples, and mobile-biased behaviors on desktop and web, breaking responsive layouts, accessibility navigation, and desktop ergonomics.
+- **True Design System Unity:** Flutter Material Design 3 provides a deeply integrated, accessibility-tested, multiplatform UI framework with native animations, theme adaptation, keyboard accessibility, and platform ergonomics across Web, Windows, macOS, Android, and iOS.
+- **Bootstrap 12-Column Responsive Precision:** Relying on `bootstrap_ui_flutter` exclusively for `BsContainer`, `BsRow`, `BsCol`, and `BsColConfig` preserves deterministic 12-column grid responsiveness across all 6 breakpoints (`xs`, `sm`, `md`, `lg`, `xl`, `xxl`), eliminating brittle `MediaQuery` arithmetic while leveraging Material 3 visual beauty.
+- **Failure Impact:** Mixing third-party visual components with Material 3 results in styling clashes, broken theme inheritance (`Theme.of(context)`), inconsistent typography, and poor user ergonomics.
 
 ---
 
 ## 3. Compliant Pattern (DO)
 
-Construct the presentation screen exclusively using `bootstrap_ui_flutter` components:
+Construct the presentation screen using Material Design 3 widgets structured within the Bootstrap responsive grid:
 
 ```dart
 // lib/presentation/stations/stations_screen.dart
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
-import '../../domain/models/weather_station_model.dart';
+import '../../l10n/app_localizations.dart';
 
 class StationsScreen extends StatelessWidget {
-  final List<WeatherStationModel> stations;
-  final VoidCallback onRefresh;
-  final ValueChanged<String> onSearch;
-
-  const StationsScreen({
-    super.key,
-    required this.stations,
-    required this.onRefresh,
-    required this.onSearch,
-  });
+  const StationsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final bs = context.bs;
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
-    return BsContainer.fluid(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Application Navigation Bar Header (Replaces AppBar)
-          BsNavbar(
-            expand: BsNavbarExpand.lg,
-            brand: const BsNavbarBrand(child: Text('Weather Logisto')),
-            collapse: BsNavbarCollapse(
-              children: [
-                const BsNavbarSpacer(),
-                BsButton(
-                  label: 'Sync',
-                  icon: BsIcons.arrowRepeat,
-                  variant: BsButtonVariant.primary,
-                  size: BsButtonSize.sm,
-                  onPressed: onRefresh,
-                ),
-              ],
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.stationsCatalogTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {},
+            tooltip: l10n.refresh,
           ),
-          // Content Layout
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: BsRow(
-              children: stations.map((station) {
-                return BsCol(
-                  config: const BsColConfig(xs: 12, sm: 12, md: 6, lg: 4, xl: 3),
-                  child: BsCard(
-                    body: BsCardBody(
+        ],
+      ),
+      body: BsContainer.fluid(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: BsRow(
+            children: [
+              BsCol(
+                config: const BsColConfig(xs: 12, md: 6, xl: 4),
+                child: Card(
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(station.name),
-                        Text(station.statusName),
-                        const SizedBox(height: 8),
-                        Text(station.locationSummary),
+                        Text(
+                          l10n.stationOverview,
+                          style: theme.textTheme.titleMedium,
+                        ),
                         const SizedBox(height: 12),
-                        BsButton(
-                          label: 'View Details',
-                          variant: BsButtonVariant.primary,
-                          outline: true,
-                          size: BsButtonSize.sm,
+                        FilledButton.icon(
                           onPressed: () {},
+                          icon: const Icon(Icons.add),
+                          label: Text(l10n.createNewItem),
                         ),
                       ],
                     ),
                   ),
-                );
-              }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 4. Prohibited Pattern (DON'T)
+
+Instantiating non-grid visual components from `bootstrap_ui_flutter` or Cupertino:
+
+```dart
+// BAD: Instantiating prohibited Bootstrap visual components
+class BadScreen extends StatelessWidget {
+  const BadScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BsContainer.fluid(
+      child: Column(
+        children: [
+          // VIOLATION: BsNavbar is prohibited! Use Material 3 AppBar or NavigationDrawer.
+          BsNavbar(brand: BsNavbarBrand(child: Text('Bad App'))),
+          // VIOLATION: BsCard is prohibited! Use Material 3 Card.
+          BsCard(
+            header: BsCardHeader(child: Text('Card Header')),
+            body: BsCardBody(
+              children: [
+                // VIOLATION: BsButton is prohibited! Use Material 3 FilledButton/ElevatedButton.
+                BsButton(label: 'Click Me', onPressed: () {}),
+                // VIOLATION: BsInput is prohibited! Use Material 3 TextField.
+                BsInput(placeholder: 'Enter name'),
+              ],
             ),
           ),
         ],
@@ -163,55 +205,19 @@ class StationsScreen extends StatelessWidget {
 
 ---
 
-## 4. Prohibited Pattern (DON'T)
+## 5. Automated Validation & Audit Gate
 
-Instantiating Material Design or Cupertino visual widgets in the presentation layer:
-
-```dart
-// lib/presentation/stations/bad_stations_screen.dart
-// VIOLATION: Using Material Scaffold, AppBar, and ElevatedButton!
-import 'package:flutter/material.dart';
-
-class BadStationsScreen extends StatelessWidget {
-  const BadStationsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // PROHIBITED: Scaffold, AppBar, ElevatedButton violate RULE-UI-006!
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Weather Stations'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {},
-          child: const Text('Refresh'),
-        ),
-      ),
-    );
-  }
-}
-```
-
----
-
-## 5. Automated Validation & Audit Procedure
-
-Execute targeted static analysis scans using `rg` across `lib/presentation/` and `lib/core/widgets/` to verify zero prohibited Material and Cupertino visual components:
+Verify zero consumption of prohibited Bootstrap visual components and Cupertino widgets:
 
 ```bash
-# 1. Verify zero prohibited Material visual containers and buttons
+# 1. Prohibit non-grid Bootstrap UI Flutter visual widgets
 rg --glob 'lib/presentation/**' --glob 'lib/core/widgets/**' \
-  '\b(Scaffold|AppBar|ElevatedButton|FilledButton|TextButton|OutlinedButton|FloatingActionButton|ListTile|ExpansionTile|AlertDialog|SimpleDialog|SnackBar|Drawer|BottomNavigationBar)\b'
+  '\b(BsCard|BsButton|BsModal|showBsModal|BsInput|BsSelect|BsCheckbox|BsRadio|BsSwitch|BsRange|BsNavbar|BsTable|BsListGroup|BsOffcanvas|BsToast|BsAlert|BsSpinner|BsProgress|BsBadge)\b'
 
-# 2. Verify zero prohibited Cupertino visual controls
+# 2. Prohibit Cupertino visual widgets
 rg --glob 'lib/presentation/**' --glob 'lib/core/widgets/**' \
-  '\b(CupertinoButton|CupertinoNavigationBar|CupertinoTabBar|CupertinoActivityIndicator|CupertinoAlertDialog|CupertinoTextField|CupertinoSwitch)\b'
+  '\b(CupertinoButton|CupertinoNavigationBar|CupertinoTabBar|CupertinoActivityIndicator|CupertinoAlertDialog)\b'
 
-# 3. Verify zero bare Material text inputs and progress indicators
-rg --glob 'lib/presentation/**' --glob 'lib/core/widgets/**' \
-  '\b(TextFormField|DropdownButtonFormField|CircularProgressIndicator|LinearProgressIndicator)\b'
+# 3. Assert permitted Bootstrap responsive grid usage
+rg --glob 'lib/presentation/**' '\b(BsContainer|BsRow|BsCol|BsColConfig)\b'
 ```
-
-If any matches are returned, the build fails the quality gate immediately.
-

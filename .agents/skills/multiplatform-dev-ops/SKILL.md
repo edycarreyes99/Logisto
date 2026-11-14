@@ -81,6 +81,10 @@ web/index.html                           # Flutter Web entry point with IndexedD
 - `dart doc` MUST compile with 0 broken links and full coverage of public APIs.
 - Platform configurations MUST support native Firestore persistence (SQLite on mobile/desktop, IndexedDB on web).
 
+### 4.3. Windows & Desktop Authentication Setup
+Desktop platforms (Windows, macOS) require native authentication configuration. For interactive OAuth login flows (Google SSO, Microsoft, Apple), `desktop_webview_auth` provides local loopback server redirects aligned with `flutterfire_desktop` standards, while email/password authentication functions natively across Windows C++ and macOS Objective-C/Swift runners.
+See: [../firebase-ui-integrator/SKILL.md](../firebase-ui-integrator/SKILL.md).
+
 ---
 
 ## 5. Step-by-Step Implementation Procedure

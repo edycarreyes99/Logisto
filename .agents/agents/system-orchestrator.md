@@ -33,7 +33,7 @@ The Master System Orchestrator is the central executive agent invoked directly f
 The System Orchestrator directs and supervises the following specialized subagents:
 
 1. **[flutter-architecture-lead.md](flutter-architecture-lead.md):** Governs system-level architectural boundaries, dependency injection in `lib/locator.dart`, unidirectional layer flow (`RULE-ARCH-001`), service locator (`RULE-ARCH-002`), startup lifecycle (`RULE-ARCH-004`), approved technology stack (`RULE-ARCH-005`), canonical project anatomy (`RULE-ARCH-006`), and ecosystem evolution (`RULE-ARCH-008`).
-2. **[bootstrap-ui-specialist.md](bootstrap-ui-specialist.md):** Enforces exclusive implementation of `bootstrap_ui_flutter` visual components, helpers, and utilities while strictly prohibiting Material Design and Cupertino visual widgets (`RULE-UI-006`).
+2. **[bootstrap-ui-specialist.md](bootstrap-ui-specialist.md):** Enforces implementation of Flutter Material Design 3 visual components and reusable widgets, while using `bootstrap_ui_flutter` exclusively for 12-column responsive grid layouts (`RULE-UI-006`).
 3. **[flutter-presentation-engineer.md](flutter-presentation-engineer.md):** Implements responsive screens, 12-column Bootstrap layouts (`RULE-UI-002`), short decomposed sub-widgets (`RULE-UI-001`), project-prefixed controls (`RULE-UI-003`), dual-theme styling (`RULE-UI-004`), and reactive state consumption.
 4. **[firestore-data-specialist.md](firestore-data-specialist.md):** Constructs Cloud Firestore collection references, DTO serializers, offline cache configurations (`RULE-DATA-001`), query indexing (`RULE-DATA-002`), cache management (`RULE-DATA-003`), and SharedPreferences wrappers (`RULE-DATA-004`).
 5. **[localization-specialist.md](localization-specialist.md):** Maintains 100% key and parameter parity between English (`app_en.arb`) and Spanish (`app_es.arb`) bundles (`RULE-L10N-001`) and eliminates hardcoded strings.
@@ -41,15 +41,17 @@ The System Orchestrator directs and supervises the following specialized subagen
 7. **[multiplatform-verification-specialist.md](multiplatform-verification-specialist.md):** Adversarially audits multiplatform execution across Web, Windows, macOS (Intel & Apple Silicon), Android, and iOS, enforcing 100% responsive orientation adaptation and laptop-first layout priority (1280x720+) without overflow (`RULE-QUAL-002`).
 8. **[quality-assurance-auditor.md](quality-assurance-auditor.md):** Acts as the adversarial reviewer, verifying widget LOC limits (<40 lines), zero-emoji compliance, static analysis (`flutter analyze`), and test immutability.
 9. **[multiplatform-devops-engineer.md](multiplatform-devops-engineer.md):** Manages multiplatform build targets (Android, iOS, macOS, Windows, Web) (`RULE-ARCH-007`), environment secrets (`RULE-SEC-001`), and tooling automation (`tool/dev_setup.dart`).
+10. **[firebase-ui-specialist.md](firebase-ui-specialist.md):** Orchestrates official Firebase UI libraries (`firebase_ui_firestore`, `firebase_ui_auth`, `flutterfire_desktop`, `firebase_ui_localizations`), reconciling their rendering with Material Design 3 and Bootstrap responsive grids, governing adaptive table/list representations (`RULE-UI-007`), and managing desktop OAuth loopback flows.
 
 ### 1.3. Procedural Skill Catalog
 The Orchestrator coordinates the invocation of all procedural skills:
-- **[../skills/bootstrap-component-library/SKILL.md](../skills/bootstrap-component-library/SKILL.md):** Reference framework for all 30 components, helpers, and utilities in `bootstrap_ui_flutter` with zero Material/Cupertino UI.
+- **[../skills/firebase-ui-integrator/SKILL.md](../skills/firebase-ui-integrator/SKILL.md):** Procedural guide for integrating Firebase UI libraries with Flutter Material Design 3 and Bootstrap responsive grids, adaptive desktop tables vs mobile lists, and multiplatform Windows/macOS/Web/Mobile auth.
+- **[../skills/bootstrap-component-library/SKILL.md](../skills/bootstrap-component-library/SKILL.md):** Reference framework for Flutter Material Design 3 component library and Bootstrap 12-column responsive grid integration.
 - **[../skills/bootstrap-responsive-layout/SKILL.md](../skills/bootstrap-responsive-layout/SKILL.md):** Constructs 12-column responsive layouts across screen breakpoints.
 - **[../skills/multiplatform-responsive-auditor/SKILL.md](../skills/multiplatform-responsive-auditor/SKILL.md):** Asserts universal multiplatform runtime readiness and executes automated responsive test matrices across all breakpoints, prioritizing laptops from 1280x720+.
 - **[../skills/flutter-feature-scaffold/SKILL.md](../skills/flutter-feature-scaffold/SKILL.md):** Scaffolds clean architecture vertical modules.
 - **[../skills/firestore-repository-builder/SKILL.md](../skills/firestore-repository-builder/SKILL.md):** Generates Firestore clients, DTOs, and repository streams.
-- **[../skills/design-system-theme-tokens/SKILL.md](../skills/design-system-theme-tokens/SKILL.md):** Assembles ThemeData and BsThemeData for Light and Dark themes.
+- **[../skills/design-system-theme-tokens/SKILL.md](../skills/design-system-theme-tokens/SKILL.md):** Assembles Flutter Material Design 3 ThemeData for Light and Dark themes.
 - **[../skills/form-validation-orchestrator/SKILL.md](../skills/form-validation-orchestrator/SKILL.md):** Binds reactive form inputs to `BaseValidator` and enum errors.
 - **[../skills/provider-state-management/SKILL.md](../skills/provider-state-management/SKILL.md):** Implements ChangeNotifier state controllers.
 - **[../skills/bilingual-localization-sync/SKILL.md](../skills/bilingual-localization-sync/SKILL.md):** Synchronizes bilingual translation bundles.
@@ -160,7 +162,7 @@ The Orchestrator coordinates the invocation of all procedural skills:
 
 ### Phase 4: Presentation & Responsive Layout Construction
 1. Delegate UI screens and decomposed sub-widgets to `bootstrap-ui-specialist` and `flutter-presentation-engineer`.
-2. Enforce exclusive consumption of `bootstrap_ui_flutter` and strictly ban Material Design and Cupertino visual widgets (`RULE-UI-006`) using [../skills/bootstrap-component-library/SKILL.md](../skills/bootstrap-component-library/SKILL.md).
+2. Enforce exclusive consumption of Flutter Material Design 3 visual components and use `bootstrap_ui_flutter` exclusively for 12-column responsive grids (`RULE-UI-006`) using [../skills/bootstrap-component-library/SKILL.md](../skills/bootstrap-component-library/SKILL.md).
 3. Enforce 12-column Bootstrap responsive grids (`RULE-UI-002`) prioritizing laptop viewports from 1280x720 upwards while guaranteeing fluid adaptation across tablets and mobile phones in portrait and landscape. Validate against [../skills/bootstrap-responsive-layout/references/bootstrap-grid-validation-checklist.md](../skills/bootstrap-responsive-layout/references/bootstrap-grid-validation-checklist.md).
 4. Enforce sub-40-line `build` methods and max 3-level nesting depth (`RULE-UI-001`), validating against [../skills/flutter-feature-scaffold/references/feature-scaffold-validation-checklist.md](../skills/flutter-feature-scaffold/references/feature-scaffold-validation-checklist.md).
 5. Enforce project-prefixed reusable controls (`RULE-UI-003`) and reactive form validators via [../skills/form-validation-orchestrator/references/form-validation-checklist.md](../skills/form-validation-orchestrator/references/form-validation-checklist.md).

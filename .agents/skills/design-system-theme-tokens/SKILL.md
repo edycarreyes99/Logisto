@@ -2,10 +2,10 @@
 name: design-system-theme-tokens
 description: |
   Procedural guide for managing design tokens, adaptive color palettes, typography scales, and themes.
-  Assembles ThemeData and BsThemeData for seamless, pixel-perfect Light and Dark theme adaptation.
+  Assembles Flutter Material Design 3 ThemeData for seamless, pixel-perfect Light and Dark theme adaptation.
   Mandatory trigger conditions:
   - Trigger when defining or updating brand colors, typography, spacing, or component metrics.
-  - Trigger when configuring Light and Dark ThemeData compilation or BsThemeData extensions.
+  - Trigger when configuring Light and Dark ThemeData compilation with Material Design 3 tokens.
   Do NOT trigger when:
   - Do not trigger for non-visual backend data operations or repository implementations.
   - Do not trigger for form input validation rules without styling concerns.
@@ -26,7 +26,7 @@ metadata:
 
 ## 1. Executive Summary & Objective
 
-This skill standardizes the Design System Architecture in `lib/theme/`. It establishes an adaptive token pipeline supporting both Light and Dark themes, eliminating hardcoded hex colors, arbitrary spacing constants, and un-themed widgets. It coordinates 5 core modules (`app_colors.dart`, `app_dimens.dart`, `app_spacing.dart`, `app_text_styles.dart`, `app_theme.dart`) and integrates with `bootstrap_ui_flutter` theme extensions.
+This skill standardizes the Design System Architecture in `lib/theme/`. It establishes an adaptive token pipeline supporting both Light and Dark themes, eliminating hardcoded hex colors, arbitrary spacing constants, and un-themed widgets. It coordinates 5 core modules (`app_colors.dart`, `app_dimens.dart`, `app_spacing.dart`, `app_text_styles.dart`, `app_theme.dart`) and integrates with Flutter Material Design 3 theme tokens.
 
 ---
 
@@ -72,13 +72,17 @@ lib/theme/
 ├── app_dimens.dart          # Corner radii, component heights, Bootstrap breakpoints
 ├── app_spacing.dart         # Modular 8px rhythm scale and component metrics
 ├── app_text_styles.dart     # Adaptive typography hierarchy
-└── app_theme.dart           # ThemeData lightTheme & darkTheme with BsThemeData
+└── app_theme.dart           # ThemeData lightTheme & darkTheme with Material Design 3 tokens
 ```
 
 ### 4.2. Invariant Rules
 - Feature code MUST NEVER use hardcoded hex values (e.g. `Color(0xFF...)`).
 - Feature code MUST resolve colors via `AppColors` helpers (e.g., `AppColors.surfaceOf(context)`) or `Theme.of(context)`.
 - All visual elements MUST render flawlessly in both Light and Dark modes.
+
+### 4.3. Firebase UI Theme Bridging Invariant
+When consuming `firebase_ui_auth` screens and widgets, ambient `ThemeData` light and dark definitions MUST bridge Flutter Material Design 3 tokens into `inputDecorationTheme`, `elevatedButtonTheme`, and `cardTheme`. This guarantees that pre-built Firebase UI forms adopt clean Material 3 borders, primary colors, and card aesthetics.
+See: [../firebase-ui-integrator/templates/firebase_ui_theme_bridge.dart](../firebase-ui-integrator/templates/firebase_ui_theme_bridge.dart).
 
 ---
 
@@ -204,35 +208,46 @@ class AppTextStyles {
 ```
 
 ### Step 4: Assemble Dual ThemeData in app_theme.dart
-Assemble `ThemeData` integrating `BsThemeData`:
+Assemble `ThemeData` integrating Material Design 3 tokens:
 
 ```dart
 // lib/theme/app_theme.dart
 import 'package:flutter/material.dart';
-import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'app_colors.dart';
 import 'app_dimens.dart';
 
 class AppTheme {
   static ThemeData lightTheme() {
     return ThemeData(
+      useMaterial3: true,
       brightness: Brightness.light,
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.backgroundLight,
-      cardColor: AppColors.cardLight,
+      cardColor: AppColors.surfaceLight,
       dividerColor: AppColors.borderLight,
-      extensions: [BsThemeData.lightTheme],
+      colorScheme: ColorScheme.light(
+        primary: AppColors.primary,
+        secondary: AppColors.secondary,
+        surface: AppColors.surfaceLight,
+        error: AppColors.error,
+      ),
     );
   }
 
   static ThemeData darkTheme() {
     return ThemeData(
+      useMaterial3: true,
       brightness: Brightness.dark,
-      primaryColor: AppColors.primaryLight,
+      primaryColor: AppColors.primaryDark,
       scaffoldBackgroundColor: AppColors.backgroundDark,
-      cardColor: AppColors.cardDark,
+      cardColor: AppColors.surfaceDark,
       dividerColor: AppColors.borderDark,
-      extensions: [BsThemeData.darkTheme],
+      colorScheme: ColorScheme.dark(
+        primary: AppColors.primaryDark,
+        secondary: AppColors.secondaryDark,
+        surface: AppColors.surfaceDark,
+        error: AppColors.errorDark,
+      ),
     );
   }
 }
@@ -261,7 +276,7 @@ rg --glob 'lib/presentation/**' 'Color\(0x'
 
 Checklist (see full [references/design-tokens-validation-checklist.md](references/design-tokens-validation-checklist.md)):
 - [ ] Both `lightTheme()` and `darkTheme()` are defined and compile cleanly.
-- [ ] `BsThemeData.lightTheme` and `darkTheme` extensions are registered.
+- [ ] Material Design 3 ThemeData (`useMaterial3: true`) and ColorScheme tokens are registered.
 - [ ] All colors in `lib/presentation/` derive from `AppColors` or `Theme.of(context)`.
 - [ ] Spacing values adhere to the 8px modular scale.
 - [ ] Zero lint warnings with `flutter analyze`.

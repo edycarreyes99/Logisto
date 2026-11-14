@@ -184,7 +184,7 @@ flutter analyze
 | Failure Scenario | Root Cause | Preventive Invariant |
 | :--- | :--- | :--- |
 | **Mobile Landscape Overflow** | Fixed heights exceeding 360px viewport height when phone is rotated. | Wrap content bodies in `SingleChildScrollView` or scrollable containers. |
-| **Modal Clipping in Landscape** | Modal dialog height exceeds screen height. | Set `scrollable: true` on `BsModal` to enable independent body scrolling. |
+| **Modal Clipping in Landscape** | Modal dialog height exceeds screen height. | Wrap dialog content in `SingleChildScrollView` to enable independent body scrolling. |
 | **Desktop Window Crash on Resize** | Hardcoded pixel math throwing divide-by-zero or negative constraints. | Rely strictly on Bootstrap 12-column grid engine (`BsRow`, `BsCol`). |
 | **Platform Unresolved Plugin** | Using mobile-only camera or biometric package without desktop fallback. | Implement platform capability checks before invoking platform channels. |
 | **Dart:io Import on Web Target** | Direct `dart:io` reference in common presentation code. | Use conditional imports or abstract storage/file interfaces. |

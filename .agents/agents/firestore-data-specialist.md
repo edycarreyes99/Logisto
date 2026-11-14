@@ -33,6 +33,8 @@ The Cloud Firestore Data Specialist is the authoritative engineer for all persis
 - Implementing typed collection manifests in `lib/data/firestore/collections/app_collections.dart`.
 - Authoring Data Transfer Objects (DTOs) with `fromFirestore`, `toFirestore`, and domain entity conversions in `lib/data/dtos/`.
 - Implementing concrete repositories exposing `watchAll()`, `save()`, `delete()`, and `batchSave()` in `lib/data/repositories/`.
+- Exposing type-safe `Query<T>` references configured with `.withConverter<T>()` to drive headless `FirestoreQueryBuilder` integrations in the presentation layer.
+- Configuring cursor-based pagination parameters (`pageSize`, ordering, query filters) for responsive catalog feeds.
 - Hardening `firestore.rules` and declaring compound queries in `firestore.indexes.json` (`RULE-DATA-002`).
 - Managing local key-value persistence in `lib/data/preferences/`.
 

@@ -76,6 +76,10 @@ lib/data/
 - Every collection MUST use `.withConverter<T>()` to eliminate raw `Map<String, dynamic>` casting in repository logic.
 - DTOs MUST encapsulate Firestore-specific types (e.g. `Timestamp`, `FieldValue`) so that Domain models remain 100% pure Dart.
 
+### 4.3. Firebase UI Firestore Query Integration
+When integrating with the presentation layer, repositories expose type-safe `Query<T>` references configured with `.withConverter<T>()`. This allows UI components to consume `FirestoreQueryBuilder<T>` headlessly from `firebase_ui_firestore` to power adaptive desktop tables and mobile lists without violating data layer isolation rules.
+See: [../firebase-ui-integrator/SKILL.md](../firebase-ui-integrator/SKILL.md).
+
 ---
 
 ## 5. Step-by-Step Implementation Procedure

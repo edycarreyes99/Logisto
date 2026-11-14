@@ -81,6 +81,10 @@ lib/l10n/
 - Key names MUST follow `camelCase` format (e.g., `saveChanges`, `stationNameHint`, `temperatureReading`).
 - User-facing text in widgets MUST ONLY be accessed through `AppLocalizations.of(context)!.keyName`.
 
+### 4.3. Firebase UI Localizations Delegation & Parity
+For Firebase UI widgets (`firebase_ui_auth`, `firebase_ui_firestore`), the application MUST register `FirebaseUILocalizations.delegate` in `MaterialApp.localizationsDelegates`. Any customized authentication strings or error overrides MUST be registered via `FirebaseUILocalizations.withDefaultOverrides` with matching English and Spanish definitions to maintain 100% bilingual parity.
+See: [../firebase-ui-integrator/SKILL.md](../firebase-ui-integrator/SKILL.md).
+
 ---
 
 ## 5. Step-by-Step Implementation Procedure

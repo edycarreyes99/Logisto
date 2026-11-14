@@ -37,7 +37,7 @@ class GenericFeatureHeader extends StatelessWidget {
           sizes: const ColSize(xs: 12, md: 4, lg: 3),
           child: Padding(
             padding: const EdgeInsets.only(top: 8.0),
-            child: ElevatedButton.icon(
+            child: FilledButton.icon(
               onPressed: onCreatePressed,
               icon: const Icon(Icons.add),
               label: Text(createButtonText),

@@ -81,6 +81,13 @@ Verify that breakpoint constants in `lib/theme/app_dimens.dart` align with stand
 | `xl` | 1200px | High-DPI Desktop Monitors | `xl: 3` (4 items per row) |
 | `xxl` | 1400px | Ultra-Wide Displays | `xxl: 3` (4 items per row) |
 
+### 4.3. Adaptive Representation Rules: Desktop Tables versus Mobile Lists
+In addition to grid column spans, data-heavy views MUST adapt their visual representation based on viewport breakpoints per [RULE-UI-007](../../rules/rule-adaptive-view-representation.md):
+- **Desktop & Laptop Viewports (`lg`, `xl`, `xxl` - Width >= 992px):** Tabular data representation using Material 3 `DataTable` in a `Card`. Maximizes horizontal screen utilization, displays sortable columns, inline metrics, and status chips.
+- **Tablet Viewports (`md` - Width 768px - 991px):** Two-column card grid (`BsColConfig(xs: 12, md: 6)`) using Material 3 `Card`.
+- **Mobile Viewports (`xs`, `sm` - Width < 768px):** Single-column stacked lists using `ListTile` or `Card` with touch targets >= 48px and continuous scroll pagination.
+- Detailed wireframes and matrix: [../firebase-ui-integrator/references/firebase-ui-wireframe-matrix.md](../firebase-ui-integrator/references/firebase-ui-wireframe-matrix.md).
+
 ---
 
 ## 5. Step-by-Step Implementation Procedure

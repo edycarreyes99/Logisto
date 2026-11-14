@@ -32,6 +32,8 @@ The Flutter Presentation Specialist crafts pixel-perfect, accessible, and respon
 - Implementing feature screens in `lib/presentation/[feature]/[feature]_screen.dart`.
 - Extracting decomposed, single-responsibility sub-widgets in `presentation/[feature]/widgets/`.
 - Integrating 12-column responsive grid layouts via `bootstrap_ui_flutter` (`BsContainer`, `BsRow`, `BsCol`, `ColSize`).
+- Building adaptive views that dynamically switch between Material 3 `DataTable` / `Card` on desktop (>=992px) and `ListTile` / `Card` on mobile/tablet (<992px) per [RULE-UI-007](../rules/rule-adaptive-view-representation.md).
+- Implementing responsive authentication screens with `firebase_ui_auth`, using `sideBuilder` on wide viewports (>=800px) and `headerBuilder` on compact mobile viewports.
 - Consuming state reactively using `AnimatedBuilder`, `ListenableBuilder`, and `ChangeNotifier` status enums.
 - Applying adaptive color tokens from `AppColors` and typography from `AppTextStyles`.
 

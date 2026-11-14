@@ -88,8 +88,8 @@ rg --glob 'lib/presentation/**' 'package:cloud_firestore'
 # Check for hardcoded hex colors
 rg --glob 'lib/presentation/**' 'Color\(0x'
 
-# Check for bare buttons
-rg --glob 'lib/presentation/**' 'ElevatedButton\(|TextButton\(|OutlinedButton\('
+# Check for prohibited Bootstrap non-grid visual components
+rg --glob 'lib/presentation/**' '\b(BsCard|BsButton|BsModal|showBsModal|BsInput|BsSelect|BsCheckbox|BsRadio|BsSwitch|BsRange|BsNavbar|BsTable|BsListGroup|BsOffcanvas|BsToast|BsAlert|BsSpinner|BsProgress|BsBadge)\b'
 ```
 
 ### Phase 4: Localization Parity Verification

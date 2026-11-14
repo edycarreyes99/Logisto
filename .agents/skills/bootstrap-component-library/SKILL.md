@@ -1,29 +1,29 @@
 ---
 name: bootstrap-component-library
 description: |
-  Comprehensive procedural guide and reference implementation framework for all components, helpers,
-  and utilities in bootstrap_ui_flutter. Enforces 100% exclusive usage of Bootstrap UI components while
-  strictly prohibiting Material Design and Cupertino visual widgets.
+  Comprehensive procedural guide and reference implementation framework for Flutter Material Design 3
+  components integrated with bootstrap_ui_flutter 12-column responsive grids. Enforces 100% exclusive usage
+  of Flutter Material Design 3 for visual components while using bootstrap_ui_flutter exclusively for responsive grids.
   Mandatory trigger conditions:
-  - Trigger when constructing new UI screens, forms, modals, tables, or reusable widgets using bootstrap_ui_flutter.
-  - Trigger when migrating or refactoring legacy Flutter views away from Material Design or Cupertino.
-  - Trigger when selecting and implementing Bootstrap components, helpers (BsVStack, BsHStack, BsRatio), or utility extensions.
+  - Trigger when constructing new UI screens, forms, modals, tables, or reusable widgets in Flutter.
+  - Trigger when refactoring views to use Flutter Material Design 3 components and Bootstrap responsive grids.
+  - Trigger when configuring responsive 12-column layouts with BsContainer, BsRow, and BsCol.
   Do NOT trigger when:
   - Do not trigger for headless backend data queries, repository streams, or pure domain modeling.
   - Do not trigger for localization translation synchronization alone.
 license: Apache-2.0
 metadata:
-  version: 1.0.0
+  version: 2.0.0
   category: presentation
   publisher: Architecture Standards Team
 ---
 
-# Bootstrap UI Flutter Component Library and Architecture Specification
+# Material Design 3 Component Library and Bootstrap Responsive Grid Specification
 
 > Standard: Universal Multiplatform Design System Specification  
 > Scope: Entire presentation layer (`lib/presentation/`, `lib/core/widgets/`)  
 > Governance: Zero Emojis, 100% Technical English, Strict Automated Validation  
-> Rule Conformance: RULE-UI-006 (Zero Material, Zero Cupertino), RULE-UI-002 (12-Column Grid)  
+> Rule Conformance: RULE-UI-006 (Material 3 Visuals, Bootstrap Grid Only), RULE-UI-002 (12-Column Grid)  
 > Component Catalog: [references/component-reference-catalog.md](references/component-reference-catalog.md)  
 > Screen Template: [templates/pure-bootstrap-screen-template.dart](templates/pure-bootstrap-screen-template.dart)  
 
@@ -31,20 +31,20 @@ metadata:
 
 ## 1. Executive Summary & Objective
 
-The `bootstrap_ui_flutter` framework provides a complete, modern design system natively built for Flutter, bringing the full breadth of Bootstrap 5.3 specifications to cross-platform desktop, mobile, and web applications.
+This specification establishes the authoritative design system and component architecture for the application. All user interface presentation components derive exclusively from Flutter Material Design 3 (`package:flutter/material.dart`, `ThemeData(useMaterial3: true)`), delivering high accessibility, fluid interactive physics, state-of-the-art visual styling, and consistent cross-platform ergonomics across Web, Windows, macOS, Android, and iOS.
 
-This skill establishes the authoritative engineering workflow for authoring screens and reusable widgets using `bootstrap_ui_flutter`. It guarantees that all visual elements derive exclusively from this library and explicitly bans visual widgets from Flutter Material Design (`package:flutter/material.dart`) and Cupertino (`package:flutter/cupertino.dart`). By enforcing a unified component suite, the application achieves seamless responsive adaptation, robust accessibility, and absolute visual parity across all target platforms.
+To ensure 100% responsive fluid adaptation across all screen sizes and device form factors without brittle `MediaQuery` arithmetic, the layout engine integrates `bootstrap_ui_flutter` EXCLUSIVELY for its 12-column responsive grid system (`BsContainer`, `BsRow`, `BsCol`, `BsColConfig`, `BsBreakpoints`). All non-grid visual components from `bootstrap_ui_flutter` and Cupertino controls are strictly prohibited.
 
 ---
 
 ## 2. Trigger Conditions & Decision Boundary
 
 ### 2.1. When to Activate This Skill
-- Constructing any presentation view, feature screen, layout body, card, table, or dashboard.
-- Implementing user input forms using `BsInput`, `BsSelect`, `BsCheckbox`, `BsRadio`, `BsSwitch`, `BsRange`, or `BsInputGroup`.
-- Displaying dialog prompts (`BsModal`), slide-over drawers (`BsOffcanvas`), toasts (`BsToast`), or alerts (`BsAlert`).
-- Applying spacing, border, alignment, or typography extensions (`.p3()`, `.m2()`, `.fs4()`, `.fwBold()`, `.rounded()`).
-- Refactoring legacy code containing `Scaffold`, `AppBar`, `ElevatedButton`, `TextField`, or Cupertino widgets.
+- Constructing any presentation view, feature screen, layout body, card, table, dialog, or dashboard.
+- Implementing user input forms using Material 3 `TextField`, `TextFormField`, `DropdownButtonFormField`, `Checkbox`, `Radio`, or `Switch`.
+- Structuring responsive multi-column layouts across mobile, tablet, and desktop breakpoints using `BsContainer`, `BsRow`, `BsCol`, and `BsColConfig`.
+- Displaying dialogs (`showDialog`, `AlertDialog`), bottom sheets (`showModalBottomSheet`), snackbars (`ScaffoldMessenger`), or progress indicators (`CircularProgressIndicator`, `LinearProgressIndicator`).
+- Refactoring legacy code containing prohibited Bootstrap visual components (`BsButton`, `BsCard`, `BsModal`, `BsInput`, `BsNavbar`, `BsTable`, `BsListGroup`) or Cupertino widgets.
 
 ### 2.2. When to Avoid This Skill
 - Writing domain repositories, Firestore DTO serialization, or business use cases.
@@ -58,137 +58,92 @@ This skill establishes the authoritative engineering workflow for authoring scre
 Execute pre-flight checks before authoring or modifying any presentation component:
 
 ```bash
-# 1. Verify bootstrap_ui_flutter dependency in pubspec.yaml
+# 1. Verify bootstrap_ui_flutter dependency in pubspec.yaml for grid support
 grep 'bootstrap_ui_flutter' pubspec.yaml
 
-# 2. Check for accidental Material or Cupertino imports in the target file
-rg '\b(Scaffold|AppBar|ElevatedButton|CupertinoButton|TextField)\b' lib/presentation/
+# 2. Check for prohibited Bootstrap visual components in presentation code
+rg --glob 'lib/presentation/**' '\b(BsCard|BsButton|BsModal|showBsModal|BsInput|BsNavbar|BsTable|BsListGroup)\b'
 
-# 3. Ensure ThemeData provides BsThemeData extensions in lib/theme/
-test -f lib/theme/app_theme.dart && echo "Theme system ready."
+# 3. Ensure ThemeData provides useMaterial3: true and ColorScheme tokens in lib/theme/
+test -f lib/theme/firebase_ui_theme_bridge.dart && echo "Theme system ready."
 ```
 
 ---
 
 ## 4. Canonical Specification & Standards
 
-### 4.1. The 30 Core Component Suites
+### 4.1. Core Component Mapping & Guidelines
 
-#### 1. Grid & Containers
-- `BsContainer`: Root layout wrapper. Always use `BsContainer.fluid(child: ...)` or `BsContainer(type: BsContainerType.fluid, child: ...)` for responsive edge-to-edge layouts.
-- `BsRow`: Flexbox row distributing columns along a 12-unit horizontal track with configurable gutters (`gutterX`, `gutterY`) and alignment (`justify`, `alignItems`).
-- `BsCol`: Column child spanning fractional track widths specified via `config: BsColConfig(xs: 12, sm: 6, md: 4, lg: 3, xl: 3, xxl: 2)`.
+#### 1. Responsive Grid Engine (From `bootstrap_ui_flutter`)
+- `BsContainer`: Root layout wrapper. Always use `BsContainer.fluid(child: ...)` or `BsContainer(fluid: true, child: ...)` for responsive layouts.
+- `BsRow`: Flexbox row distributing columns along a 12-unit horizontal track with configurable gutters and alignment.
+- `BsCol`: Column child spanning fractional track widths specified via `config: BsColConfig(xs: 12, sm: 12, md: 6, lg: 4, xl: 3, xxl: 2)`.
 
-#### 2. Navigation Bar (Replaces `AppBar` and `CupertinoNavigationBar`)
-- `BsNavbar`: Universal header bar. Supports `expand: BsNavbarExpand.lg`, `dark: true`, `brand`, and `collapse: BsNavbarCollapse(...)`.
-- `BsNavbarBrand` & `BsNavbarIconBrand`: Logo branding with optional network image support (`BsNavbarIconBrand.network`).
-- `BsNavbarNav` & `BsNavbarLink`: Navigation link items supporting active (`active: true`) and disabled states.
-- `BsNavbarSpacer`: Responsive flex spacer expanding on desktop and collapsing on mobile.
-- `BsNavbarToggler` & `BsNavbarCollapse`: Mobile hamburger drawer menu toggled dynamically on small viewports.
+#### 2. Navigation & Headers (Material Design 3)
+- `AppBar`: Top application header bar with `title`, `actions`, `leading`, and surface elevation tint.
+- `NavigationDrawer` / `Drawer`: Side navigation drawer for desktop and mobile navigation shells.
+- `NavigationBar` / `NavigationRail`: Adaptive bottom or vertical side navigation for responsive screen sizes.
 
-#### 3. Buttons & Button Groups (Replaces `ElevatedButton`, `TextButton`, `CupertinoButton`)
-- `BsButton`: Primary action control. Properties: `label`, `onPressed`, `variant: BsButtonVariant.primary`, `size: BsButtonSize.md`, `outline: true`, `icon: BsIcons.star`, `isLoading: bool`.
-- `BsButtonGroup`: Arranges related buttons in a continuous horizontal or vertical group with merged borders.
-- `BsCloseButton`: Standardized dismiss control for modals, alerts, and offcanvas panels (`white: true` for dark backgrounds).
+#### 3. Buttons (Material Design 3)
+- `FilledButton`: Primary high-emphasis action button.
+- `FilledButton.tonal`: Secondary medium-emphasis action button.
+- `ElevatedButton`: Alternative surface-elevated action button.
+- `OutlinedButton`: Medium-emphasis bordered button for secondary actions.
+- `TextButton`: Low-emphasis text action button.
+- `IconButton`: Compact icon-only button for toolbars and actions.
 
-#### 4. Cards & Containers (Replaces `Card`)
-- `BsCard`: Structured content container supporting `header: BsCardHeader(child: ...)`, `body: BsCardBody(children: [...])`, and `footer: BsCardFooter(child: ...)`.
-- `BsCardImage`: Image caps positioned at `BsCardImagePosition.top`, `bottom`, or `overlay`.
-- `BsCardGroup`: Connected series of equal-height cards.
+#### 4. Cards & Surfaces (Material Design 3)
+- `Card`: Primary content container. Use `Card.outlined` or `Card(elevation: 0, shape: RoundedRectangleBorder(...))` for clean, modern information density.
+- `Material`: Base rendering surface providing elevation and theme ink response.
 
-#### 5. Form Input Controls (Replaces `TextFormField`, `DropdownButtonFormField`, `Switch`)
-- `BsInput`: Text input field natively integrating with Flutter's `Form` validation. Supports `size: BsInputSize.sm/md/lg`, `placeholder`, `disabled`, `validator`, `floatingLabel`, and `validationState`.
-- `BsSelect<T>`: Dropdown selection menu with styled overlay list and keyboard traversal.
-- `BsCheckbox`: Checkbox and toggle switch input (`isSwitch: true` for switches) with semantic variant color and label.
-- `BsRadio<T>`: Mutually exclusive radio option controls.
-- `BsRange`: Slider control for continuous numerical ranges.
-- `BsInputGroup`: Prepends or appends addons (`BsInputGroupText`, `BsButton`) to inputs in a unified border box.
-- `BsValidatedForm`: Wraps `Form` to show green valid or red invalid borders when `wasValidated: true`.
-- `BsFormFeedback`: Contextual validation message display (`valid` and `invalid`).
+#### 5. Form Input Controls (Material Design 3)
+- `TextFormField` & `TextField`: Text input fields styled via `InputDecoration` (`outline` borders, label, hint, error text).
+- `DropdownButtonFormField<T>` / `DropdownMenu<T>`: Styled dropdown selector with label and error state.
+- `Checkbox`: Square toggle selection control.
+- `Radio<T>`: Mutually exclusive option selector.
+- `Switch`: Adaptive toggle switch.
+- `Slider`: Continuous numerical range selector.
 
-#### 6. Modals & Dialogs (Replaces `showDialog`, `AlertDialog`, `CupertinoAlertDialog`)
-- `BsModal` & `showBsModal`: Overlay dialog prompt.
-  - Backdrop behaviors: `BsBackdrop.enabled` (dismissible), `BsBackdrop.static` (animated shake on click-away), `BsBackdrop.disabled`.
-  - Sizes: `BsModalSize.sm` (300px), `md` (500px), `lg` (800px), `xl` (1140px), and `fullscreen`.
-  - Structural sub-widgets: `BsModalHeader`, `BsModalBody`, `BsModalFooter`. Supports Escape key closing.
+#### 6. Dialogs & Overlays (Material Design 3)
+- `showDialog` with `AlertDialog`: Centered prompt with `title`, `content`, and `actions`.
+- `showModalBottomSheet`: Bottom slide-up sheet for contextual mobile operations.
 
-#### 7. Offcanvas Sidebars (Replaces `Drawer` and `EndDrawer`)
-- `BsOffcanvas` & `showBsOffcanvas`: Sliding drawer panels from `BsOffcanvasPlacement.start`, `end`, `top`, or `bottom`. Ideal for responsive filter panels, shopping carts, and secondary navigation.
+#### 7. Feedback & Notifications (Material Design 3)
+- `ScaffoldMessenger.of(context).showSnackBar`: Non-intrusive toast messages via `SnackBar`.
+- `MaterialBanner`: Persistent top-of-screen message.
+- `Badge`: Small visual count or status badge attached to widgets.
+- `Chip` / `FilterChip` / `ActionChip`: Compact semantic labels and filter tags.
 
-#### 8. Navs and Tabs (Replaces `BottomNavigationBar` and `TabBar`)
-- `BsNav`: Versatile navigation bar supporting styles: `tabs`, `pills`, or `underline`.
-- `BsTabContent` & `BsTabPane`: Tab content manager with smooth fade transitions between active panes.
+#### 8. Indicators & Loading (Material Design 3)
+- `CircularProgressIndicator`: Spinning circular indeterminate loader.
+- `LinearProgressIndicator`: Horizontal progress bar.
 
-#### 9. Feedback & Notifications (Replaces `SnackBar` and `Banner`)
-- `BsAlert`: Contextual inline notification with variants (`success`, `danger`, `warning`, `info`), optional icon, and `dismissible: true`.
-- `BsToast` & `showBsToast`: Desktop-style push notifications with `BsToastHeader`, icon, timestamp, and body message.
-- `BsBadge`: Small status labels or count pills with `isPill: true`.
-
-#### 10. Indicators & Loading (Replaces `CircularProgressIndicator` and `LinearProgressIndicator`)
-- `BsSpinner`: Lightweight circular loader available as `BsSpinner.border()` or pulsing `BsSpinner.grow()`, with sizes `sm` and `md`.
-- `BsProgress` & `BsProgressBar`: Progress bars with optional text labels, striped patterns, and animation.
-- `BsPlaceholder` & `BsPlaceholderContainer`: Skeleton loading shimmer placeholders (`BsPlaceholderAnimation.glow` or `wave`).
-
-#### 11. Tables, Lists & Media
-- `BsTable`: Complete data table with `BsTableHead`, `BsTableBody`, `BsTableRow`, `BsTableCell`, hover effects, zebra striping, and horizontal scrolling.
-- `BsListGroup` & `BsListGroupItem`: Clean lists for items, links, or actions.
-- `BsBreadcrumb` & `BsBreadcrumbItem`: Hierarchical breadcrumb navigation trails.
-- `BsPagination` & `BsPaginationItem`: Multi-page paging bars (`BsPagination.automatic`).
-- `BsImage`: Responsive images with `fluid: true`, `thumbnail: true`, `rounded: true`, or `circle: true`.
-- `BsFigure` & `BsFigureCaption`: Semantic HTML5 `<figure>` wrapper.
-- `BsCarousel`: Rich media slideshow with indicators, controls, captions, and touch swipe gestures.
-
-#### 12. Tooltips, Popovers & Collapse
-- `BsTooltip`: Small floating hover labels positioned `top`, `bottom`, `start`, or `end`.
-- `BsPopover`: Rich popups with title and interactive content triggered on click or hover.
-- `BsCollapse`: Smooth vertical or horizontal expand/collapse animations.
-- `BsScrollspy`: Automatically highlights active navigation links according to viewport scroll offset.
-
-#### 13. Typography & Icons
-- `BsHeading`: Semantic heading elements with levels `BsHeadingLevel.h1` through `h6`.
-- `BsCode`, `BsKbd`, `BsBlockquote`: Semantic typography elements for code snippets and keyboard commands.
-- `BsIcon` & `BsIcons`: Over 2000 native Bootstrap vector icons.
+#### 9. Tables & Lists (Material Design 3)
+- `DataTable` & `PaginatedDataTable`: Multi-column tabular data rendering on desktop displays.
+- `ListTile`: Standardized single-row representation with `leading`, `title`, `subtitle`, and `trailing`.
+- `ListView`: Scrolling vertical list of tiles or cards.
 
 ---
 
-### 4.2. Helpers Suite
-- `BsVStack(gap: 16, children: [...])`: Vertical layout stack enforcing strict uniform item spacing.
-- `BsHStack(gap: 8, children: [...])`: Horizontal layout stack with uniform item spacing.
-- `BsRatio(type: BsRatioType.ratio16x9, child: ...)`: Enforces strict aspect ratios (`1x1`, `4x3`, `16x9`, `21x9`).
-- `BsVerticalRule`: Thin vertical divider element.
-- `BsLink` & `BsIconLink`: Semantic clickable links with hover color changes.
-- `Text(...).truncate()`: Extension method truncating long text strings with ellipses.
-
----
-
-### 4.3. Utility Extensions Suite
-The library provides fluent extension methods on widgets for rapid styling:
-- **Spacing:** `.p0()` through `.p5()`, `.px()`, `.py()`, `.pt()`, `.pb()`, `.m0()` through `.m5()`, `.mx()`, `.my()`, `.mt()`, `.mb()`. Supports responsive breakpoint thresholds (e.g. `.p3(BsBreakpoints.md)`).
-- **Borders & Rounding:** `.border()`, `.border0()`, `.rounded()`, `.roundedPill()`, `.roundedCircle()`.
-- **Display & Alignment:** `.dNone(BsBreakpoints.lg)`, `.dBlock()`, `.dFlex()`, `.center()`, `.w100()`, `.h100()`.
-- **Text:** `.fs1()` through `.fs6()`, `.fwBold()`, `.textPrimary()`, `.textCenter()`.
-
----
-
-### 4.4. Theme Access via Context
-Access Bootstrap theme colors and typography tokens directly from `BuildContext`:
+### 4.2. Theme Access via Context
+Access Material Design 3 color scheme and typography tokens directly from `Theme.of(context)`:
 
 ```dart
-final bs = context.bs;
-final Color primaryColor = bs.primary;
-final Color bodyBg = bs.bodyBg;
-final Color bodyTextColor = bs.bodyColor;
+final theme = Theme.of(context);
+final Color primaryColor = theme.colorScheme.primary;
+final Color surfaceColor = theme.colorScheme.surface;
+final TextStyle titleStyle = theme.textTheme.titleMedium!;
 ```
 
 ---
 
 ## 5. Step-by-Step Implementation Procedure
 
-### Step 1: Establish Root Screen with BsContainer and BsNavbar
-Replace `Scaffold` and `AppBar` with `BsContainer.fluid` and `BsNavbar`:
+### Step 1: Establish Root Scaffold and AppBar
+Construct screens using `Scaffold` and `AppBar`:
 
 ```dart
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 
 class CompliantScreen extends StatelessWidget {
@@ -196,37 +151,18 @@ class CompliantScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BsContainer.fluid(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          BsNavbar(
-            expand: BsNavbarExpand.lg,
-            brand: const BsNavbarBrand(child: Text('Logisto System')),
-            collapse: BsNavbarCollapse(
-              children: [
-                BsNavbarNav(
-                  children: [
-                    BsNavbarLink(
-                      label: 'Dashboard',
-                      active: true,
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-                const BsNavbarSpacer(),
-                BsButton(
-                  label: 'New Task',
-                  icon: BsIcons.plusLg,
-                  variant: BsButtonVariant.primary,
-                  size: BsButtonSize.sm,
-                  onPressed: () {},
-                ),
-              ],
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Logisto System'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {},
           ),
-          const Expanded(child: ResponsiveBody()),
         ],
+      ),
+      body: const BsContainer.fluid(
+        child: ResponsiveBody(),
       ),
     );
   }
@@ -263,8 +199,40 @@ class ResponsiveBody extends StatelessWidget {
 }
 ```
 
-### Step 3: Implement Reusable Project Controls
-Wrap `bootstrap_ui_flutter` components inside project-prefixed controls in `lib/core/widgets/` (`AppButton`, `AppCard`, `AppTextField`, `AppModal`).
+### Step 3: Implement Reusable Content Cards
+Wrap content inside Material Design 3 `Card` widgets with explicit padding and text styling:
+
+```dart
+class MainContentCard extends StatelessWidget {
+  const MainContentCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: theme.colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Operations', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 12),
+            FilledButton(
+              onPressed: () {},
+              child: const Text('Execute'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
 
 ---
 
@@ -272,23 +240,22 @@ Wrap `bootstrap_ui_flutter` components inside project-prefixed controls in `lib/
 
 | Failure Scenario | Root Cause | Preventive Invariant |
 | :--- | :--- | :--- |
-| **Material Scaffold Import** | Copy-pasting boilerplate from online Flutter tutorials. | CI Regex Gate in `RULE-UI-006` blocks PRs containing `Scaffold`. |
-| **Ink Ripple Glitches on Desktop** | Using Material `ElevatedButton` on desktop targets. | Use `BsButton`, which renders native desktop-friendly hover states. |
-| **Modal Overflow in Landscape** | Fixed modal height exceeding landscape screen height. | Use `scrollable: true` in `BsModal` and wrap modal body in `BsModalBody`. |
-| **Drawer Conflict with Native Gestures** | Mobile OS swipe-back conflict with custom drawers. | Use `showBsOffcanvas` with explicit backdrop and close button. |
-| **Form Validation Bypassed** | Using uncontrolled text fields without form bindings. | Always wrap inputs in Flutter `Form` and bind `BsInput.validator`. |
-| **Dark Mode Inversion Contrast** | Hardcoding `Colors.white` or `Colors.black`. | Always query `context.bs.bodyBg` and `context.bs.bodyColor`. |
+| **Prohibited BsButton Import** | Using deprecated Bootstrap buttons instead of Material 3. | CI Regex Gate in `RULE-UI-006` blocks PRs containing `BsButton`. |
+| **Modal Overflow in Landscape** | Fixed dialog height exceeding landscape screen height. | Wrap dialog content in `SingleChildScrollView` inside `AlertDialog`. |
+| **Form Validation Bypassed** | Using uncontrolled text fields without form bindings. | Always wrap inputs in Flutter `Form` and bind `TextFormField.validator`. |
+| **Dark Mode Contrast Breakdown** | Hardcoding `Colors.white` or `Colors.black`. | Always query `theme.colorScheme.surface` and `theme.colorScheme.onSurface`. |
+| **Responsive Grid Misalignment** | Omitting explicit `BsColConfig` across device breakpoints. | Always declare explicit breakpoint spans (`xs`, `md`, `xl`). |
 
 ---
 
 ## 7. Verification & Quality Gates
 
-Run automated audit scripts to ensure zero Material/Cupertino contamination:
+Run automated audit scripts to ensure zero prohibited Bootstrap non-grid widgets or Cupertino visual widgets:
 
 ```bash
-# 1. Verify zero prohibited Material visual widgets in presentation code
+# 1. Verify zero prohibited Bootstrap visual widgets in presentation code
 rg --glob 'lib/presentation/**' --glob 'lib/core/widgets/**' \
-  '\b(Scaffold|AppBar|ElevatedButton|TextButton|OutlinedButton|FloatingActionButton|ListTile|AlertDialog|SnackBar|Drawer)\b'
+  '\b(BsCard|BsButton|BsModal|showBsModal|BsInput|BsSelect|BsCheckbox|BsRadio|BsSwitch|BsRange|BsNavbar|BsTable|BsListGroup|BsOffcanvas|BsToast|BsAlert|BsSpinner|BsProgress|BsBadge)\b'
 
 # 2. Verify zero Cupertino visual controls
 rg --glob 'lib/presentation/**' --glob 'lib/core/widgets/**' \
@@ -297,4 +264,3 @@ rg --glob 'lib/presentation/**' --glob 'lib/core/widgets/**' \
 # 3. Verify Flutter static analysis passes cleanly
 flutter analyze
 ```
-

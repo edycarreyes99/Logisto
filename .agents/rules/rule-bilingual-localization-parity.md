@@ -28,6 +28,7 @@ Under no circumstances shall:
 1. Feature screens or presentation widgets display hardcoded text literals (e.g. `Text('Save')` or `Text('Error')` is strictly forbidden).
 2. A localization key exist in `app_en.arb` without an exact, identical translation key and placeholder signature in `app_es.arb` (and vice versa).
 3. Alerts, notifications, or toasts in services emit untranslated English or Spanish string literals.
+4. Firebase UI widgets (`firebase_ui_auth`, `firebase_ui_firestore`) omit localized labels. Applications MUST register `FirebaseUILocalizations.delegate` in `MaterialApp.localizationsDelegates` alongside `AppLocalizations.delegate`, and synchronize any custom label overrides using `FirebaseUILocalizations.withDefaultOverrides` to guarantee 100% Spanish (`es`) and English (`en`) parity.
 
 ---
 
@@ -69,6 +70,23 @@ Declare synchronized keys in both ARB files and consume via `AppLocalizations`:
     }
   }
 }
+```
+
+```dart
+// lib/main.dart delegate registration
+import 'package:firebase_ui_localizations/firebase_ui_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/app_localizations.dart';
+
+// Inside MaterialApp:
+localizationsDelegates: const [
+  AppLocalizations.delegate,
+  FirebaseUILocalizations.delegate,
+  GlobalMaterialLocalizations.delegate,
+  GlobalWidgetsLocalizations.delegate,
+  GlobalCupertinoLocalizations.delegate,
+],
+supportedLocales: AppLocalizations.supportedLocales,
 ```
 
 In Presentation widget:

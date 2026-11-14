@@ -26,7 +26,7 @@ All applications and modules in this repository MUST strictly adhere to the appr
 
 Approved Dependency Manifest:
 1. **Core SDK:** Dart SDK / Flutter (`sdk: ^3.9.2`).
-2. **Universal Design System & Grid:** `bootstrap_ui_flutter` (`^0.6.0`) as the exclusive presentation component library, responsive grid, and design token provider (RULE-UI-006).
+2. **Universal Design System & Responsive Grid:** Flutter Material Design 3 (`package:flutter/material.dart`, `useMaterial3: true`) for all visual UI components, and `bootstrap_ui_flutter` (`^0.6.0`) EXCLUSIVELY for the 12-column responsive grid layout system (`BsContainer`, `BsRow`, `BsCol`, `BsColConfig`, `BsBreakpoints`) (RULE-UI-006).
 3. **Dependency Injection:** `get_it` (`^7.6.0`) for compile-time service location.
 4. **State Management:** `provider` (`^6.1.2`) with `ChangeNotifier` and status enums.
 5. **Firebase Core:** `firebase_core` (`^3.10.0`).
@@ -36,12 +36,14 @@ Approved Dependency Manifest:
 9. **Vector Graphics & Animations:** `flutter_svg` (`^2.0.17`), `lottie` (`^3.2.0`), `fl_chart` (`^0.69.0`).
 10. **Internationalization:** `flutter_localizations` and `intl` (`^0.20.2`).
 11. **Image Caching:** `cached_network_image` (`^3.4.1`).
+12. **Firebase UI Presentation Suite:** `firebase_ui_firestore` (`^1.6.0`) for headless paginated queries, `firebase_ui_auth` (`^1.16.0`) with `firebase_auth` (`^5.4.0`) for authentication workflows, and `firebase_ui_localizations` (`^1.14.0`) for multi-language UI strings.
+13. **Multiplatform Desktop Authentication:** `desktop_webview_auth` (`^0.0.16`) for Windows and desktop OAuth loopback flows aligned with `flutterfire_desktop`.
 
 Prohibited Dependencies:
 - Alternative state managers (`bloc`, `flutter_bloc`, `riverpod`, `flutter_riverpod`, `get`, `mobx`).
 - Ad-hoc HTTP clients (`http`, `dio`) that bypass Cloud Firestore offline synchronization for core data.
 - Unvetted local persistence packages (`hive`, `isar`, `sqflite`, `objectbox`) bypassing the single source of truth.
-- Unvetted external UI design systems that conflict with `bootstrap_ui_flutter` and `AppTheme`.
+- Unvetted external UI design systems that conflict with Flutter Material Design 3 and AppTheme.
 
 ---
 
@@ -71,8 +73,15 @@ dependencies:
 
   # Firebase & Persistence
   firebase_core: ^3.10.0
+  firebase_auth: ^5.4.0
   cloud_firestore: ^5.6.0
   shared_preferences: ^2.3.0
+
+  # Firebase UI Suite & Desktop Auth
+  firebase_ui_firestore: ^1.6.0
+  firebase_ui_auth: ^1.16.0
+  firebase_ui_localizations: ^1.14.0
+  desktop_webview_auth: ^0.0.16
 
   # Cross-Cutting & UI
   flutter_dotenv: ^5.2.1

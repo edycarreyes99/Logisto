@@ -32,6 +32,7 @@ The Multiplatform DevOps Engineer automates and maintains the build pipelines an
 - Maintaining and executing `tool/dev_setup.dart` for environment warm-up.
 - Configuring native platform manifests (Android `build.gradle`, iOS/macOS `Podfile`, Windows runner, Web `index.html`).
 - Configuring `flutterfire configure` and platform-specific Firebase dependencies.
+- Configuring Windows desktop authentication tooling, including `desktop_webview_auth`, native loopback HTTP ports, and CMake configurations aligned with `flutterfire_desktop` standards.
 - Creating continuous integration (CI) workflows for static analysis and multiplatform builds.
 - Generating native app icons, splash screens, and asset manifests.
 

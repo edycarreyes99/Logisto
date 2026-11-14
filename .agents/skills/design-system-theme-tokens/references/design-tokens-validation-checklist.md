@@ -12,7 +12,7 @@
   - `app_dimens.dart`: Component heights, icon dimensions, radius constants, and Bootstrap breakpoint bounds.
   - `app_spacing.dart`: Standard 8px modular spacing rhythm scale (`xxs` 2px, `xs` 4px, `sm` 8px, `md` 16px, `lg` 24px, `xl` 32px, `xxl` 48px).
   - `app_text_styles.dart`: Adaptive typography hierarchy (Display, Title, Body, Label) with brightness scaling.
-  - `app_theme.dart`: ThemeData assembly for `lightTheme()` and `darkTheme()` with `BsThemeData` extensions.
+  - `app_theme.dart`: ThemeData assembly for `lightTheme()` and `darkTheme()` with Material Design 3 tokens.
 
 ## 2. Adaptive Dual-Theme Support (Light & Dark Parity)
 - [ ] The app provides complete, pixel-perfect rendering in both Light and Dark themes.
@@ -20,7 +20,7 @@
 - [ ] `themeMode` is driven reactively by `ThemeProvider` consuming `ThemeModeEnum` (`light`, `dark`, `system`).
 - [ ] Zero hardcoded hex literals (`Color(0xFF...)`) or bare `Colors.white` / `Colors.black` in UI widgets or screens.
 - [ ] All colors resolve dynamically through context helpers (e.g., `AppColors.surfaceOf(context)`, `AppColors.textPrimaryOf(context)`).
-- [ ] `BsThemeData.lightTheme` and `BsThemeData.darkTheme` are registered in ThemeData extensions for Bootstrap widgets.
+- [ ] Material Design 3 ThemeData (`useMaterial3: true`) and ColorScheme tokens are properly configured for both light and dark themes.
 
 ## 3. Accessibility & Contrast Ratios
 - [ ] Text contrast ratios satisfy WCAG 2.1 AA standards (minimum 4.5:1 for body text, 3:1 for large display titles) in both themes.

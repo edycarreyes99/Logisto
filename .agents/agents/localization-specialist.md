@@ -32,6 +32,7 @@ The Bilingual Localization Specialist ensures the application maintains flawless
 - Synchronizing translation keys between `lib/l10n/app_en.arb` and `lib/l10n/app_es.arb` (`RULE-L10N-001`).
 - Extracting raw string literals from UI widgets and converting them to `AppLocalizations` invocations.
 - Running `flutter gen-l10n` to compile Dart localization classes.
+- Registering `FirebaseUILocalizations.delegate` in `MaterialApp` and synchronizing custom label overrides via `FirebaseUILocalizations.withDefaultOverrides` to maintain 100% Spanish (`es`) and English (`en`) parity across Firebase UI screens and dialogs.
 - Validating placeholder parameters and pluralization blocks across both language bundles.
 - Auditing the entire presentation layer for un-localized hardcoded strings.
 
