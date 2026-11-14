@@ -1,12 +1,13 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../auth/logout_dialog.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
 import '../common/enum_localization_extensions.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import 'dashboard_provider.dart';
 import 'widgets/dashboard_kpi_cards.dart';
@@ -30,14 +31,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     _provider = locator<DashboardProvider>();
     _contextProvider = locator<BusinessContextProvider>();
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    final buId =
-        _contextProvider.activeBusinessUnit?.id ??
-        DatabaseSeeder.defaultBuCentralId;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadDashboard(orgId: orgId, buId: buId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadDashboard(orgId: orgId, buId: buId);
+      });
+    }
   }
 
   @override
@@ -45,8 +45,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: _buildHeader(l10n, theme),
+    return LogistoScaffold(
+      title: l10n.dashboard,
+      actions: _buildHeaderActions(l10n, theme),
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -80,37 +81,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  PreferredSizeWidget _buildHeader(AppLocalizations l10n, ThemeData theme) {
+  List<Widget> _buildHeaderActions(AppLocalizations l10n, ThemeData theme) {
+    final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
     final filters = [
       ('Today', l10n.filterToday),
       ('Week', l10n.filterWeek),
       ('Month', l10n.filterMonth),
     ];
-    return AppBar(
-      title: Text(
-        l10n.dashboard,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      elevation: 0,
-      scrolledUnderElevation: 1,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh_rounded),
-          tooltip: l10n.refresh,
-          onPressed: () async {
-            final orgId =
-                _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-            final buId =
-                _contextProvider.activeBusinessUnit?.id ??
-                DatabaseSeeder.defaultBuCentralId;
+    return [
+      IconButton(
+        icon: const Icon(Icons.refresh_rounded),
+        tooltip: l10n.refresh,
+        onPressed: () async {
+          final orgId = _contextProvider.activeOrganization?.id ?? '';
+          final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+          if (orgId.isNotEmpty) {
             await _provider.loadDashboard(orgId: orgId, buId: buId);
             if (mounted) {
               AppFeedback.showSuccess(context, 'Dashboard sincronizado');
             }
-          },
-        ),
+          }
+        },
+      ),
+      if (!isDesktop)
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.calendar_today_outlined, size: 20),
+          tooltip: l10n.filterToday,
+          initialValue: _provider.timeFilter,
+          onSelected: _provider.setTimeFilter,
+          itemBuilder: (context) => filters
+              .map((entry) => PopupMenuItem(
+                    value: entry.$1,
+                    child: Text(entry.$2),
+                  ))
+              .toList(),
+        )
+      else
         Padding(
-          padding: const EdgeInsets.only(right: 12.0),
+          padding: const EdgeInsets.only(right: 4.0),
           child: Wrap(
             spacing: 4,
             crossAxisAlignment: WrapCrossAlignment.center,
@@ -136,26 +144,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
             }).toList(),
           ),
         ),
-      ],
-    );
+      if (!isDesktop)
+        IconButton(
+          icon: const Icon(Icons.logout_rounded),
+          tooltip: l10n.logout,
+          color: theme.colorScheme.error,
+          onPressed: () => showLogoutDialog(context),
+        ),
+    ];
   }
 
   Widget _buildBreakdownRow(AppLocalizations l10n) {
     return BsRow(
       children: [
         BsCol(
-          config: const BsColConfig(xs: 12, md: 6, lg: 6),
-          child: _buildCategoryCard(l10n),
+          config: const BsColConfig(xs: 12, md: 6),
+          child: _buildTenderCard(l10n),
         ),
         BsCol(
-          config: const BsColConfig(xs: 12, md: 6, lg: 6),
-          child: _buildTenderCard(l10n),
+          config: const BsColConfig(xs: 12, md: 6),
+          child: _buildRevenueCard(l10n),
         ),
       ],
     );
   }
 
-  Widget _buildCategoryCard(AppLocalizations l10n) {
+  Widget _buildRevenueCard(AppLocalizations l10n) {
     return Card(
       elevation: 1,
       child: Padding(

@@ -52,7 +52,8 @@ class DashboardProvider extends ChangeNotifier {
           final aggDoc = await client!
               .aggregations(orgId, buId)
               .doc('daily_$todayKey')
-              .get();
+              .get()
+              .timeout(const Duration(seconds: 4));
           if (aggDoc.exists && aggDoc.data() != null) {
             _metrics = DashboardMetricsModel.fromMap(aggDoc.data()!);
           }
@@ -62,10 +63,12 @@ class DashboardProvider extends ChangeNotifier {
       // Query live invoices if invoiceRepository is available
       if (invoiceRepository != null) {
         try {
-          final invoices = await invoiceRepository!.getInvoices(
-            orgId: orgId,
-            buId: buId,
-          );
+          final invoices = await invoiceRepository!
+              .getInvoices(
+                orgId: orgId,
+                buId: buId,
+              )
+              .timeout(const Duration(seconds: 4));
           if (invoices.isNotEmpty) {
             _computeLiveMetrics(invoices);
           }
