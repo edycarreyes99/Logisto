@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import 'user_management_provider.dart';
 import 'widgets/edit_user_role_modal.dart';
@@ -32,19 +33,21 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     super.initState();
     _provider = locator<UserManagementProvider>();
     _contextProvider = locator<BusinessContextProvider>();
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? 'org_logisto_matriz';
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadUsers(orgId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadUsers(orgId);
+      });
+    }
   }
 
   void _refresh() {
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? 'org_logisto_matriz';
-    _provider.loadUsers(orgId);
-    final l10n = AppLocalizations.of(context)!;
-    AppFeedback.showInfo(context, l10n.refresh);
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    if (orgId.isNotEmpty) {
+      _provider.loadUsers(orgId);
+      final l10n = AppLocalizations.of(context)!;
+      AppFeedback.showInfo(context, l10n.refresh);
+    }
   }
 
   @override
@@ -54,16 +57,18 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   }
 
   void _showInviteModal() {
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? 'org_logisto_matriz';
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
     showDialog<void>(
       context: context,
-      builder: (ctx) => InviteUserModal(orgId: orgId, provider: _provider),
+      builder: (ctx) => InviteUserModal(
+        orgId: orgId,
+        provider: _provider,
+      ),
     );
   }
 
   void _showRoleModal(UserProfileModel user) {
-    final buId = _contextProvider.activeBusinessUnit?.id ?? 'bu_matriz_central';
+    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
     showDialog<void>(
       context: context,
       builder: (ctx) =>
@@ -74,37 +79,60 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
     final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
 
-    return BsContainer.fluid(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildHeader(isDesktop, l10n, theme),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: ListenableBuilder(
-                listenable: _provider,
-                builder: (context, _) {
-                  if (_provider.status == FeatureStatusEnum.loading &&
-                      _provider.users.isEmpty) {
-                    return isDesktop
-                        ? const AppSkeletonTable(rowCount: 5, columnCount: 4)
-                        : const AppSkeletonList(itemCount: 4);
-                  }
-                  return isDesktop
-                      ? UserTableDesktop(
-                          users: _provider.filteredUsers,
-                          onEditRole: _showRoleModal,
-                        )
-                      : _buildMobileContent(l10n);
-                },
+    return LogistoScaffold(
+      title: l10n.usersAndStaff,
+      actions: [
+        if (isDesktop)
+          SizedBox(
+            width: 240,
+            height: 40,
+            child: TextField(
+              controller: _searchCtrl,
+              decoration: InputDecoration(
+                hintText: l10n.searchPlaceholder,
+                prefixIcon: const Icon(Icons.search, size: 20),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
+              onChanged: _provider.setSearchQuery,
             ),
           ),
-        ],
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          tooltip: l10n.refresh,
+          onPressed: _refresh,
+        ),
+        FilledButton.icon(
+          icon: const Icon(Icons.person_add_outlined, size: 18),
+          label: Text(l10n.inviteEmployee),
+          onPressed: _showInviteModal,
+        ),
+      ],
+      body: BsContainer.fluid(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: ListenableBuilder(
+            listenable: _provider,
+            builder: (context, _) {
+              if (_provider.status == FeatureStatusEnum.loading &&
+                  _provider.users.isEmpty) {
+                return isDesktop
+                    ? const AppSkeletonTable(rowCount: 5, columnCount: 4)
+                    : const AppSkeletonList(itemCount: 4);
+              }
+              return isDesktop
+                  ? UserTableDesktop(
+                      users: _provider.filteredUsers,
+                      onEditRole: _showRoleModal,
+                    )
+                  : _buildMobileContent(l10n);
+            },
+          ),
+        ),
       ),
     );
   }
@@ -132,72 +160,6 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
           onEditRole: _showRoleModal,
         ),
       ],
-    );
-  }
-
-  Widget _buildHeader(
-    bool isDesktop,
-    AppLocalizations l10n,
-    ThemeData theme,
-  ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(color: theme.colorScheme.outlineVariant),
-        ),
-      ),
-      child: Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: 12,
-        runSpacing: 8,
-        children: [
-          Text(
-            l10n.usersAndStaff,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Wrap(
-            spacing: 12,
-            runSpacing: 8,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              if (isDesktop)
-                SizedBox(
-                  width: 240,
-                  height: 40,
-                  child: TextField(
-                    controller: _searchCtrl,
-                    decoration: InputDecoration(
-                      hintText: l10n.searchPlaceholder,
-                      prefixIcon: const Icon(Icons.search, size: 20),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    onChanged: _provider.setSearchQuery,
-                  ),
-                ),
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                tooltip: l10n.refresh,
-                onPressed: _refresh,
-              ),
-              FilledButton.icon(
-                icon: const Icon(Icons.person_add_outlined, size: 18),
-                label: Text(l10n.inviteEmployee),
-                onPressed: _showInviteModal,
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }

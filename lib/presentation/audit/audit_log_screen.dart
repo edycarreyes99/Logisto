@@ -2,12 +2,12 @@ import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/audit_action_enum.dart';
 import '../../core/enums/feature_status_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
 import '../common/enum_localization_extensions.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import 'audit_log_provider.dart';
 import 'widgets/audit_log_list_mobile.dart';
@@ -32,20 +32,22 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
     super.initState();
     _provider = locator<AuditLogProvider>();
     _contextProvider = locator<BusinessContextProvider>();
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadAuditLogs(orgId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadAuditLogs(orgId);
+      });
+    }
   }
 
   Future<void> _refresh() async {
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    await _provider.loadAuditLogs(orgId);
-    if (mounted) {
-      final l10n = AppLocalizations.of(context)!;
-      AppFeedback.showSuccess(context, '${l10n.auditTrail}: ${l10n.refresh}');
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    if (orgId.isNotEmpty) {
+      await _provider.loadAuditLogs(orgId);
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        AppFeedback.showSuccess(context, '${l10n.auditTrail}: ${l10n.refresh}');
+      }
     }
   }
 
@@ -61,87 +63,58 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
     final theme = Theme.of(context);
     final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
 
-    return BsContainer.fluid(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildHeader(l10n, theme, isDesktop),
-          _buildActionFilterBar(l10n, theme, isDesktop),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: ListenableBuilder(
-                listenable: _provider,
-                builder: (context, _) {
-                  if (_provider.status == FeatureStatusEnum.loading &&
-                      _provider.logs.isEmpty) {
-                    return isDesktop
-                        ? const AppSkeletonTable(rowCount: 6, columnCount: 5)
-                        : const AppSkeletonList(itemCount: 4);
-                  }
-                  return isDesktop
-                      ? AuditLogTableDesktop(logs: _provider.filteredLogs)
-                      : AuditLogListMobile(logs: _provider.filteredLogs);
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(
-    AppLocalizations l10n,
-    ThemeData theme,
-    bool isDesktop,
-  ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(color: theme.colorScheme.outlineVariant),
+    return LogistoScaffold(
+      title: l10n.auditTrail,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          tooltip: l10n.refresh,
+          onPressed: _refresh,
         ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            l10n.audit,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+        if (isDesktop)
+          SizedBox(
+            width: 260,
+            height: 40,
+            child: TextField(
+              controller: _searchCtrl,
+              decoration: InputDecoration(
+                hintText: l10n.filterAuditLogsPlaceholder,
+                prefixIcon: const Icon(Icons.search, size: 20),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onChanged: _provider.setSearchQuery,
             ),
           ),
-          Wrap(
-            spacing: 8,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                tooltip: l10n.refresh,
-                onPressed: _refresh,
-              ),
-              if (isDesktop)
-                SizedBox(
-                  width: 260,
-                  height: 40,
-                  child: TextField(
-                    controller: _searchCtrl,
-                    decoration: InputDecoration(
-                      hintText: l10n.filterAuditLogsPlaceholder,
-                      prefixIcon: const Icon(Icons.search, size: 20),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    onChanged: _provider.setSearchQuery,
-                  ),
+      ],
+      body: BsContainer.fluid(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildActionFilterBar(l10n, theme, isDesktop),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: ListenableBuilder(
+                  listenable: _provider,
+                  builder: (context, _) {
+                    if (_provider.status == FeatureStatusEnum.loading &&
+                        _provider.logs.isEmpty) {
+                      return isDesktop
+                          ? const AppSkeletonTable(rowCount: 6, columnCount: 5)
+                          : const AppSkeletonList(itemCount: 4);
+                    }
+                    return isDesktop
+                        ? AuditLogTableDesktop(logs: _provider.filteredLogs)
+                        : AuditLogListMobile(logs: _provider.filteredLogs);
+                  },
                 ),
-            ],
-          ),
-        ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -179,18 +152,13 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _buildFilterBtn(
-                label: l10n.allEvents,
-                isSelected: _provider.selectedActionFilter == null,
-                onPressed: () => _provider.setActionFilter(null),
+              _buildFilterActionChip(l10n.allEvents, null),
+              ...AuditActionEnum.values.map(
+                (action) => _buildFilterActionChip(
+                  action.localizedTitle(l10n),
+                  action,
+                ),
               ),
-              ...AuditActionEnum.values.map((action) {
-                return _buildFilterBtn(
-                  label: action.localizedTitle(l10n),
-                  isSelected: _provider.selectedActionFilter == action,
-                  onPressed: () => _provider.setActionFilter(action),
-                );
-              }),
             ],
           ),
         ],
@@ -198,22 +166,12 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
     );
   }
 
-  Widget _buildFilterBtn({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onPressed,
-  }) {
-    if (isSelected) {
-      return FilledButton(
-        style: FilledButton.styleFrom(visualDensity: VisualDensity.compact),
-        onPressed: onPressed,
-        child: Text(label),
-      );
-    }
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(visualDensity: VisualDensity.compact),
-      onPressed: onPressed,
-      child: Text(label),
+  Widget _buildFilterActionChip(String label, AuditActionEnum? action) {
+    final isSel = _provider.selectedActionFilter == action;
+    return ChoiceChip(
+      label: Text(label),
+      selected: isSel,
+      onSelected: (_) => _provider.setActionFilter(action),
     );
   }
 }

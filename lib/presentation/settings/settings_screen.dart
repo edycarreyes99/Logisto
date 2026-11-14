@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../auth/logout_dialog.dart';
+import '../common/logisto_scaffold.dart';
 import 'settings_provider.dart';
 import 'widgets/appearance_settings_card.dart';
 import 'widgets/org_settings_card.dart';
@@ -31,21 +32,81 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    return BsContainer.fluid(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildHeader(l10n, theme),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: ListenableBuilder(
-                listenable: _provider,
-                builder: (context, _) => _buildActiveSection(),
-              ),
+    return LogistoScaffold(
+      title: l10n.settingsAndRbac,
+      actions: [
+        OutlinedButton.icon(
+          style: OutlinedButton.styleFrom(
+            visualDensity: VisualDensity.compact,
+            foregroundColor: theme.colorScheme.error,
+            side: BorderSide(
+              color: theme.colorScheme.error.withValues(alpha: 0.5),
             ),
           ),
-        ],
+          icon: const Icon(Icons.logout_rounded, size: 16),
+          label: Text(l10n.logout),
+          onPressed: () => showLogoutDialog(context),
+        ),
+      ],
+      body: BsContainer.fluid(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildSectionTabBar(l10n, theme),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: ListenableBuilder(
+                  listenable: _provider,
+                  builder: (context, _) => _buildActiveSection(),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTabBar(AppLocalizations l10n, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerLowest,
+        border: Border(
+          bottom: BorderSide(
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+          ),
+        ),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: ListenableBuilder(
+          listenable: _provider,
+          builder: (context, _) {
+            return Row(
+              children: [
+                _buildSectionBtn(
+                  key: 'org',
+                  label: l10n.corporateAndFiscal,
+                  icon: Icons.business_outlined,
+                ),
+                const SizedBox(width: 8),
+                _buildSectionBtn(
+                  key: 'appearance',
+                  label: l10n.appearance,
+                  icon: Icons.palette_outlined,
+                ),
+                const SizedBox(width: 8),
+                _buildSectionBtn(
+                  key: 'rbac',
+                  label: l10n.rbacSecurity,
+                  icon: Icons.security_outlined,
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -60,65 +121,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       default:
         return OrgSettingsCard(provider: _provider);
     }
-  }
-
-  Widget _buildHeader(AppLocalizations l10n, ThemeData theme) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(color: theme.colorScheme.outlineVariant),
-        ),
-      ),
-      child: Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: 12,
-        runSpacing: 8,
-        children: [
-          Text(
-            l10n.settingsAndRbac,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Wrap(
-            spacing: 8,
-            runSpacing: 6,
-            children: [
-              _buildSectionBtn(
-                key: 'appearance',
-                label: l10n.appearance,
-                icon: Icons.palette_outlined,
-              ),
-              _buildSectionBtn(
-                key: 'org',
-                label: l10n.corporateAndFiscal,
-                icon: Icons.business_outlined,
-              ),
-              _buildSectionBtn(
-                key: 'rbac',
-                label: l10n.rbacSecurity,
-                icon: Icons.security_outlined,
-              ),
-              OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  visualDensity: VisualDensity.compact,
-                  foregroundColor: theme.colorScheme.error,
-                  side: BorderSide(
-                    color: theme.colorScheme.error.withValues(alpha: 0.5),
-                  ),
-                ),
-                icon: const Icon(Icons.logout_rounded, size: 16),
-                label: Text(l10n.logout),
-                onPressed: () => showLogoutDialog(context),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildSectionBtn({

@@ -5,6 +5,7 @@ import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
+import '../common/logisto_scaffold.dart';
 import 'reports_provider.dart';
 import 'widgets/reports_list_mobile.dart';
 import 'widgets/reports_table_desktop.dart';
@@ -46,7 +47,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
   void _showExportSuccessModal() {
     final l10n = AppLocalizations.of(context)!;
     final csv = _provider.exportToCsv(l10n);
-    final theme = Theme.of(context);
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -60,7 +60,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -80,95 +80,69 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
+  Future<void> _refresh() async {
+    await _provider.refresh();
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+    AppFeedback.showSuccess(
+      context,
+      '${l10n.reportsAndBi}: ${l10n.refresh}',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
 
-    return BsContainer.fluid(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildHeader(l10n, theme),
-          _buildFilterBar(l10n, theme),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: ListenableBuilder(
-                listenable: _provider,
-                builder: (context, _) {
-                  if (_provider.status == FeatureStatusEnum.loading) {
-                    return isDesktop
-                        ? const AppSkeletonTable(rowCount: 6, columnCount: 4)
-                        : const AppSkeletonList(itemCount: 4);
-                  }
-                  return isDesktop
-                      ? ReportsTableDesktop(
-                          rows: _provider.getLocalizedReportRows(l10n),
-                          title: _getCategoryTitle(
-                            l10n,
-                            _provider.selectedCategory,
-                          ),
-                        )
-                      : ReportsListMobile(
-                          rows: _provider.getLocalizedReportRows(l10n),
-                        );
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(AppLocalizations l10n, ThemeData theme) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(color: theme.colorScheme.outlineVariant),
+    return LogistoScaffold(
+      title: l10n.reportsAndBi,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          tooltip: l10n.refresh,
+          onPressed: _refresh,
         ),
-      ),
-      child: Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: 12,
-        runSpacing: 8,
-        children: [
-          Text(
-            l10n.reportsAndBi,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+        FilledButton.icon(
+          icon: const Icon(Icons.file_download_outlined, size: 18),
+          label: Text(l10n.exportCsv),
+          onPressed: _showExportSuccessModal,
+        ),
+      ],
+      body: BsContainer.fluid(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildFilterBar(l10n, theme),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: ListenableBuilder(
+                  listenable: _provider,
+                  builder: (context, _) {
+                    if (_provider.status == FeatureStatusEnum.loading) {
+                      return isDesktop
+                          ? const AppSkeletonTable(rowCount: 6, columnCount: 4)
+                          : const AppSkeletonList(itemCount: 4);
+                    }
+                    return isDesktop
+                        ? ReportsTableDesktop(
+                            rows: _provider.getLocalizedReportRows(l10n),
+                            title: _getCategoryTitle(
+                              l10n,
+                              _provider.selectedCategory,
+                            ),
+                          )
+                        : ReportsListMobile(
+                            rows: _provider.getLocalizedReportRows(l10n),
+                          );
+                  },
+                ),
+              ),
             ),
-          ),
-          Wrap(
-            spacing: 8,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                tooltip: l10n.refresh,
-                onPressed: () async {
-                  await _provider.refresh();
-                  if (mounted) {
-                    AppFeedback.showSuccess(
-                      context,
-                      '${l10n.reportsAndBi}: ${l10n.refresh}',
-                    );
-                  }
-                },
-              ),
-              FilledButton.icon(
-                icon: const Icon(Icons.file_download_outlined, size: 18),
-                label: Text(l10n.exportCsv),
-                onPressed: _showExportSuccessModal,
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
