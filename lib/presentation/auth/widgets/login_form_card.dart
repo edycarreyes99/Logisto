@@ -240,8 +240,11 @@ class _LoginFormCardState extends State<LoginFormCard> {
   }
 
   Widget _buildOptionsRow(ThemeData theme, AppLocalizations l10n) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 8.0,
+      runSpacing: 4.0,
       children: [
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -392,12 +395,14 @@ class _LoginFormCardState extends State<LoginFormCard> {
               color: theme.colorScheme.primary,
             ),
             const SizedBox(width: 4.0),
-            Text(
-              l10n.demoProfilesPrompt,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.primary,
-                letterSpacing: 0.3,
+            Expanded(
+              child: Text(
+                l10n.demoProfilesPrompt,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                  letterSpacing: 0.3,
+                ),
               ),
             ),
           ],

@@ -62,10 +62,16 @@ class _LoginScreenState extends State<LoginScreen>
 
   Future<void> _handleLogin() async {
     final l10n = AppLocalizations.of(context)!;
+    final nav = locator.isRegistered<NavigationProvider>()
+        ? locator<NavigationProvider>()
+        : null;
     final success = await _loginProvider.signInWithEmailPassword(
       _emailController.text,
       _passwordController.text,
     );
+    if (success) {
+      nav?.navigateTo(AppRoutes.dashboard);
+    }
     if (!mounted) return;
     if (success) {
       AppFeedback.showSuccess(
@@ -73,7 +79,6 @@ class _LoginScreenState extends State<LoginScreen>
         l10n.welcomeTitle,
         title: l10n.logistoEnterprise,
       );
-      locator<NavigationProvider>().navigateTo(AppRoutes.dashboard);
     } else {
       AppFeedback.showError(
         context,

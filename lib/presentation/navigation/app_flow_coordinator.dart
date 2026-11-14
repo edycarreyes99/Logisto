@@ -10,6 +10,7 @@ import '../auth/login_screen.dart';
 import '../business_units/business_unit_selector_screen.dart';
 import '../context/business_context_provider.dart';
 import '../onboarding/onboarding_wizard_screen.dart';
+import 'app_routes.dart';
 import 'navigation_provider.dart';
 import 'navigation_shell.dart';
 
@@ -119,6 +120,11 @@ class _AppFlowCoordinatorState extends State<AppFlowCoordinator> {
         }
 
         // Step 4: Active Application Shell with Dashboard & All Enterprise Modules
+        if (_navProvider.currentRoute == AppRoutes.login) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _navProvider.navigateTo(AppRoutes.dashboard);
+          });
+        }
         return const NavigationShell();
       },
     );

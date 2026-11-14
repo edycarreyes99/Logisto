@@ -8,6 +8,7 @@ import '../../locator.dart';
 import '../audit/audit_log_screen.dart';
 import '../auth/login_provider.dart';
 import '../auth/login_screen.dart';
+import '../auth/logout_dialog.dart';
 import '../auth/widgets/pin_switch_modal.dart';
 import '../billiards/billiard_floor_plan_screen.dart';
 import '../business_units/business_unit_selector_screen.dart';
@@ -272,7 +273,10 @@ class _NavigationShellState extends State<NavigationShell> {
         : null;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: isDesktop ? 16.0 : 8.0,
+        vertical: 4.0,
+      ),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         border: Border(
@@ -286,44 +290,71 @@ class _NavigationShellState extends State<NavigationShell> {
         children: [
           if (!isDesktop) ...[
             OutlinedButton.icon(
-              icon: const Icon(Icons.menu_rounded, size: 18),
+              icon: const Icon(Icons.menu_rounded, size: 16),
               label: Text(l10n.menu),
               onPressed: _openDrawer,
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 12.0,
-                  vertical: 6.0,
+                  horizontal: 8.0,
+                  vertical: 4.0,
                 ),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
           ],
           Text(
             'Logisto',
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 18,
+              fontSize: isDesktop ? 18 : 16,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Expanded(
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: InkWell(
-                onTap: () => _navProvider.navigateTo(AppRoutes.businessUnits),
-                borderRadius: BorderRadius.circular(8.0),
-                child: Chip(
-                  label: Text(buName, overflow: TextOverflow.ellipsis),
-                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                  labelStyle: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                if (constraints.maxWidth < 40) {
+                  return const SizedBox.shrink();
+                }
+                return InkWell(
+                  onTap: () => _navProvider.navigateTo(AppRoutes.businessUnits),
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6.0,
+                      vertical: 3.0,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(6.0),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.storefront_rounded,
+                          size: 13.0,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 4.0),
+                        Expanded(
+                          child: Text(
+                            buName,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                              fontSize: 11.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-              ),
+                );
+              },
             ),
           ),
           if (isDesktop) ...[
@@ -409,14 +440,46 @@ class _NavigationShellState extends State<NavigationShell> {
                         },
                       ),
                     ],
+                    const SizedBox(width: 6),
+                    OutlinedButton.icon(
+                      icon: const Icon(Icons.logout_rounded, size: 16),
+                      label: Text(l10n.logout),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: theme.colorScheme.error,
+                        side: BorderSide(
+                          color: theme.colorScheme.error.withValues(alpha: 0.5),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0,
+                          vertical: 6.0,
+                        ),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: () => showLogoutDialog(context),
+                    ),
                   ],
                 ),
               ),
             ),
           ] else ...[
             IconButton(
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.all(4.0),
+              constraints: const BoxConstraints(),
               icon: const Icon(Icons.notifications_outlined, size: 20.0),
+              tooltip: 'Notificaciones',
               onPressed: _showNotificationsPanel,
+            ),
+            const SizedBox(width: 4),
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.all(4.0),
+              constraints: const BoxConstraints(),
+              icon: const Icon(Icons.logout_rounded, size: 20.0),
+              tooltip: l10n.logout,
+              color: theme.colorScheme.error,
+              onPressed: () => showLogoutDialog(context),
             ),
           ],
         ],

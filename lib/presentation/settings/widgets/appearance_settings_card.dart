@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/enums/language_enum.dart';
 import '../../../core/enums/theme_mode_enum.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../auth/logout_dialog.dart';
 import '../settings_provider.dart';
 
 /// Card providing dynamic runtime toggles for application Theme (Light/Dark)
@@ -43,6 +44,33 @@ class AppearanceSettingsCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             _buildLanguageWrap(l10n),
+            const SizedBox(height: 24),
+            const Divider(),
+            const SizedBox(height: 12),
+            Text(
+              l10n.logout,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.logoutConfirmation,
+              style: TextStyle(
+                fontSize: 12,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: theme.colorScheme.error,
+                side: BorderSide(
+                  color: theme.colorScheme.error.withValues(alpha: 0.5),
+                ),
+              ),
+              icon: const Icon(Icons.logout_rounded, size: 18),
+              label: Text(l10n.logout),
+              onPressed: () => showLogoutDialog(context),
+            ),
           ],
         ),
       ),

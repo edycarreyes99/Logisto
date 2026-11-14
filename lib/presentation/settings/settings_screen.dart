@@ -2,6 +2,7 @@ import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../auth/logout_dialog.dart';
 import 'settings_provider.dart';
 import 'widgets/appearance_settings_card.dart';
 import 'widgets/org_settings_card.dart';
@@ -100,6 +101,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 key: 'rbac',
                 label: l10n.rbacSecurity,
                 icon: Icons.security_outlined,
+              ),
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                  foregroundColor: theme.colorScheme.error,
+                  side: BorderSide(
+                    color: theme.colorScheme.error.withValues(alpha: 0.5),
+                  ),
+                ),
+                icon: const Icon(Icons.logout_rounded, size: 16),
+                label: Text(l10n.logout),
+                onPressed: () => showLogoutDialog(context),
               ),
             ],
           ),

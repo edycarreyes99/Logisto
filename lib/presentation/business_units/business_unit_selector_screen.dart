@@ -6,6 +6,7 @@ import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/business_unit_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../auth/logout_dialog.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
 import '../context/business_context_provider.dart';
@@ -175,6 +176,13 @@ class _BusinessUnitSelectorScreenState
           onPressed: () => _showAddUnitModal(l10n),
           icon: const Icon(Icons.add, size: 18),
           label: Text(l10n.addBranch),
+        ),
+        const SizedBox(width: 8),
+        IconButton(
+          icon: const Icon(Icons.logout_rounded),
+          color: Theme.of(context).colorScheme.error,
+          tooltip: l10n.logout,
+          onPressed: () => showLogoutDialog(context),
         ),
         const SizedBox(width: 16),
       ],

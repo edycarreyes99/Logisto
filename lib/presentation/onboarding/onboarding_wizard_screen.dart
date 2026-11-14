@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../auth/logout_dialog.dart';
 import '../common/app_feedback.dart';
 import '../navigation/app_routes.dart';
 import '../navigation/navigation_provider.dart';
@@ -70,6 +71,15 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
         ),
         elevation: 0,
         scrolledUnderElevation: 1,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout_rounded),
+            color: Theme.of(context).colorScheme.error,
+            tooltip: l10n.logout,
+            onPressed: () => showLogoutDialog(context),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: BsContainer.fluid(
         child: SingleChildScrollView(

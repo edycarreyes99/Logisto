@@ -5,7 +5,7 @@ import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../../theme/app_colors.dart';
 import '../auth/login_provider.dart';
-import '../common/app_feedback.dart';
+import '../auth/logout_dialog.dart';
 import '../context/business_context_provider.dart';
 import '../settings/settings_provider.dart';
 import 'app_routes.dart';
@@ -127,13 +127,30 @@ class AppNavigationDrawer extends StatelessWidget {
                   ),
                 ),
               ),
-              IconButton(
-                visualDensity: VisualDensity.compact,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                icon: const Icon(Icons.close_rounded, size: 20.0, color: Colors.white70),
-                tooltip: l10n.close,
-                onPressed: () => Navigator.of(context).maybePop(),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    icon: const Icon(Icons.logout_rounded, size: 18.0, color: Colors.white70),
+                    tooltip: l10n.logout,
+                    onPressed: () => showLogoutDialog(
+                      context,
+                      onBeforeLogout: () => Navigator.of(context).maybePop(),
+                    ),
+                  ),
+                  const SizedBox(width: 8.0),
+                  IconButton(
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    icon: const Icon(Icons.close_rounded, size: 20.0, color: Colors.white70),
+                    tooltip: l10n.close,
+                    onPressed: () => Navigator.of(context).maybePop(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -287,41 +304,10 @@ class AppNavigationDrawer extends StatelessWidget {
             icon: const Icon(Icons.logout_rounded, size: 20.0),
             tooltip: l10n.logout,
             color: theme.colorScheme.error,
-            onPressed: () async {
-              final confirmed = await showDialog<bool>(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: Text(l10n.logout),
-                  content: Text(l10n.logoutConfirmation),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(ctx).pop(false),
-                      child: Text(l10n.cancel),
-                    ),
-                    FilledButton(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: theme.colorScheme.error,
-                      ),
-                      onPressed: () => Navigator.of(ctx).pop(true),
-                      child: Text(l10n.confirm),
-                    ),
-                  ],
-                ),
-              );
-
-              if (confirmed == true && context.mounted) {
-                final login = locator.isRegistered<LoginProvider>()
-                    ? locator<LoginProvider>()
-                    : null;
-                await login?.signOut();
-                await contextProvider.clearContext();
-                navProvider.navigateTo(AppRoutes.login);
-                onNavigate?.call();
-                if (context.mounted) {
-                  AppFeedback.showInfo(context, l10n.logout);
-                }
-              }
-            },
+            onPressed: () => showLogoutDialog(
+              context,
+              onBeforeLogout: () => onNavigate?.call(),
+            ),
           ),
         ],
       ),
@@ -361,6 +347,12 @@ class AppNavigationDrawer extends StatelessWidget {
         _Item(l10n.audit, Icons.security, AppRoutes.audit),
         _Item(l10n.settings, Icons.settings, AppRoutes.settings),
         _Item(l10n.onboarding, Icons.auto_awesome, AppRoutes.onboarding),
+        _Item(
+          l10n.logout,
+          Icons.logout_rounded,
+          AppRoutes.login,
+          isDestructive: true,
+        ),
       ]),
     ];
   }
@@ -402,9 +394,16 @@ class AppNavigationDrawer extends StatelessWidget {
     return _SidebarNavItem(
       item: item,
       isActive: isActive,
-      onTap: () {
-        navProvider.navigateTo(item.route);
-        onNavigate?.call();
+      onTap: () async {
+        if (item.isDestructive) {
+          await showLogoutDialog(
+            context,
+            onBeforeLogout: () => onNavigate?.call(),
+          );
+        } else {
+          navProvider.navigateTo(item.route);
+          onNavigate?.call();
+        }
       },
     );
   }
@@ -448,8 +447,18 @@ class _SidebarNavItemState extends State<_SidebarNavItem> {
   }
 
   (Color, Color, Color) _resolveColors(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primary = Theme.of(context).colorScheme.primary;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primary = theme.colorScheme.primary;
+    final errorColor = theme.colorScheme.error;
+
+    if (widget.item.isDestructive) {
+      if (_isHovered) {
+        final bg = errorColor.withValues(alpha: 0.15);
+        return (bg, errorColor, errorColor);
+      }
+      return (Colors.transparent, errorColor, errorColor);
+    }
 
     if (widget.isActive) {
       return (primary, AppColors.backgroundLight, AppColors.backgroundLight);
@@ -501,5 +510,11 @@ class _Item {
   final String title;
   final IconData icon;
   final String route;
-  const _Item(this.title, this.icon, this.route);
+  final bool isDestructive;
+  const _Item(
+    this.title,
+    this.icon,
+    this.route, {
+    this.isDestructive = false,
+  });
 }
