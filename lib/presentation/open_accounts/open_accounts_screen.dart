@@ -1,8 +1,11 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../data/firestore/database_seeder.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../context/business_context_provider.dart';
 import '../navigation/app_routes.dart';
 import '../navigation/navigation_provider.dart';
@@ -39,6 +42,17 @@ class _OpenAccountsScreenState extends State<OpenAccountsScreen> {
     });
   }
 
+  void _refresh() {
+    final orgId =
+        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
+    final buId =
+        _contextProvider.activeBusinessUnit?.id ??
+        DatabaseSeeder.defaultBuCentralId;
+    _provider.loadAccounts(orgId: orgId, buId: buId);
+    final l10n = AppLocalizations.of(context)!;
+    AppFeedback.showInfo(context, l10n.refresh);
+  }
+
   void _showNewTabModal() {
     final l10n = AppLocalizations.of(context)!;
     final nameCtrl = TextEditingController();
@@ -68,11 +82,14 @@ class _OpenAccountsScreenState extends State<OpenAccountsScreen> {
           ),
           FilledButton(
             onPressed: () {
+              final tabName =
+                  nameCtrl.text.isEmpty ? 'Cliente Barra' : nameCtrl.text;
               _provider.createNewAccount(
-                name: nameCtrl.text.isEmpty ? 'Cliente Barra' : nameCtrl.text,
+                name: tabName,
                 originType: 'counter',
               );
               Navigator.of(ctx).pop();
+              AppFeedback.showSuccess(context, '${l10n.openTabAction}: $tabName');
             },
             child: Text(l10n.openTabAction),
           ),
@@ -136,13 +153,21 @@ class _OpenAccountsScreenState extends State<OpenAccountsScreen> {
   }
 
   Widget _buildAccountPanels() {
+    if (_provider.status == FeatureStatusEnum.loading &&
+        _provider.accounts.isEmpty) {
+      return const AppSkeletonTable(rowCount: 5, columnCount: 4);
+    }
+
     return BsRow(
       children: [
         BsCol(
           config: const BsColConfig(xs: 12, md: 7, lg: 7),
           child: AccountCatalogPanel(
             products: _provider.quickCatalog,
-            onAddProduct: _provider.addProductToSelected,
+            onAddProduct: (prod) {
+              _provider.addProductToSelected(prod);
+              AppFeedback.showSuccess(context, '${prod.name} +1');
+            },
           ),
         ),
         BsCol(
@@ -175,6 +200,11 @@ class _OpenAccountsScreenState extends State<OpenAccountsScreen> {
       elevation: 0,
       scrolledUnderElevation: 1,
       actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          tooltip: l10n.refresh,
+          onPressed: _refresh,
+        ),
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: FilledButton.icon(

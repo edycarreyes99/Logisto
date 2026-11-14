@@ -1,10 +1,13 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/table_status_enum.dart';
 import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/billiard_table_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../context/business_context_provider.dart';
 import 'billiard_provider.dart';
 import 'widgets/billiard_table_card.dart';
@@ -75,6 +78,10 @@ class _BilliardFloorPlanScreenState extends State<BilliardFloorPlanScreen> {
                 customerName: customerCtrl.text,
               );
               Navigator.of(ctx).pop();
+              AppFeedback.showSuccess(
+                context,
+                'Sesión iniciada en ${table.name}',
+              );
             },
             child: Text(l10n.startSessionAction),
           ),
@@ -102,7 +109,12 @@ class _BilliardFloorPlanScreenState extends State<BilliardFloorPlanScreen> {
           padding: const EdgeInsets.all(16.0),
           child: ListenableBuilder(
             listenable: _provider,
-            builder: (context, _) => _buildTableGrid(),
+            builder: (context, _) {
+              if (_provider.status == FeatureStatusEnum.loading) {
+                return const AppSkeletonKpiGrid(cardCount: 6);
+              }
+              return _buildTableGrid();
+            },
           ),
         ),
       ),

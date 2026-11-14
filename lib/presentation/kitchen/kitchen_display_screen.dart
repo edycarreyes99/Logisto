@@ -1,9 +1,12 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/kds_status_enum.dart';
 import '../../data/firestore/database_seeder.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../context/business_context_provider.dart';
 import 'kitchen_provider.dart';
 import 'widgets/kds_order_card.dart';
@@ -36,6 +39,17 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
     });
   }
 
+  void _refresh() {
+    final orgId =
+        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
+    final buId =
+        _contextProvider.activeBusinessUnit?.id ??
+        DatabaseSeeder.defaultBuCentralId;
+    _provider.loadOrders(orgId: orgId, buId: buId);
+    final l10n = AppLocalizations.of(context)!;
+    AppFeedback.showInfo(context, l10n.refresh);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -62,6 +76,11 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
       elevation: 0,
       scrolledUnderElevation: 1,
       actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          tooltip: l10n.refresh,
+          onPressed: _refresh,
+        ),
         Padding(
           padding: const EdgeInsets.only(right: 12.0),
           child: Wrap(
@@ -101,6 +120,11 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
   }
 
   Widget _buildOrdersGrid(AppLocalizations l10n) {
+    if (_provider.status == FeatureStatusEnum.loading &&
+        _provider.filteredOrders.isEmpty) {
+      return const AppSkeletonList(itemCount: 4);
+    }
+
     final list = _provider.filteredOrders;
     if (list.isEmpty) {
       return Padding(
@@ -117,7 +141,15 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
             padding: const EdgeInsets.only(bottom: 16.0),
             child: KdsOrderCard(
               order: order,
-              onAdvance: () => _provider.advanceStatus(order),
+              onAdvance: () async {
+                await _provider.advanceStatus(order);
+                if (mounted) {
+                  AppFeedback.showSuccess(
+                    context,
+                    '${order.orderCode} - ${order.tableOrTabName}',
+                  );
+                }
+              },
             ),
           ),
         );

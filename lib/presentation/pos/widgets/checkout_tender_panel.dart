@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/enums/feature_status_enum.dart';
 import '../../../l10n/app_localizations.dart';
 import '../pos_checkout_provider.dart';
 
@@ -58,13 +59,23 @@ class CheckoutTenderPanel extends StatelessWidget {
   }
 
   Widget _buildFinalizeButton(AppLocalizations l10n) {
+    final isLoading = provider.status == FeatureStatusEnum.loading;
     return FilledButton.icon(
       style: FilledButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 14),
       ),
-      icon: const Icon(Icons.check_circle_outline),
+      icon: isLoading
+          ? const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.2,
+                color: Colors.white,
+              ),
+            )
+          : const Icon(Icons.check_circle_outline),
       label: Text(l10n.finalizeSale),
-      onPressed: provider.cartItems.isEmpty ? null : onFinalize,
+      onPressed: (provider.cartItems.isEmpty || isLoading) ? null : onFinalize,
     );
   }
 

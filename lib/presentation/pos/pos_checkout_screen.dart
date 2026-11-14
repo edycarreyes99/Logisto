@@ -5,6 +5,7 @@ import '../../data/repositories/product_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../cash/cash_shift_provider.dart';
+import '../common/app_feedback.dart';
 import '../context/business_context_provider.dart';
 import 'pos_checkout_provider.dart';
 import 'widgets/checkout_cart_panel.dart';
@@ -104,6 +105,10 @@ class _PosCheckoutScreenState extends State<PosCheckoutScreen> {
                           _cashCtrl.text = _provider.totalAmount
                               .toStringAsFixed(2);
                           Navigator.of(ctx).pop();
+                          AppFeedback.showSuccess(
+                            context,
+                            '${p.name} agregado a la orden',
+                          );
                         },
                         child: Text(l10n.add),
                       ),
@@ -211,6 +216,12 @@ class _PosCheckoutScreenState extends State<PosCheckoutScreen> {
             : cashTender,
         cardAmount: cardTender,
         creditAmount: creditTender,
+      );
+
+      AppFeedback.showSuccess(
+        context,
+        'Factura #${invoice.invoiceNumber} emitida exitosamente',
+        title: 'Venta Finalizada',
       );
 
       final orgName =
