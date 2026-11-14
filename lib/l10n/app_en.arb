@@ -1,0 +1,1394 @@
+{
+  "@@locale": "en",
+  "appTitle": "Logisto ERP & Smart POS",
+  "appTagline": "Multi-Branch Commercial, Operations & Financial Management",
+  "dashboard": "Dashboard",
+  "billiards": "Billiards",
+  "openAccounts": "Open Accounts",
+  "pos": "POS Checkout",
+  "kitchen": "Kitchen KDS",
+  "cash": "Cash Shifts",
+  "products": "Products",
+  "inventory": "Inventory",
+  "kardex": "Kardex Ledger",
+  "customers": "Customers",
+  "invoices": "Invoices",
+  "suppliers": "Suppliers",
+  "purchasing": "Purchasing",
+  "receivables": "Receivables",
+  "payables": "Payables",
+  "reports": "Reports & BI",
+  "users": "Users & Staff",
+  "settings": "Settings",
+  "audit": "Audit Trail",
+  "login": "Sign In",
+  "onboarding": "Onboarding",
+  "businessUnits": "Branches",
+  "save": "Save",
+  "cancel": "Cancel",
+  "accept": "Accept",
+  "confirm": "Confirm",
+  "delete": "Delete",
+  "edit": "Edit",
+  "create": "Create",
+  "search": "Search",
+  "searchPlaceholder": "Search by name, SKU or ID...",
+  "filter": "Filter",
+  "refresh": "Refresh",
+  "close": "Close",
+  "back": "Back",
+  "next": "Next",
+  "finish": "Finish",
+  "seedDatabase": "Seed DB",
+  "databaseSeededSuccess": "Database initialized successfully in Cloud Firestore.",
+  "logout": "Log Out",
+  "switchBranch": "Switch Branch",
+  "fastPin": "Fast PIN",
+  "viewDetails": "View Details",
+  "printTicket": "Print Receipt",
+  "pay": "Pay",
+  "openShift": "Open Shift",
+  "closeShift": "Close Shift (Z-Cut)",
+  "transfer": "Transfer",
+  "addProduct": "New Product",
+  "addCustomer": "New Customer",
+  "addSupplier": "New Supplier",
+  "addWarehouse": "New Warehouse",
+  "inviteUser": "Register Staff Member",
+  "emailLabel": "Email Address",
+  "passwordLabel": "Password",
+  "pinLabel": "Terminal PIN (4 digits)",
+  "loginButton": "Sign In to System",
+  "googleSignIn": "Sign In with Google",
+  "switchAccount": "Switch Account",
+  "invalidCredentials": "Invalid credentials. Please try again.",
+  "enterPin": "Enter your 4-digit PIN",
+  "pinPrompt": "Enter terminal PIN for quick user switch",
+  "welcomeTitle": "Welcome to Logisto ERP",
+  "welcomeDesc": "Configure your organization and initial branch to get started.",
+  "createFirstBranch": "Step 1: Create First Branch",
+  "selectBusinessType": "Business Type",
+  "branchNameLabel": "Branch Name",
+  "initializeDefaults": "Step 2: Initialize Catalogs",
+  "sampleCatalogPrompt": "Default products, warehouses, cash register and base settings will be created in Cloud Firestore.",
+  "startUsingApp": "Start Operating",
+  "stepLabel": "Step {current} of {total}",
+  "@stepLabel": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "selectBranchPrompt": "Select an active branch to operate:",
+  "noBranchesFound": "No assigned branches found.",
+  "activeBranchBadge": "Active Branch",
+  "todaySales": "Today Sales",
+  "weekSales": "Week Sales",
+  "monthSales": "Month Sales",
+  "activeCash": "Cash in Till",
+  "openTabs": "Open Tabs",
+  "totalProducts": "Catalog SKUs",
+  "totalCustomers": "Registered Customers",
+  "topSellingProducts": "Top Selling Products",
+  "salesByCategory": "Sales by Category",
+  "salesByTender": "Sales by Payment Tender",
+  "cartTitle": "Sale Summary & Items",
+  "emptyCart": "Cart is empty. Add items from the catalog.",
+  "subtotal": "Subtotal",
+  "discount": "Discount",
+  "total": "Total Amount",
+  "tenderCash": "Cash",
+  "tenderCard": "Card",
+  "tenderCredit": "Customer Credit",
+  "tenderTransfer": "Bank Transfer",
+  "changeDue": "Change Due",
+  "amountTendered": "Tendered",
+  "referenceCode": "Payment Reference Code",
+  "selectCustomer": "Customer",
+  "consumidorFinal": "Consumidor Final (CF)",
+  "creditAvailable": "Available Credit: {amount}",
+  "@creditAvailable": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "creditExceeded": "Amount exceeds available credit limit.",
+  "invoiceCreatedSuccess": "Invoice #{number} generated successfully.",
+  "@invoiceCreatedSuccess": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "ticketHeader": "SALES RECEIPT",
+  "printSuccess": "Thermal ticket sent to printer.",
+  "tableNumber": "Table #{number}",
+  "@tableNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "tableType": "Table Type",
+  "hourlyRate": "Hourly Rate",
+  "statusAvailable": "Available",
+  "statusOccupied": "Occupied",
+  "statusPaused": "Paused",
+  "statusMaintenance": "Maintenance",
+  "startSession": "Start Time",
+  "pauseSession": "Pause",
+  "resumeSession": "Resume",
+  "stopSession": "Stop & Bill",
+  "transferTable": "Transfer Table",
+  "selectDestinationTable": "Select destination table",
+  "elapsedMinutes": "Elapsed: {minutes} min",
+  "@elapsedMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "currentAmount": "Current: {amount}",
+  "@currentAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "openTabsTitle": "Active Tabs",
+  "openNewTab": "Open New Bar / Table Tab",
+  "tabNamePlaceholder": "Tab name or identifier...",
+  "tableAssignment": "Assign Table (Optional)",
+  "addItemToTab": "Add Item",
+  "sendToKitchen": "Send to Kitchen",
+  "checkoutTab": "Checkout Tab",
+  "preReceipt": "Print Pre-Bill",
+  "splitTab": "Split Tab",
+  "sku": "SKU Code",
+  "barcode": "Barcode",
+  "productName": "Product Name",
+  "category": "Category",
+  "productType": "Product Type",
+  "costPrice": "Cost Price",
+  "salePrice": "Sale Price",
+  "stockQuantity": "In Stock",
+  "minStock": "Min Stock",
+  "warehouse": "Warehouse",
+  "transferStock": "Transfer Stock",
+  "sourceWarehouse": "Source Warehouse",
+  "destWarehouse": "Destination Warehouse",
+  "adjustStock": "Stock Adjustment",
+  "customerName": "Customer Name",
+  "taxId": "Tax ID / SSN",
+  "phone": "Phone",
+  "email": "Email",
+  "creditLimit": "Credit Limit",
+  "currentDebt": "Outstanding Debt",
+  "creditBlocked": "Credit Blocked (Delinquent)",
+  "allowCredit": "Enable Credit Line",
+  "customerSavedSuccess": "Customer saved successfully.",
+  "supplierName": "Supplier Company Name",
+  "contactPerson": "Contact Person",
+  "paymentTermsDays": "Payment Terms (Days)",
+  "supplierSavedSuccess": "Supplier saved successfully.",
+  "activeShift": "Active Cash Shift",
+  "noActiveShift": "No active shift open in this branch.",
+  "startingCash": "Starting Cash Float",
+  "expectedCash": "System Expected Cash",
+  "actualCash": "Actual Physical Cash",
+  "discrepancy": "Cash Discrepancy",
+  "balanced": "Balanced",
+  "shortage": "Cash Shortage",
+  "surplus": "Cash Surplus",
+  "blindDropPrompt": "Blind Count: Enter counted bills and coins without viewing system total.",
+  "performBlindDrop": "Submit Blind Count",
+  "xCut": "Partial X-Cut",
+  "zCut": "Closing Z-Cut",
+  "shiftClosedSuccess": "Cash shift closed successfully with Z-Cut.",
+  "kitchenOrders": "Kitchen Orders",
+  "barOrders": "Bar Orders",
+  "markCooking": "Preparing",
+  "markReady": "Mark Ready",
+  "markServed": "Mark Served",
+  "elapsedOrderTime": "Elapsed: {time}",
+  "@elapsedOrderTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "userName": "Staff Member Name",
+  "userEmail": "Login Email",
+  "userRole": "Branch Role",
+  "superAdmin": "Global Super Administrator",
+  "assignRole": "Assign Role",
+  "terminalPin": "Terminal PIN",
+  "roleUpdatedSuccess": "Role updated successfully.",
+  "userInvitedSuccess": "Staff member registered successfully.",
+  "companySettings": "Organization Settings",
+  "rbacMatrix": "RBAC Permission Matrix",
+  "supervisorElevation": "Supervisor Authorization Required",
+  "enterSupervisorPin": "Enter authorized supervisor PIN to proceed:",
+  "pinVerified": "Authorization granted.",
+  "pinIncorrect": "Invalid PIN or supervisor privilege missing.",
+  "lightTheme": "Light Mode (White)",
+  "darkTheme": "Dark Mode",
+  "spanishLanguage": "Español",
+  "englishLanguage": "English",
+  "auditTrail": "Audit Trail",
+  "actionType": "Action Type",
+  "performedBy": "Performed By",
+  "timestamp": "Timestamp",
+  "details": "Details",
+  "requiredField": "This field is required.",
+  "invalidEmail": "Enter a valid email address.",
+  "numberRequired": "Enter a valid numeric value.",
+  "operationSuccessful": "Operation completed successfully.",
+  "operationFailed": "Operation could not be completed. Check input.",
+  "confirmationPrompt": "Are you sure you want to perform this action?",
+  "deleteConfirmation": "Are you sure you want to delete this record permanently?",
+  "recordDeletedSuccess": "Record deleted successfully.",
+  "modules": "Modules",
+  "logistoEnterprise": "Logisto Enterprise",
+  "corporatePortalLogin": "Corporate Portal Login",
+  "welcomeBannerTitle": "Logisto Multiplatform ERP & POS",
+  "welcomeBannerDesc": "Unified enterprise operations for retail, billiard halls, pharmacies, and hospitality. Offline-first Firestore synchronization with high-density desktop controls.",
+  "fastPinAlert": "Fast Operator Switching enabled for multi-user POS.",
+  "newOrgSetup": "New Org Setup",
+  "fastPinSwitch": "Fast PIN Switch",
+  "enterPinPrompt": "Enter 4-digit terminal PIN to unlock station:",
+  "unlock": "Unlock",
+  "invalidPin": "Invalid 4-digit PIN.",
+  "systemInformation": "System Information",
+  "operationalControls": "Operational Controls",
+  "liveEventStream": "Live Event Stream",
+  "registerNewBranch": "Register New Branch",
+  "branchName": "Branch Name",
+  "physicalAddress": "Physical Address",
+  "createBranch": "Create Branch",
+  "manageBranches": "Manage Branches",
+  "selectBranchToOperate": "Select an active branch to operate:",
+  "onboardingTitle": "Logisto Onboarding Wizard",
+  "step1Title": "Step 1: Enterprise Architecture Overview",
+  "step2Title": "Step 2: First Business Unit Branch",
+  "step3Title": "Step 3: Initial Station Infrastructure",
+  "step4Title": "Step 4: Operational Readiness",
+  "primaryBusinessSegment": "Primary Business Segment:",
+  "billiardSetupPrompt": "Configure initial billiard rental tables:",
+  "retailSetupPrompt": "Default warehouse and cash drawer setup:",
+  "readyToLaunch": "Ready to launch your enterprise workspace.",
+  "seedProductionDataPrompt": "Inject initial production seeds (products, warehouses, tables, customers, suppliers)",
+  "completeAndStart": "Complete Setup & Launch",
+  "createProduct": "Create Product",
+  "editProduct": "Edit Product",
+  "stockWarehouses": "Warehouses & Stock",
+  "internalTransfer": "Internal Warehouse Transfer",
+  "transferQuantity": "Transfer Quantity",
+  "confirmTransfer": "Confirm Transfer",
+  "confirmAdjustment": "Confirm Adjustment",
+  "adjustmentReason": "Adjustment Reason",
+  "newWarehouse": "New Warehouse",
+  "warehouseName": "Warehouse Name",
+  "warehouseCode": "Warehouse Code",
+  "isDefaultSalesWarehouse": "Default for Sales Dispatch",
+  "startTable": "Start Table",
+  "pauseTable": "Pause",
+  "resumeTable": "Resume",
+  "sendToTab": "Send to Tab",
+  "tableStatusAvailable": "Available",
+  "tableStatusOccupied": "In Play",
+  "tableStatusPaused": "Paused",
+  "tableStatusBilling": "Billing",
+  "ratePerHour": "Rate per hour",
+  "player": "Player / Customer",
+  "accrued": "Accrued",
+  "tableReady": "Table ready for check-in",
+  "enterCustomerPrompt": "Enter customer name or table alias:",
+  "openAccountsTitle": "Open Accounts & Bar Tabs",
+  "tabAliasPrompt": "Customer / Table Alias (e.g. Table 1, Bar Carlos)",
+  "preBillPreview": "Pre-Bill Preview",
+  "totalToCollect": "Total to Collect",
+  "sendToCheckout": "Proceed to Payment / Checkout",
+  "addItem": "Add Item",
+  "multiTenderPayment": "Multi-Tender Payment",
+  "customerSelectOrRegister": "Select or Register Customer",
+  "availableCredit": "Available Credit",
+  "creditCeiling": "Credit Limit Ceiling",
+  "changeCustomer": "Change",
+  "quickCatalog": "Quick Product Catalog",
+  "noProductsAvailable": "No products available in this branch.",
+  "confirmAndInvoice": "Confirm & Print Invoice",
+  "thermalReceipt": "Thermal Receipt (ESC/POS)",
+  "printThermal": "Print Receipt",
+  "newSale": "New Sale",
+  "cashShiftsTitle": "Cash Shifts & Blind Drop Controls",
+  "openNewShift": "Open New Shift",
+  "openingFloat": "Initial Opening Cash Float",
+  "recordCashMovement": "Record Cash Movement",
+  "withdrawalSangria": "Withdrawal (Sangría)",
+  "cashInflow": "Cash Inflow (Ingreso)",
+  "blindDropTitle": "Blind Drop & Z-Cut Closing",
+  "physicalCashCount": "Physical Cash Counted",
+  "closeShiftConfirm": "Close Shift & Lock Drawer",
+  "taxIdRuc": "Tax ID / RUC / Cédula",
+  "creditBlockedStatus": "BLOCKED",
+  "creditActiveStatus": "ACTIVE",
+  "blockCredit": "Block Credit",
+  "unblockCredit": "Unblock Credit",
+  "creditDays": "Credit Days",
+  "editRole": "Edit Role",
+  "deleteUser": "Delete User",
+  "accountsReceivableTitle": "Accounts Receivable (CxC) & ROC",
+  "collectPaymentRoc": "Collect Payment (ROC)",
+  "accountsPayableTitle": "Accounts Payable (CxP)",
+  "paySupplier": "Pay Supplier",
+  "dueDate": "Due Date",
+  "totalDebt": "Total Debt",
+  "balanceRemaining": "Balance Remaining",
+  "emitReceiptAndApply": "Emit Receipt & Apply",
+  "disbursePayment": "Disburse Payment",
+  "purchasingTitle": "Purchase Orders & Inbound Goods",
+  "createPurchaseOrder": "Create Purchase Order",
+  "receiveGoods": "Receive Inbound Goods",
+  "orderStatus": "Order Status",
+  "kitchenKdsTitle": "Kitchen & Bar Display System (KDS)",
+  "markInPreparation": "In Preparation",
+  "orderQueueEmpty": "No orders in this status queue.",
+  "settingsTitle": "Settings & RBAC",
+  "corporateSettings": "Corporate & Fiscal",
+  "corporateTaxConfig": "Corporate & Tax Configuration",
+  "rbacSecurity": "RBAC Security",
+  "appearanceAndLanguage": "Appearance & Language",
+  "themeModeLabel": "Theme Mode",
+  "themeLight": "Light (White)",
+  "themeDark": "Dark",
+  "languageLabel": "System Language",
+  "langSpanish": "Español (Spanish)",
+  "langEnglish": "English (Inglés)",
+  "currencyExchange": "Currency & Exchange Rates",
+  "saveChanges": "Save Changes",
+  "changesSavedSuccess": "Settings saved successfully.",
+  "filterToday": "Today",
+  "filterWeek": "Week",
+  "filterMonth": "Month",
+  "filterYear": "Year",
+  "navSectionCoreOperations": "Core Operations",
+  "navSectionInventoryOperations": "Operations & Inventory",
+  "navSectionCatalogsPartners": "Catalogs & Partners",
+  "navSectionFinanceLedgers": "Finance & Ledgers",
+  "navSectionSystemManagement": "System Management",
+  "navOffcanvasTitle": "Logisto ERP Modules",
+  "defaultBranchName": "Central Branch",
+  "menu": "Menu",
+  "selectBranch": "Select Branch",
+  "filterAuditLogsPlaceholder": "Filter audit logs...",
+  "tableHeaderTimestamp": "Timestamp",
+  "tableHeaderUser": "User",
+  "tableHeaderAction": "Action",
+  "tableHeaderDescription": "Description",
+  "tableHeaderBeforeAfter": "Before / After",
+  "tableHeaderClientIp": "Client IP",
+  "tableCustomerAliasPlaceholder": "e.g. Carlos M.",
+  "billiardFloorPlanTitle": "Billiard Stations & Floor Plan",
+  "selectDestinationTablePrompt": "Select an available destination table:",
+  "noTablesAvailableForTransfer": "No other available tables at this moment.",
+  "currentShiftSummary": "Current Shift Summary",
+  "openingFloatPrompt": "Enter initial opening cash float:",
+  "amountPlaceholder": "Amount (e.g. 50.00)",
+  "tableHeaderTime": "Time",
+  "tableHeaderType": "Type",
+  "tableHeaderAmount": "Amount",
+  "tableHeaderReason": "Reason",
+  "blindDropShiftClosure": "Blind Drop Shift Closure (Corte Z)",
+  "expectedBalance": "Expected Balance:",
+  "physicalCashCountedPrompt": "Enter actual physical cash counted in cash drawer (USD):",
+  "physicalCountedAmountPlaceholder": "Physical Counted Amount (e.g. 520.00)",
+  "noCustomersFound": "No customers found matching search.",
+  "placeholderFirstName": "First Name",
+  "placeholderLastName": "Last Name",
+  "placeholderTaxId": "Tax ID / SSN / RUC",
+  "placeholderPhone": "Phone Number",
+  "placeholderEmail": "Email Address",
+  "placeholderCreditLimit": "Credit Limit ($)",
+  "tableHeaderTaxId": "Tax ID / RUC",
+  "tableHeaderCustomerName": "Customer Name",
+  "tableHeaderAvailableHeadroom": "Available Headroom",
+  "tableHeaderStatus": "Status",
+  "tableHeaderActions": "Actions",
+  "kpiRealtime": "Realtime",
+  "kpiAuditReady": "Audit Ready",
+  "tableHeaderQtySold": "Qty Sold",
+  "tableHeaderRevenue": "Revenue",
+  "filterLogsPlaceholder": "Filter logs or telemetry...",
+  "tableHeaderService": "Service",
+  "tableHeaderTarget": "Target",
+  "telemetryAndStatus": "Telemetry & Status",
+  "processedTasksLabel": "Processed Tasks:",
+  "telemetryNodeOperational": "Multiplatform node operational on current target.",
+  "transferSourceBodega": "Source: Bodega Central de Reserva",
+  "transferDestBarra": "Destination: Barra Principal (Piso de Venta)",
+  "auditedStockCountPrompt": "Enter audited physical stock count:",
+  "transferQuantityPlaceholder": "Transfer Quantity (Units)",
+  "newTotalQuantityPlaceholder": "New Total Quantity",
+  "tableHeaderAvailableStock": "Available Stock",
+  "tableHeaderReserved": "Reserved",
+  "noKardexMovements": "No Kardex movements recorded.",
+  "tableHeaderMovementType": "Movement Type",
+  "tableHeaderQuantity": "Quantity",
+  "tableHeaderTotalValue": "Total Value",
+  "tableHeaderReferenceNotes": "Reference / Notes",
+  "voidInvoiceTitle": "Void Sales Invoice",
+  "voidInvoiceConfirmation": "Are you sure you want to void this sales invoice? Stock movements will be reversed and an audit entry recorded.",
+  "searchInvoicePlaceholder": "Search invoice # or customer...",
+  "noInvoicesRecorded": "No sales invoices recorded yet.",
+  "tableHeaderInvoiceNumber": "Invoice #",
+  "tableHeaderCustomer": "Customer",
+  "tableHeaderCashier": "Cashier",
+  "tableHeaderPaymentTender": "Payment Tender",
+  "kdsOrderCompleted": "Order completed.",
+  "kdsOrderCancelled": "Order cancelled.",
+  "hourlyRatePlaceholder": "Hourly rate (e.g. 10.00)",
+  "fastCatalogTitle": "Fast Bar / Kitchen Catalog",
+  "tapItemToAddPrompt": "Tap an item to add immediately to current tab:",
+  "activeTabOrderTitle": "Active Tab Order",
+  "noTabSelected": "No tab selected. Select or create an open account.",
+  "noConsumablesLoaded": "No consumables loaded yet. Click items on the left to add.",
+  "noSupplierLiabilities": "No supplier liabilities recorded.",
+  "paymentAmountPlaceholder": "Payment Amount ($)",
+  "tableHeaderSupplier": "Supplier",
+  "tableHeaderSupplierInvoiceNumber": "Supplier Invoice #",
+  "tableHeaderPaidToDate": "Paid to Date",
+  "consumidorFinalWalkIn": "Consumidor Final (Walk-in)",
+  "errorTitle": "Error",
+  "tableHeaderItem": "Item",
+  "tableHeaderQty": "Qty",
+  "productNamePlaceholder": "Product name...",
+  "skuPlaceholder": "SKU-001",
+  "tableHeaderSkuBarcode": "SKU / Barcode",
+  "noPurchaseOrdersRegistered": "No purchase orders registered.",
+  "estimatedOrderValuePlaceholder": "Estimated Total Order Value ($)",
+  "tableHeaderOrderRef": "Order Ref",
+  "tableHeaderOrderDate": "Order Date",
+  "noOutstandingReceivables": "No outstanding accounts receivable.",
+  "tableHeaderBalanceDue": "Balance Due",
+  "reportExportedSuccess": "Report Exported Successfully",
+  "reportExportedDesc": "The financial ledger and operational metrics have been compiled into CSV format.\n\nReady for corporate audit archive.",
+  "tableHeaderItemConcept": "Item / Concept",
+  "tableHeaderDetailsSku": "Details / SKU",
+  "tableHeaderMetric1": "Metric 1",
+  "tableHeaderMetric2": "Metric 2",
+  "tableHeaderStatusRatio": "Status / Ratio",
+  "tabAppearance": "Appearance",
+  "legalNameLabel": "Legal Name:",
+  "commercialBrandLabel": "Commercial Brand:",
+  "salesTaxRateLabel": "Sales Tax Rate (%):",
+  "rbacMatrixTitle": "RBAC Security & Permission Matrix",
+  "tableHeaderRoleKey": "Role Key",
+  "tableHeaderAccessibleModules": "Accessible Modules",
+  "tableHeaderSensitivePermissions": "Sensitive Permissions",
+  "supervisorPinPrompt": "This action requires elevated supervisor permissions. Please enter authorized 4-digit PIN:",
+  "noSuppliersFound": "No suppliers found.",
+  "placeholderCompanyLegalName": "Company Legal Name",
+  "placeholderContactPerson": "Contact Person",
+  "placeholderPaymentTerms": "Payment Terms (e.g. 30 Days)",
+  "tableHeaderCompanyName": "Company Name",
+  "tableHeaderContactPerson": "Contact Person",
+  "tableHeaderCreditTerms": "Credit Terms",
+  "tableHeaderPayableBalance": "Payable Balance",
+  "tableHeaderUserName": "Name",
+  "tableHeaderUserEmail": "Email",
+  "tableHeaderSuperAdmin": "Super Admin",
+  "tableHeaderAssignedBranches": "Assigned Branches",
+  "yes": "YES",
+  "no": "NO",
+  "statusActive": "ACTIVE",
+  "statusInactive": "INACTIVE",
+  "statusActiveTitle": "Active",
+  "statusInactiveTitle": "Inactive",
+  "staff": "Staff",
+  "placeholderFullName": "Full name...",
+  "sendInvite": "Send Invite",
+  "companyEmailPlaceholder": "admin@company.com",
+  "userEmailPlaceholder": "user@logisto.com",
+  "editCustomer": "Edit Customer",
+  "editSupplier": "Edit Supplier",
+  "startTableNamed": "Start {name}",
+  "@startTableNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "transferTableNamed": "Transfer {name}",
+  "@transferTableNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openCashShiftRegister": "Open Cash Shift (Register #{number})",
+  "@openCashShiftRegister": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "reconciliationStatus": "Reconciliation Status: {status}",
+  "@reconciliationStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "registerActiveShift": "Register #{number} • Active Shift",
+  "@registerActiveShift": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "customerDebtAmount": "Debt: ${amount}",
+  "@customerDebtAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "telemetryTasksProcessed": "Active telemetry tasks processed: {count}",
+  "@telemetryTasksProcessed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "kardexValueAmount": "Val: ${amount}",
+  "@kardexValueAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceDetailsTitle": "Invoice #{number}",
+  "@invoiceDetailsTitle": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceCustomerLabel": "Customer: {name}",
+  "@invoiceCustomerLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceCashierLabel": "Cashier: {cashier}",
+  "@invoiceCashierLabel": {
+    "placeholders": {
+      "cashier": {
+        "type": "String"
+      }
+    }
+  },
+  "kdsItemNote": "Note: {note}",
+  "@kdsItemNote": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "preBillPreviewCode": "Pre-Bill Preview: {code}",
+  "@preBillPreviewCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "customerDisplayName": "Customer: {name}",
+  "@customerDisplayName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "paySupplierNamed": "Pay Supplier: {name}",
+  "@paySupplierNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "payableInvoiceLabel": "Invoice: {number}",
+  "@payableInvoiceLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "remainingDebtLabel": "Remaining Debt: ",
+  "@remainingDebtLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "collectPaymentCustomer": "Collect Payment (ROC): {customer}",
+  "@collectPaymentCustomer": {
+    "placeholders": {
+      "customer": {
+        "type": "String"
+      }
+    }
+  },
+  "outstandingBalanceAmount": "Outstanding Balance: ${amount}",
+  "@outstandingBalanceAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "authorizeActionTitle": "Authorize: {action}",
+  "@authorizeActionTitle": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "supplierDueAmount": "Due: ${amount}",
+  "@supplierDueAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "branchCountLabel": "{count} Branch(es)",
+  "@branchCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "editStaffNamed": "Edit Staff: {name}",
+  "@editStaffNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "superAdminStatus": "Super Admin: {status}",
+  "@superAdminStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "taxAmountLabel": "Tax ({percent}%):",
+  "@taxAmountLabel": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "taxReceiptLabel": "IVA / Tax ({percent}%):",
+  "@taxReceiptLabel": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "invoiceReceiptNumber": "INVOICE: {number}",
+  "@invoiceReceiptNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "allEvents": "All Events",
+  "unknown": "Unknown",
+  "finishPrintZCut": "Finish & Print Z-Cut",
+  "submitBlindCount": "Submit Blind Count",
+  "blindDropSecurityRule": "Security Rule: Enter total physical cash counted in drawer. Expected totals remain hidden until count is confirmed.",
+  "physicalCountedLabel": "Physical Counted:",
+  "varianceDiscrepancyLabel": "Variance / Discrepancy:",
+  "shiftOpen": "Shift Open",
+  "openingFloatBase": "Opening Float (Base):",
+  "cashSalesLabel": "Cash Sales:",
+  "cardSalesLabel": "Card / POS Sales:",
+  "cashInjectionsLabel": "Cash Injections:",
+  "withdrawalsLabel": "Withdrawals (Sangrías):",
+  "calculatedCashInTill": "Calculated Cash in Till:",
+  "cashMovementButton": "Cash Movement (+ / -)",
+  "closeShiftBlindDropButton": "Close Shift (Blind Drop / Corte Z)",
+  "noActiveShiftPrompt": "No cash shift currently open on this workstation.",
+  "openShiftInitialFloat": "Open Shift with Initial Float",
+  "closedShiftHistoryTitle": "Closed Shift Audit History",
+  "tableHeaderRegister": "Register",
+  "tableHeaderExpected": "Expected",
+  "tableHeaderCounted": "Counted",
+  "tableHeaderVariance": "Variance",
+  "counterDefault": "Counter",
+  "tableRatePerHour": "Rate: /hr ({type})",
+  "@tableRatePerHour": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "tablePlayerLabel": "Player: {name}",
+  "@tablePlayerLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tableAccruedAmount": "Accrued: ",
+  "@tableAccruedAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "startSessionAction": "Start Session",
+  "selectOperatingBusinessUnit": "Select Operating Business Unit",
+  "addBranch": "Add Branch",
+  "registerCustomer": "Register Customer",
+  "saveCustomer": "Save Customer",
+  "collect": "Collect",
+  "view": "View",
+  "registerSupplier": "Register Supplier",
+  "saveSupplier": "Save Supplier",
+  "issueOrder": "Issue Order",
+  "block": "Block",
+  "unblock": "Unblock",
+  "kpiSynced": "Synced",
+  "kpiMonthly": "Monthly",
+  "kpiPending": "Pending",
+  "kpiCatalog": "Catalog",
+  "tableHeaderUnitsSold": "Units Sold",
+  "revenueByCategory": "Revenue by Category",
+  "revenueByTender": "Revenue by Payment Tender",
+  "topSellingProductsAndServices": "Top 10 Selling Products & Services",
+  "dismiss": "Dismiss",
+  "overview": "Overview",
+  "metrics": "Metrics",
+  "erpSuite": "ERP Suite",
+  "systemInfo": "System Info",
+  "filterLogsOrTelemetry": "Filter logs or telemetry...",
+  "increment": "Increment",
+  "reset": "Reset",
+  "processedTasks": "Processed Tasks:",
+  "serviceCore": "Core",
+  "targetDarwinWin32": "Darwin/Win32",
+  "serviceWeb": "Web",
+  "targetWasmMobile": "WASM/Mobile",
+  "statusReady": "Ready",
+  "internalTransferTitle": "Internal Transfer: {productName}",
+  "@internalTransferTitle": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmTransferGuide": "Confirm Transfer Guide",
+  "stockAdjustmentTitle": "Inventory Stock Adjustment: {productName}",
+  "@stockAdjustmentTitle": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      }
+    }
+  },
+  "newTotalQuantity": "New Total Quantity",
+  "saveAdjustment": "Save Adjustment",
+  "warehouses": "Warehouses",
+  "stockLevels": "Stock Levels",
+  "kardexLedger": "Kardex Ledger",
+  "stockLevelsWarehouse": "Stock Levels: {warehouse}",
+  "@stockLevelsWarehouse": {
+    "placeholders": {
+      "warehouse": {
+        "type": "String"
+      }
+    }
+  },
+  "kardexLedgerHeader": "Permanent Kardex Movement Ledger (Entries, Exits, Transfers & Audits)",
+  "tableHeaderProduct": "Product",
+  "tableHeaderUnitCost": "Unit Cost",
+  "tableHeaderSku": "SKU",
+  "tableHeaderProductItem": "Product Item",
+  "tableHeaderMinStock": "Min Stock",
+  "tableHeaderCost": "Cost",
+  "tableHeaderSalePrice": "Sale Price",
+  "tableHeaderTotalAmount": "Total Amount",
+  "tableHeaderDueDate": "Due Date",
+  "tableHeaderTotalDebt": "Total Debt",
+  "tableHeaderProductName": "Product Name",
+  "tableHeaderRucTaxId": "RUC / Tax ID",
+  "tableHeaderPhone": "Phone",
+  "invoiceTitle": "Invoice {invoiceNumber}",
+  "@invoiceTitle": {
+    "placeholders": {
+      "invoiceNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "customerLabel": "Customer: {customer}",
+  "@customerLabel": {
+    "placeholders": {
+      "customer": {
+        "type": "String"
+      }
+    }
+  },
+  "cashierLabel": "Cashier: {cashier}",
+  "@cashierLabel": {
+    "placeholders": {
+      "cashier": {
+        "type": "String"
+      }
+    }
+  },
+  "startPreparation": "Start Preparation",
+  "readyToServe": "Ready to Serve",
+  "served": "Served",
+  "openAccountsAndTabs": "Open Accounts & Tabs",
+  "openNewTabTitle": "Open New Bar / Table Tab",
+  "openTabAction": "Open Tab",
+  "fastCatalogPrompt": "Tap an item to add immediately to current tab:",
+  "activeTabOrder": "Active Tab Order",
+  "timerAction": "Timer",
+  "preBillPrint": "Pre-Bill Print",
+  "proceedToCheckout": "Proceed to Checkout",
+  "paySupplierTitle": "Pay Supplier: {supplier}",
+  "@paySupplierTitle": {
+    "placeholders": {
+      "supplier": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceLabel": "Invoice: {invoiceNumber}",
+  "@invoiceLabel": {
+    "placeholders": {
+      "invoiceNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "paid": "Paid",
+  "receive": "Receive",
+  "delivered": "Delivered",
+  "outstandingBalanceLabel": "Outstanding Balance: ",
+  "reportsAndBi": "Reports & BI",
+  "exportCsv": "Export CSV",
+  "reportExportedSuccessfully": "Report Exported Successfully",
+  "done": "Done",
+  "settingsAndRbac": "Settings & RBAC",
+  "appearance": "Appearance",
+  "corporateAndFiscal": "Corporate & Fiscal",
+  "themeMode": "Theme Mode",
+  "systemLanguage": "System Language",
+  "corporateAndTaxConfig": "Corporate & Tax Configuration",
+  "legalName": "Legal Name:",
+  "commercialBrand": "Commercial Brand:",
+  "taxIdRucLabel": "Tax ID / RUC:",
+  "salesTaxRatePercent": "Sales Tax Rate (%):",
+  "defaultOperatingCurrency": "Default Operating Currency:",
+  "rbacSecurityMatrix": "RBAC Security & Permission Matrix",
+  "authorizeActionNamed": "Authorize: {action}",
+  "@authorizeActionNamed": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "authorizeAction": "Authorize Action",
+  "invalidSupervisorPin": "Invalid supervisor authorization PIN.",
+  "companyNamePrompt": "Company name...",
+  "usersAndStaff": "Users & Staff",
+  "inviteEmployee": "Invite Employee",
+  "inviteNewEmployee": "Invite New Employee",
+  "fullNamePrompt": "Full name...",
+  "superAdminYes": "Super Admin: YES",
+  "superAdminNo": "Super Admin: NO",
+  "editStaffTitle": "Edit Staff: {name}",
+  "@editStaffTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "roles": "Roles",
+  "productCatalog": "Products",
+  "newProduct": "New Product",
+  "productNamePrompt": "Product name...",
+  "quickProductCatalog": "Quick Product Catalog",
+  "noProductsAvailablePrompt": "No products available. Add items in catalog or seed database.",
+  "selectOrRegisterCustomer": "Select or Register Customer",
+  "limit": "Limit",
+  "balance": "Balance",
+  "saleSummaryAndItems": "Sale Summary & Items",
+  "cartIsEmptyPrompt": "Cart is empty. Add items from the catalog.",
+  "itemHeader": "Item",
+  "qtyHeader": "Qty",
+  "clear": "Clear",
+  "finalizeSale": "Finalize Sale",
+  "walkInCustomer": "Consumidor Final (Walk-in)",
+  "creditAvail": "Credit Avail.",
+  "changeAction": "Change",
+  "salesReceipt": "Sales Receipt",
+  "thankYouForBusiness": "*** THANK YOU FOR YOUR BUSINESS ***",
+  "printAction": "Print",
+  "newSaleAction": "New Sale",
+  "tax15Percent": "IVA / Tax (15%):",
+  "onboardingWizardTitle": "Logisto Onboarding Wizard",
+  "stepCounter": "Step {step} of 4",
+  "@stepCounter": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "previousStep": "Previous",
+  "launchSystem": "Launch System",
+  "nextStep": "Next Step",
+  "step1Desc": "Logisto isolates global corporate masters (Customers, Suppliers, Users) at the Organization level, while transactional activities (POS, Kitchen, Warehouses, Tables) execute inside specific Business Units.",
+  "step1Placeholder": "Corporate Legal Name (e.g. Inversiones Castillo S.A.)",
+  "step2Placeholder": "Branch Name (e.g. Downtown Billiards or Central Pharmacy)",
+  "step2Segment": "Primary Business Segment:",
+  "step3Placeholder": "Hourly rate (e.g. 10.00)",
+  "adjust": "Adjust",
+  "itemsBilled": "Items Billed:",
+  "totalPaid": "Total Paid:",
+  "confirmVoid": "Confirm Void",
+  "searchInvoiceOrCustomer": "Search invoice # or customer...",
+  "voidAction": "Void",
+  "voidInvoiceDesc": "Supervisor confirmation required. Voiding this invoice will reverse sales metrics and audit the cancellation.",
+  "allFilter": "All",
+  "pendingFilter": "Pending",
+  "inPrepFilter": "In Prep",
+  "readyFilter": "Ready",
+  "noOrdersInQueue": "No orders in this status queue.",
+  "customerTableAliasPlaceholder": "Customer / Table Alias (e.g. Barra Carlos)",
+  "accountTotal": "Account Total:",
+  "paymentAmountDollar": "Payment Amount ($)",
+  "estimatedTotalOrderValue": "Estimated Total Order Value ($)",
+  "createPurchaseOrderAction": "Create Purchase Order",
+  "exchangeRateLabel": "Exchange Rate (USD -> NIO):",
+  "supervisorPermissionPrompt": "This action requires elevated supervisor permissions. Please enter authorized 4-digit PIN:",
+  "orderCompleted": "Order completed.",
+  "orderCancelled": "Order cancelled.",
+  "cancelled": "Cancelled",
+  "newTab": "New Tab",
+  "noTabSelectedPrompt": "No tab selected. Select or create an open account.",
+  "noSupplierLiabilitiesRecorded": "No supplier liabilities recorded.",
+  "settled": "SETTLED",
+  "noPurchaseOrdersRecorded": "No purchase orders recorded.",
+  "statusReceived": "RECEIVED",
+  "statusPending": "PENDING",
+  "salesReport8020": "Sales 80/20",
+  "cashShifts": "Cash Shifts",
+  "creditAging": "Credit & Aging",
+  "csvReportGenerated": "CSV formatted report generated ({count} rows):",
+  "@csvReportGenerated": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "reportSalesPareto": "Sales & Pareto Contribution (80/20)",
+  "reportInventoryValuation": "Inventory Valuation & Reorder Point",
+  "reportBilliardsUtilization": "Billiard Station Utilization & Hourly Rent",
+  "reportCashDrawerCuts": "Cash Drawer Cuts (Z-Report Audit)",
+  "reportReceivablesAging": "Accounts Receivable & Aging (CxC)",
+  "noneRequiresSupervisorPin": "None (Requires Supervisor PIN)",
+  "companyLegalName": "Company Legal Name",
+  "contactRepresentative": "Contact Representative",
+  "creditDaysExample": "Credit Days (e.g. 15, 30)",
+  "searchSupplierPlaceholder": "Search supplier name or tax ID...",
+  "rucTaxIdPlaceholder": "RUC / Tax ID",
+  "daysCount": "{count} Days",
+  "@daysCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "superAdminShort": "SuperAdmin",
+  "noProductsRegistered": "No products registered in this organization.",
+  "saveProduct": "Save Product",
+  "select": "Select",
+  "add": "Add",
+  "error": "Error",
+  "creditLimitLabel": "Limit",
+  "debtLabel": "Debt",
+  "tableHeaderPrice": "Price",
+  "totalAmountLabel": "Total Amount:",
+  "subtotalLabel": "Subtotal:",
+  "customer": "Customer",
+  "cashTendered": "Cash Tendered",
+  "cardPayment": "Card Payment",
+  "customerCredit": "Customer Credit",
+  "addedToCustomerDebt": "Added to Customer Debt:",
+  "creditAvailablePrefix": "Credit Avail.",
+  "step3Alert": "Auto-provisioning \"Main Warehouse\" and \"Register 01\".",
+  "productionSeedsEnabled": "Production Seeds: ENABLED",
+  "productionSeedsDisabled": "Production Seeds: DISABLED",
+  "unitsCount": "{count} units",
+  "@unitsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inStockCount": "{count} in stock",
+  "@inStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "minStockCount": "Min: {count}",
+  "@minStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stockStatusLow": "LOW STOCK",
+  "stockStatusOptimal": "OPTIMAL",
+  "defaultCustomerFirstName": "New",
+  "defaultCustomerLastName": "Customer",
+  "defaultSupplierName": "New Supplier",
+  "defaultContactName": "Contact",
+  "defaultProductName": "New Product",
+  "auditPhysicalCountReason": "Physical count audit",
+  "mainWarehouse": "Main",
+  "kdsMinutesPending": "{minutes} min (Pending)",
+  "@kdsMinutesPending": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "kdsMinutesCooking": "{minutes} min (Cooking)",
+  "@kdsMinutesCooking": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "kdsNote": "Note: {note}",
+  "@kdsNote": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "priceEach": "${price} each",
+  "@priceEach": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "totalLiabilitiesAmount": "Total Liabilities: ${amount}",
+  "@totalLiabilitiesAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "authErrorEmailPasswordRequired": "Email and password are required.",
+  "authErrorPinFourDigits": "PIN must be exactly 4 digits.",
+  "businessTypeBilliard": "Billiards & Entertainment",
+  "businessTypeRetail": "Retail & Store",
+  "businessTypePharmacy": "Pharmacy & Health",
+  "businessTypeRestaurant": "Restaurant & Bar",
+  "businessTypeGeneral": "General Commercial",
+  "productTypeStandard": "Standard",
+  "productTypeCombo": "Combo",
+  "productTypeService": "Service",
+  "productTypeRawMaterial": "Raw Material",
+  "productTypePack": "Pack / Bundle",
+  "productTypeRecipeBom": "Recipe / BOM",
+  "roleSuperAdmin": "Super Administrator",
+  "roleAdminBusinessUnit": "Branch Manager",
+  "roleSupervisor": "Floor Supervisor",
+  "roleCashier": "Cashier",
+  "roleWaiter": "Waiter / Server",
+  "roleInventoryManager": "Inventory Manager",
+  "roleKitchen": "Kitchen / KDS",
+  "auditActionVoidItem": "void item",
+  "auditActionVoidInvoice": "void invoice",
+  "auditActionApplyDiscount": "apply discount",
+  "auditActionOpenDrawer": "open drawer",
+  "auditActionTransferTable": "transfer table",
+  "auditActionSplitBill": "split bill",
+  "auditActionBlindDrop": "blind drop",
+  "auditActionReorderPoint": "reorder point",
+  "auditActionForceSync": "force sync",
+  "auditActionRateChange": "rate change",
+  "auditActionCreditOverride": "credit override",
+  "auditActionStockAdjustment": "stock adjustment",
+  "auditActionCloseShift": "close shift",
+  "movementPurchaseReceipt": "Purchase Receipt",
+  "movementSalesDeduction": "Sales Deduction",
+  "movementInternalTransfer": "Internal Transfer",
+  "movementWasteAdjustment": "Waste Adjustment",
+  "movementInitialCount": "Initial Count",
+  "paymentMethodCash": "Cash",
+  "paymentMethodCard": "Card",
+  "paymentMethodCustomerCredit": "Customer Credit",
+  "paymentMethodBankTransfer": "Bank Transfer",
+  "paymentMethodMixed": "Mixed / Split",
+  "discrepancyBalanced": "Balanced",
+  "discrepancyShortage": "Shortage",
+  "discrepancySurplus": "Surplus",
+  "tableTypePool": "Pool",
+  "tableTypeCarambola": "Carambola",
+  "tableTypeSnooker": "Snooker",
+  "tableTypeVip": "VIP",
+  "reportTagLowStock": "Low Stock: {count} Units",
+  "@reportTagLowStock": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportTagInStock": "{count} In Stock",
+  "@reportTagInStock": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportTagShortage": "Shortage -${amount}",
+  "@reportTagShortage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportTagBalanced": "Balanced $0.00",
+  "reportTagActiveCredit": "Active Credit",
+  "reportTagBlockedOverdue": "BLOCKED (Overdue >30d)",
+  "reportTagOccupancy": "Occupancy: {percent}%",
+  "@reportTagOccupancy": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "reportTagTopPareto": "Top 80%",
+  "reportMetricCostVal": "Cost Val: ${amount}",
+  "@reportMetricCostVal": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportMetricSaleVal": "Sale Val: ${amount}",
+  "@reportMetricSaleVal": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportMetricExpected": "Expected: ${amount}",
+  "@reportMetricExpected": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportMetricCounted": "Counted: ${amount}",
+  "@reportMetricCounted": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportMetricCurrentDebt": "Current Debt: ${amount}",
+  "@reportMetricCurrentDebt": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportMetricDaysOverdue": "Days Overdue: {days}",
+  "@reportMetricDaysOverdue": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "reportMetricTimeSales": "Time Sales: ${amount}",
+  "@reportMetricTimeSales": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportMetricBarConsumed": "Bar Consumed: ${amount}",
+  "@reportMetricBarConsumed": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportMetricRevenue": "Revenue: ${amount}",
+  "@reportMetricRevenue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportMetricMargin": "Margin: {percent}%",
+  "@reportMetricMargin": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "reportSubShiftHours": "Opened {opened} • Closed {closed}",
+  "@reportSubShiftHours": {
+    "placeholders": {
+      "opened": {
+        "type": "String"
+      },
+      "closed": {
+        "type": "String"
+      }
+    }
+  },
+  "reportSubTableRateHours": "Rate: ${rate}/h • {hours} Hours Active",
+  "@reportSubTableRateHours": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "reportSubParetoRankUnits": "Pareto Rank #{rank} • {units} Units Sold",
+  "@reportSubParetoRankUnits": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "units": {
+        "type": "int"
+      }
+    }
+  },
+  "reportSubSkuMin": "SKU: {sku} • Min: {min} units",
+  "@reportSubSkuMin": {
+    "placeholders": {
+      "sku": {
+        "type": "String"
+      },
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "reportSubRucLimit": "RUC: {ruc} • Limit: ${limit}",
+  "@reportSubRucLimit": {
+    "placeholders": {
+      "ruc": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "reportShiftCashier": "Shift #{number} • Cashier: {name}",
+  "@reportShiftCashier": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryBeverages": "Beverages",
+  "categoryCocktails": "Cocktails",
+  "categoryFood": "Food"
+}
