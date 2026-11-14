@@ -82,6 +82,24 @@ void main() {
       expect(provider.currentUserName, isNull);
       expect(provider.status, equals(FeatureStatusEnum.idle));
     });
+
+    test('persists session in preferences and restores it on new provider instance', () async {
+      await provider.signInWithEmailPassword('cashier@logisto.com', 'pass123');
+      expect(provider.isAuthenticated, isTrue);
+      expect(preferences.hasActiveSession(), isTrue);
+      expect(preferences.getUserName(), equals('cashier'));
+
+      // Simulate app restart by creating a new provider instance with the same preferences
+      final restartedProvider = LoginProvider(preferences: preferences);
+      expect(restartedProvider.isAuthenticated, isTrue);
+      expect(restartedProvider.currentUserName, equals('cashier'));
+      expect(restartedProvider.status, equals(FeatureStatusEnum.loaded));
+
+      // Sign out clears persisted session
+      await restartedProvider.signOut();
+      expect(restartedProvider.isAuthenticated, isFalse);
+      expect(preferences.hasActiveSession(), isFalse);
+    });
   });
 
   group('LoginScreen Widget Tests', () {

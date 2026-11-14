@@ -141,7 +141,7 @@ void main() {
         expect(find.text('Inventario'), findsOneWidget);
         expect(find.text('Turnos de Caja'), findsOneWidget);
         expect(find.text('Crédito y Cartera'), findsOneWidget);
-        expect(find.text('Billares'), findsOneWidget);
+        expect(find.widgetWithText(OutlinedButton, 'Billares'), findsOneWidget);
 
         // Tap 'Inventario' filter button
         await tester.tap(find.text('Inventario'));

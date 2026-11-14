@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:logisto/core/enums/business_type_enum.dart';
 import 'package:logisto/core/enums/feature_status_enum.dart';
 import 'package:logisto/core/enums/kds_status_enum.dart';
 import 'package:logisto/data/firestore/firestore_client.dart';
 import 'package:logisto/data/repositories/kitchen_order_repository.dart';
+import 'package:logisto/domain/models/business_unit_model.dart';
 import 'package:logisto/domain/models/kitchen_order_model.dart';
+import 'package:logisto/domain/models/organization_model.dart';
 import 'package:logisto/locator.dart';
 import 'package:logisto/main.dart';
+import 'package:logisto/presentation/context/business_context_provider.dart';
 import 'package:logisto/presentation/kitchen/kitchen_display_screen.dart';
 import 'package:logisto/presentation/kitchen/kitchen_provider.dart';
 import 'package:mocktail/mocktail.dart';
@@ -116,6 +120,30 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       mockFirestoreClient = MockFirestoreClient();
       await setupLocator(firestoreClient: mockFirestoreClient, reset: true);
+      final contextProvider = locator<BusinessContextProvider>();
+      await contextProvider.initializeContext(
+        organization: OrganizationModel(
+          id: 'org_test',
+          legalName: 'Test Org',
+          commercialName: 'Test Org',
+          taxId: 'J12345678',
+          ownerUserId: 'user_01',
+          createdAt: DateTime(2025, 1, 1),
+        ),
+        units: [
+          BusinessUnitModel(
+            id: 'bu_test',
+            orgId: 'org_test',
+            name: 'Central Branch',
+            taxId: 'J12345678',
+            phone: '555-0100',
+            address: 'Managua',
+            businessType: BusinessTypeEnum.billiard,
+            isBilliardHall: true,
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        ],
+      );
     });
 
     tearDown(() async {

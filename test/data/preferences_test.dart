@@ -12,14 +12,25 @@ void main() {
 
     test('saves and retrieves session tokens and IDs', () async {
       final prefs = await AppPreferences.getInstance();
-      await prefs.saveSession(token: 'jwt_token_123', userId: 'user_456');
+      await prefs.saveSession(
+        token: 'jwt_token_123',
+        userId: 'user_456',
+        userName: 'Admin User',
+        email: 'admin@logisto.io',
+      );
 
       expect(prefs.getToken(), 'jwt_token_123');
       expect(prefs.getUserId(), 'user_456');
+      expect(prefs.getUserName(), 'Admin User');
+      expect(prefs.getUserEmail(), 'admin@logisto.io');
+      expect(prefs.hasActiveSession(), isTrue);
 
       await prefs.clearSession();
       expect(prefs.getToken(), isNull);
       expect(prefs.getUserId(), isNull);
+      expect(prefs.getUserName(), isNull);
+      expect(prefs.getUserEmail(), isNull);
+      expect(prefs.hasActiveSession(), isFalse);
     });
 
     test(

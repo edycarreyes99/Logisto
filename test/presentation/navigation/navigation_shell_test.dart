@@ -1,19 +1,24 @@
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logisto/core/enums/user_role_enum.dart';
+import 'package:logisto/data/firestore/firestore_client.dart';
 import 'package:logisto/locator.dart';
 import 'package:logisto/main.dart';
 import 'package:logisto/presentation/audit/audit_log_screen.dart';
 import 'package:logisto/presentation/auth/widgets/pin_switch_modal.dart';
+import 'package:logisto/presentation/navigation/app_flow_coordinator.dart';
 import 'package:logisto/presentation/navigation/app_routes.dart';
 import 'package:logisto/presentation/navigation/navigation_drawer.dart';
 import 'package:logisto/presentation/navigation/navigation_provider.dart';
 import 'package:logisto/presentation/navigation/navigation_shell.dart';
+import 'package:logisto/presentation/onboarding/onboarding_wizard_screen.dart';
 import 'package:logisto/presentation/pos/pos_checkout_screen.dart';
 import 'package:logisto/presentation/products/product_catalog_screen.dart';
 import 'package:logisto/presentation/reports/reports_screen.dart';
 import 'package:logisto/presentation/settings/settings_screen.dart';
 import 'package:logisto/presentation/users/user_management_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../test_helpers.dart';
 
 void main() {
@@ -98,6 +103,8 @@ void main() {
         expect(find.byType(ProductCatalogScreen), findsOneWidget);
 
         // Navigate to Reports & BI via sidebar
+        await tester.ensureVisible(find.text('Reports & BI'));
+        await tester.pumpAndSettle();
         await tester.tap(find.text('Reports & BI'));
         await tester.pumpAndSettle();
 
@@ -147,7 +154,7 @@ void main() {
       },
     );
 
-    testWidgets('renders mobile layout with menu toggle button', (
+    testWidgets('renders mobile layout with menu toggle button in app bar', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(400, 800);
@@ -163,16 +170,16 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
-      expect(find.text('Logisto'), findsOneWidget);
+      expect(find.text('Dashboard'), findsOneWidget);
 
-      // On mobile, desktop sidebar is hidden
-      expect(find.byType(AppNavigationDrawer), findsNothing);
+      // On mobile, desktop sidebar is hidden and no bottom navigation is present
+      expect(find.byType(NavigationBar), findsNothing);
 
-      // Menu button exists on mobile
-      expect(find.text('Menu'), findsOneWidget);
+      // Menu button exists on mobile in LogistoAppBar
+      expect(find.byIcon(Icons.menu_rounded), findsOneWidget);
 
-      // Open offcanvas drawer
-      await tester.tap(find.text('Menu'));
+      // Open drawer from LogistoAppBar
+      await tester.tap(find.byIcon(Icons.menu_rounded));
       await tester.pumpAndSettle();
 
       expect(find.text('Logisto ERP Modules'), findsOneWidget);
@@ -185,5 +192,38 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.byType(PosCheckoutScreen), findsOneWidget);
     });
+  });
+
+  group('AppFlowCoordinator Self-Healing Tests', () {
+    testWidgets(
+      'redirects to onboarding instead of hanging on loading screen when org is missing in DB',
+      (tester) async {
+        tester.view.physicalSize = const Size(1280, 800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+
+        // Precondition: user is authenticated, onboarding flagged true, but DB has 0 orgs
+        SharedPreferences.setMockInitialValues({
+          'auth_token': 'test_token',
+          'user_id': 'test_user',
+          'onboarding_completed': true,
+        });
+        final fake = FakeFirebaseFirestore();
+        final client = FirestoreClient(firestore: fake);
+        await setupLocator(firestoreClient: client, reset: true);
+
+        await tester.pumpWidget(
+          const LogistoApp(
+            locale: Locale('es'),
+            home: AppFlowCoordinator(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        // Confirms it self-healed and transitioned to OnboardingWizardScreen rather than hanging on CircularProgressIndicator
+        expect(find.byType(OnboardingWizardScreen), findsOneWidget);
+      },
+    );
   });
 }

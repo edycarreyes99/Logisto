@@ -71,7 +71,6 @@ void main() {
       expect(provider.businessType, equals(BusinessTypeEnum.billiard));
       expect(provider.initialTables, equals(4));
       expect(provider.hourlyRate, equals(10.0));
-      expect(provider.seedDemoData, isTrue);
     });
 
     test(
@@ -109,9 +108,6 @@ void main() {
       provider.setBilliardConfig(8, 25.0);
       expect(provider.initialTables, equals(8));
       expect(provider.hourlyRate, equals(25.0));
-
-      provider.setSeedDemo(false);
-      expect(provider.seedDemoData, isFalse);
     });
 
     test(
