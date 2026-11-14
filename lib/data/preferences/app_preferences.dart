@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/enums/language_enum.dart';
 import '../../core/enums/theme_mode_enum.dart';
+import '../../domain/models/printer_device_model.dart';
 
 /// High-level asynchronous wrapper over local [SharedPreferences] storage.
 /// Conforms to RULE-DATA-004 by encapsulating all key-value operations.
@@ -14,6 +15,8 @@ class AppPreferences {
   static const String _keyOnboardingCompleted = 'onboarding_completed';
   static const String _keyLanguage = 'selected_language';
   static const String _keyThemeMode = 'selected_theme_mode';
+  static const String _keySavedPrinter = 'saved_printer_device';
+  static const String _keyAutoPrintOnSale = 'auto_print_on_sale';
 
   final SharedPreferences _prefs;
 
@@ -112,6 +115,35 @@ class AppPreferences {
     final key = _prefs.getString(_keyThemeMode);
     return ThemeModeEnum.fromStorageKey(key);
   }
+
+  /// Persists configured printer device metadata including MAC address and custom alias.
+  Future<void> saveSavedPrinter(PrinterDeviceModel printer) async {
+    await _prefs.setString(_keySavedPrinter, printer.toJson());
+  }
+
+  /// Retrieves persisted printer device configuration, or null if unconfigured.
+  PrinterDeviceModel? getSavedPrinter() {
+    final rawJson = _prefs.getString(_keySavedPrinter);
+    if (rawJson == null || rawJson.isEmpty) return null;
+    try {
+      return PrinterDeviceModel.fromJson(rawJson);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Removes persisted printer device configuration.
+  Future<void> clearSavedPrinter() async {
+    await _prefs.remove(_keySavedPrinter);
+  }
+
+  /// Persists whether tickets should be automatically dispatched to printer upon sale completion.
+  Future<void> setAutoPrintOnSale(bool autoPrint) async {
+    await _prefs.setBool(_keyAutoPrintOnSale, autoPrint);
+  }
+
+  /// Retrieves whether tickets should auto-print upon sale completion.
+  bool getAutoPrintOnSale() => _prefs.getBool(_keyAutoPrintOnSale) ?? false;
 
   /// Clears active credentials upon logout.
   Future<void> clearSession() async {
