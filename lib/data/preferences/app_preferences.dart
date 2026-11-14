@@ -7,6 +7,8 @@ import '../../core/enums/theme_mode_enum.dart';
 class AppPreferences {
   static const String _keyToken = 'auth_token';
   static const String _keyUserId = 'user_id';
+  static const String _keyUserName = 'user_name';
+  static const String _keyUserEmail = 'user_email';
   static const String _keyActiveOrgId = 'active_org_id';
   static const String _keyActiveBuId = 'active_bu_id';
   static const String _keyOnboardingCompleted = 'onboarding_completed';
@@ -29,9 +31,17 @@ class AppPreferences {
   Future<void> saveSession({
     required String token,
     required String userId,
+    String? userName,
+    String? email,
   }) async {
     await _prefs.setString(_keyToken, token);
     await _prefs.setString(_keyUserId, userId);
+    if (userName != null) {
+      await _prefs.setString(_keyUserName, userName);
+    }
+    if (email != null) {
+      await _prefs.setString(_keyUserEmail, email);
+    }
   }
 
   /// Retrieves the persisted session token.
@@ -39,6 +49,19 @@ class AppPreferences {
 
   /// Retrieves the persisted user identifier.
   String? getUserId() => _prefs.getString(_keyUserId);
+
+  /// Retrieves the persisted user display name.
+  String? getUserName() => _prefs.getString(_keyUserName);
+
+  /// Retrieves the persisted user email address.
+  String? getUserEmail() => _prefs.getString(_keyUserEmail);
+
+  /// Returns whether an active user session is saved.
+  bool hasActiveSession() {
+    final token = getToken();
+    final uid = getUserId();
+    return token != null && token.isNotEmpty && uid != null && uid.isNotEmpty;
+  }
 
   /// Persists active Organization tenant identifier.
   Future<void> saveActiveOrgId(String orgId) async {
@@ -90,10 +113,16 @@ class AppPreferences {
     return ThemeModeEnum.fromStorageKey(key);
   }
 
-  /// Clears active credentials and organization context upon logout.
+  /// Clears active credentials upon logout.
   Future<void> clearSession() async {
     await _prefs.remove(_keyToken);
     await _prefs.remove(_keyUserId);
+    await _prefs.remove(_keyUserName);
+    await _prefs.remove(_keyUserEmail);
+  }
+
+  /// Clears active organization and business unit station context.
+  Future<void> clearOrganizationContext() async {
     await _prefs.remove(_keyActiveOrgId);
     await _prefs.remove(_keyActiveBuId);
   }
