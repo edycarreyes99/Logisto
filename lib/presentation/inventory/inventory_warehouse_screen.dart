@@ -1,8 +1,11 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../data/firestore/database_seeder.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../context/business_context_provider.dart';
 import 'inventory_warehouse_provider.dart';
 import 'widgets/kardex_list_mobile.dart';
@@ -85,6 +88,10 @@ class _InventoryWarehouseScreenState extends State<InventoryWarehouseScreen> {
                 quantity: qty,
               );
               Navigator.of(ctx).pop();
+              AppFeedback.showSuccess(
+                context,
+                'Transferencia interna de $qty unidades confirmada',
+              );
             },
             child: Text(l10n.confirmTransferGuide),
           ),
@@ -135,6 +142,10 @@ class _InventoryWarehouseScreenState extends State<InventoryWarehouseScreen> {
                 reason: l10n.auditPhysicalCountReason,
               );
               Navigator.of(ctx).pop();
+              AppFeedback.showSuccess(
+                context,
+                'Ajuste de inventario aplicado a ${item['name']}',
+              );
             },
             child: Text(l10n.saveAdjustment),
           ),
@@ -217,6 +228,18 @@ class _InventoryWarehouseScreenState extends State<InventoryWarehouseScreen> {
     final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
     final items = _provider.stockItems;
 
+    if (_provider.status == FeatureStatusEnum.loading) {
+      return Card(
+        elevation: 1,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: isDesktop
+              ? const AppSkeletonTable(rowCount: 5, columnCount: 5)
+              : const AppSkeletonList(itemCount: 4),
+        ),
+      );
+    }
+
     return Card(
       elevation: 1,
       child: Padding(
@@ -251,6 +274,18 @@ class _InventoryWarehouseScreenState extends State<InventoryWarehouseScreen> {
   Widget _buildKardexView(AppLocalizations l10n) {
     final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
     final movements = _provider.movements;
+
+    if (_provider.status == FeatureStatusEnum.loading) {
+      return Card(
+        elevation: 1,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: isDesktop
+              ? const AppSkeletonTable(rowCount: 6, columnCount: 6)
+              : const AppSkeletonList(itemCount: 4),
+        ),
+      );
+    }
 
     return Card(
       elevation: 1,

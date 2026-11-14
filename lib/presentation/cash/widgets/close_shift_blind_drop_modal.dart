@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/enums/shift_status_enum.dart';
 import '../../../domain/services/cash_shift_calculator.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../common/app_feedback.dart';
 import '../../common/enum_localization_extensions.dart';
 import '../cash_shift_provider.dart';
 
@@ -33,6 +34,21 @@ class _CloseShiftBlindDropModalState extends State<CloseShiftBlindDropModal> {
     );
     if (!mounted) return;
     setState(() => _result = res);
+    if (res != null) {
+      if (res.discrepancyStatus == ShiftDiscrepancyEnum.balanced) {
+        AppFeedback.showSuccess(context, 'Cierre Z procesado con balance exacto');
+      } else if (res.difference < 0) {
+        AppFeedback.showWarning(
+          context,
+          'Cierre Z con faltante de \$${res.difference.abs().toStringAsFixed(2)}',
+        );
+      } else {
+        AppFeedback.showWarning(
+          context,
+          'Cierre Z con sobrante de \$${res.difference.toStringAsFixed(2)}',
+        );
+      }
+    }
   }
 
   @override

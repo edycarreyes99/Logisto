@@ -1,9 +1,12 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/product_type_enum.dart';
 import '../../domain/models/product_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../common/enum_localization_extensions.dart';
 import '../context/business_context_provider.dart';
 import 'product_catalog_provider.dart';
@@ -188,6 +191,10 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                 );
                 _provider.saveProduct(orgId: orgId, product: item);
                 Navigator.of(ctx).pop();
+                AppFeedback.showSuccess(
+                  context,
+                  'Producto "${item.name}" guardado exitosamente',
+                );
               },
               child: Text(l10n.saveProduct),
             ),
@@ -210,6 +217,16 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
         elevation: 0,
         scrolledUnderElevation: 1,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            tooltip: l10n.refresh,
+            onPressed: () {
+              final orgId =
+                  _contextProvider.activeOrganization?.id ?? 'org_logisto_matriz';
+              _provider.loadProducts(orgId);
+              AppFeedback.showSuccess(context, 'Catálogo de productos sincronizado');
+            },
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: FilledButton.icon(
@@ -238,6 +255,25 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
     final orgId =
         _contextProvider.activeOrganization?.id ?? 'org_logisto_matriz';
     final theme = Theme.of(context);
+
+    if (_provider.status == FeatureStatusEnum.loading) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildFilterBar(l10n),
+          const SizedBox(height: 16),
+          Card(
+            elevation: 1,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: isDesktop
+                  ? const AppSkeletonTable(rowCount: 6, columnCount: 6)
+                  : const AppSkeletonList(itemCount: 4),
+            ),
+          ),
+        ],
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -276,10 +312,16 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                     ? ProductTableDesktop(
                         products: products,
                         onEdit: _showProductModal,
-                        onDelete: (id) => _provider.deleteProduct(
-                          orgId: orgId,
-                          productId: id,
-                        ),
+                        onDelete: (id) {
+                          _provider.deleteProduct(
+                            orgId: orgId,
+                            productId: id,
+                          );
+                          AppFeedback.showSuccess(
+                            context,
+                            l10n.recordDeletedSuccess,
+                          );
+                        },
                       )
                     : ProductListMobile(
                         products: products,

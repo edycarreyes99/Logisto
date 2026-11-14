@@ -1,9 +1,12 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/invoice_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../context/business_context_provider.dart';
 import 'invoice_history_provider.dart';
 import 'widgets/invoice_list_mobile.dart';
@@ -137,6 +140,7 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
             onPressed: () {
               _provider.voidInvoice(id);
               Navigator.of(ctx).pop();
+              AppFeedback.showWarning(context, 'Factura anulada en el sistema');
             },
             child: Text(l10n.confirmVoid),
           ),
@@ -156,6 +160,21 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
         ),
         elevation: 0,
         scrolledUnderElevation: 1,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            tooltip: l10n.refresh,
+            onPressed: () {
+              final orgId =
+                  _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
+              final buId =
+                  _contextProvider.activeBusinessUnit?.id ??
+                  DatabaseSeeder.defaultBuCentralId;
+              _provider.loadInvoices(orgId: orgId, buId: buId);
+              AppFeedback.showSuccess(context, 'Historial de facturas actualizado');
+            },
+          ),
+        ],
       ),
       body: BsContainer.fluid(
         child: SingleChildScrollView(
@@ -173,6 +192,41 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
     final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
     final invoices = _provider.filteredInvoices;
     final theme = Theme.of(context);
+
+    if (_provider.status == FeatureStatusEnum.loading) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            width: 280,
+            child: TextField(
+              controller: _searchCtrl,
+              decoration: InputDecoration(
+                hintText: l10n.searchInvoiceOrCustomer,
+                prefixIcon: const Icon(Icons.search, size: 20),
+                border: const OutlineInputBorder(),
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+              ),
+              onChanged: _provider.setSearchQuery,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            elevation: 1,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: isDesktop
+                  ? const AppSkeletonTable(rowCount: 6, columnCount: 6)
+                  : const AppSkeletonList(itemCount: 4),
+            ),
+          ),
+        ],
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

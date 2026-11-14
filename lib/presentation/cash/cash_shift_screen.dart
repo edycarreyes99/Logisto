@@ -1,8 +1,11 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../data/firestore/database_seeder.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../context/business_context_provider.dart';
 import 'cash_shift_provider.dart';
 import 'widgets/close_shift_blind_drop_modal.dart';
@@ -77,6 +80,10 @@ class _CashShiftScreenState extends State<CashShiftScreen> {
                 cashierId: 'usr_cashier_1',
               );
               Navigator.of(ctx).pop();
+              AppFeedback.showSuccess(
+                context,
+                'Turno de caja abierto con \$${float.toStringAsFixed(2)}',
+              );
             },
             child: Text(l10n.openShift),
           ),
@@ -115,6 +122,10 @@ class _CashShiftScreenState extends State<CashShiftScreen> {
                         isWithdrawal: true,
                       );
                       Navigator.of(ctx).pop();
+                      AppFeedback.showWarning(
+                        context,
+                        'Retiro de efectivo por \$${val.toStringAsFixed(2)} registrado',
+                      );
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.error,
@@ -132,6 +143,10 @@ class _CashShiftScreenState extends State<CashShiftScreen> {
                         isWithdrawal: false,
                       );
                       Navigator.of(ctx).pop();
+                      AppFeedback.showSuccess(
+                        context,
+                        'Ingreso de efectivo por \$${val.toStringAsFixed(2)} registrado',
+                      );
                     },
                     child: Text(l10n.cashInflow),
                   ),
@@ -162,21 +177,33 @@ class _CashShiftScreenState extends State<CashShiftScreen> {
           padding: const EdgeInsets.all(16.0),
           child: ListenableBuilder(
             listenable: _provider,
-            builder: (context, _) => Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (_provider.hasActiveShift)
-                  ShiftSummaryCard(
-                    shift: _provider.activeShift!,
-                    onAddMovement: () => _showMovementModal(l10n),
-                    onCloseShift: _showCloseShiftModal,
-                  )
-                else
-                  _buildNoShiftBanner(l10n),
-                const SizedBox(height: 20),
-                _buildHistoryTable(l10n),
-              ],
-            ),
+            builder: (context, _) {
+              if (_provider.status == FeatureStatusEnum.loading) {
+                return const Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AppSkeletonKpiGrid(cardCount: 4),
+                    SizedBox(height: 20),
+                    AppSkeletonTable(rowCount: 4, columnCount: 4),
+                  ],
+                );
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (_provider.hasActiveShift)
+                    ShiftSummaryCard(
+                      shift: _provider.activeShift!,
+                      onAddMovement: () => _showMovementModal(l10n),
+                      onCloseShift: _showCloseShiftModal,
+                    )
+                  else
+                    _buildNoShiftBanner(l10n),
+                  const SizedBox(height: 20),
+                  _buildHistoryTable(l10n),
+                ],
+              );
+            },
           ),
         ),
       ),

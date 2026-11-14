@@ -1,10 +1,13 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/payment_method_enum.dart';
 import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/account_receivable_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../context/business_context_provider.dart';
 import 'accounts_receivable_provider.dart';
 import 'widgets/receivable_list_mobile.dart';
@@ -81,6 +84,10 @@ class _AccountsReceivableScreenState extends State<AccountsReceivableScreen> {
                 method: PaymentMethodEnum.cash,
               );
               Navigator.of(ctx).pop();
+              AppFeedback.showSuccess(
+                context,
+                'Abono de \$${val.toStringAsFixed(2)} aplicado a ${r.customerName}',
+              );
             },
             child: Text(l10n.emitReceiptAndApply),
           ),
@@ -132,6 +139,18 @@ class _AccountsReceivableScreenState extends State<AccountsReceivableScreen> {
     final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
     final receivables = _provider.receivables;
     final theme = Theme.of(context);
+
+    if (_provider.status == FeatureStatusEnum.loading) {
+      return Card(
+        elevation: 1,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: isDesktop
+              ? const AppSkeletonTable(rowCount: 5, columnCount: 5)
+              : const AppSkeletonList(itemCount: 4),
+        ),
+      );
+    }
 
     return Card(
       elevation: 1,

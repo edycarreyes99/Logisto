@@ -1,9 +1,12 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/customer_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../context/business_context_provider.dart';
 import 'customer_catalog_provider.dart';
 import 'widgets/customer_list_mobile.dart';
@@ -145,6 +148,10 @@ class _CustomerCatalogScreenState extends State<CustomerCatalogScreen> {
               );
               _provider.saveCustomer(orgId: orgId, customer: cust);
               Navigator.of(ctx).pop();
+              AppFeedback.showSuccess(
+                context,
+                'Cliente "${cust.fullName}" guardado exitosamente',
+              );
             },
             child: Text(l10n.saveCustomer),
           ),
@@ -165,6 +172,16 @@ class _CustomerCatalogScreenState extends State<CustomerCatalogScreen> {
         elevation: 0,
         scrolledUnderElevation: 1,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            tooltip: l10n.refresh,
+            onPressed: () {
+              final orgId =
+                  _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
+              _provider.loadCustomers(orgId);
+              AppFeedback.showSuccess(context, 'Directorio de clientes sincronizado');
+            },
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: FilledButton.icon(
@@ -191,6 +208,41 @@ class _CustomerCatalogScreenState extends State<CustomerCatalogScreen> {
     final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
     final customers = _provider.filteredCustomers;
     final theme = Theme.of(context);
+
+    if (_provider.status == FeatureStatusEnum.loading) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            width: 300,
+            child: TextField(
+              controller: _searchCtrl,
+              decoration: InputDecoration(
+                hintText: l10n.searchPlaceholder,
+                prefixIcon: const Icon(Icons.search, size: 20),
+                border: const OutlineInputBorder(),
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+              ),
+              onChanged: _provider.setSearchQuery,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            elevation: 1,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: isDesktop
+                  ? const AppSkeletonTable(rowCount: 5, columnCount: 5)
+                  : const AppSkeletonList(itemCount: 4),
+            ),
+          ),
+        ],
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -233,7 +285,13 @@ class _CustomerCatalogScreenState extends State<CustomerCatalogScreen> {
                     ? CustomerTableDesktop(
                         customers: customers,
                         onEdit: _showCustomerModal,
-                        onToggleBlock: _provider.toggleCreditBlock,
+                        onToggleBlock: (id) {
+                          _provider.toggleCreditBlock(id);
+                          AppFeedback.showWarning(
+                            context,
+                            'Estado de crédito actualizado',
+                          );
+                        },
                       )
                     : CustomerListMobile(
                         customers: customers,

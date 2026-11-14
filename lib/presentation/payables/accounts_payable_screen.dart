@@ -1,9 +1,12 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/account_payable_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../context/business_context_provider.dart';
 import 'accounts_payable_provider.dart';
 import 'widgets/payable_list_mobile.dart';
@@ -78,6 +81,10 @@ class _AccountsPayableScreenState extends State<AccountsPayableScreen> {
               final val = double.tryParse(amtCtrl.text) ?? p.remainingBalance;
               _provider.recordPayment(payableId: p.id, amount: val);
               Navigator.of(ctx).pop();
+              AppFeedback.showSuccess(
+                context,
+                'Pago a proveedor de \$${val.toStringAsFixed(2)} emitido con éxito',
+              );
             },
             child: Text(l10n.disbursePayment),
           ),
@@ -131,6 +138,18 @@ class _AccountsPayableScreenState extends State<AccountsPayableScreen> {
     final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
     final payables = _provider.payables;
     final theme = Theme.of(context);
+
+    if (_provider.status == FeatureStatusEnum.loading) {
+      return Card(
+        elevation: 1,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: isDesktop
+              ? const AppSkeletonTable(rowCount: 5, columnCount: 5)
+              : const AppSkeletonList(itemCount: 4),
+        ),
+      );
+    }
 
     return Card(
       elevation: 1,

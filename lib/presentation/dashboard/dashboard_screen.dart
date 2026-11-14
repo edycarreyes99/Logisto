@@ -1,8 +1,11 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../data/firestore/database_seeder.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../common/enum_localization_extensions.dart';
 import '../context/business_context_provider.dart';
 import 'dashboard_provider.dart';
@@ -49,16 +52,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
           padding: const EdgeInsets.all(16.0),
           child: ListenableBuilder(
             listenable: _provider,
-            builder: (context, _) => Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                DashboardKpiCards(metrics: _provider.metrics),
-                const SizedBox(height: 16),
-                _buildBreakdownRow(l10n),
-                const SizedBox(height: 16),
-                TopSellingTable(items: _provider.topProducts),
-              ],
-            ),
+            builder: (context, _) {
+              if (_provider.status == FeatureStatusEnum.loading) {
+                return const Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AppSkeletonKpiGrid(cardCount: 6),
+                    SizedBox(height: 16),
+                    AppSkeletonTable(rowCount: 5, columnCount: 3),
+                  ],
+                );
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  DashboardKpiCards(metrics: _provider.metrics),
+                  const SizedBox(height: 16),
+                  _buildBreakdownRow(l10n),
+                  const SizedBox(height: 16),
+                  TopSellingTable(items: _provider.topProducts),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -79,6 +94,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
       elevation: 0,
       scrolledUnderElevation: 1,
       actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh_rounded),
+          tooltip: l10n.refresh,
+          onPressed: () async {
+            final orgId =
+                _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
+            final buId =
+                _contextProvider.activeBusinessUnit?.id ??
+                DatabaseSeeder.defaultBuCentralId;
+            await _provider.loadDashboard(orgId: orgId, buId: buId);
+            if (mounted) {
+              AppFeedback.showSuccess(context, 'Dashboard sincronizado');
+            }
+          },
+        ),
         Padding(
           padding: const EdgeInsets.only(right: 12.0),
           child: Wrap(

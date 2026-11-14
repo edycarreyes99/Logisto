@@ -1,9 +1,12 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/purchase_order_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../context/business_context_provider.dart';
 import 'purchase_order_provider.dart';
 import 'widgets/purchase_order_list_mobile.dart';
@@ -97,6 +100,10 @@ class _PurchaseOrderScreenState extends State<PurchaseOrderScreen> {
               );
               _provider.createOrder(order);
               Navigator.of(ctx).pop();
+              AppFeedback.showSuccess(
+                context,
+                'Orden de compra #${order.id} creada',
+              );
             },
             child: Text(l10n.issueOrder),
           ),
@@ -144,6 +151,18 @@ class _PurchaseOrderScreenState extends State<PurchaseOrderScreen> {
     final orders = _provider.orders;
     final theme = Theme.of(context);
 
+    if (_provider.status == FeatureStatusEnum.loading) {
+      return Card(
+        elevation: 1,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: isDesktop
+              ? const AppSkeletonTable(rowCount: 5, columnCount: 5)
+              : const AppSkeletonList(itemCount: 4),
+        ),
+      );
+    }
+
     return Card(
       elevation: 1,
       child: Padding(
@@ -161,11 +180,17 @@ class _PurchaseOrderScreenState extends State<PurchaseOrderScreen> {
             : (isDesktop
                 ? PurchaseOrderTableDesktop(
                     orders: orders,
-                    onReceive: _provider.receiveGoods,
+                    onReceive: (id) {
+                      _provider.receiveGoods(id);
+                      AppFeedback.showSuccess(context, 'Mercancía recibida en almacén');
+                    },
                   )
                 : PurchaseOrderListMobile(
                     orders: orders,
-                    onReceive: _provider.receiveGoods,
+                    onReceive: (id) {
+                      _provider.receiveGoods(id);
+                      AppFeedback.showSuccess(context, 'Mercancía recibida en almacén');
+                    },
                   )),
       ),
     );
