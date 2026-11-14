@@ -98,75 +98,131 @@ class AppNavigationDrawer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CircleAvatar(
-                radius: 20.0,
-                backgroundColor: Colors.white.withValues(alpha: 0.25),
-                child: const Icon(
-                  Icons.person_rounded,
-                  color: Colors.white,
-                  size: 24.0,
-                ),
-              ),
-              const SizedBox(width: 12.0),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      userName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15.0,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2.0),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                      child: Text(
-                        userRole,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10.0,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(6.0),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.apps_rounded, size: 13.0, color: Colors.white),
+                      const SizedBox(width: 5.0),
+                      Flexible(
+                        child: Text(
+                          l10n.navOffcanvasTitle,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+              ),
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                icon: const Icon(Icons.close_rounded, size: 20.0, color: Colors.white70),
+                tooltip: l10n.close,
+                onPressed: () => Navigator.of(context).maybePop(),
               ),
             ],
           ),
           const SizedBox(height: 12.0),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
+          InkWell(
+            onTap: () {
+              navProvider.navigateTo(AppRoutes.users);
+              onNavigate?.call();
+            },
+            borderRadius: BorderRadius.circular(8.0),
             child: Row(
               children: [
-                const Icon(Icons.storefront_rounded, size: 14.0, color: Colors.white70),
-                const SizedBox(width: 6.0),
+                CircleAvatar(
+                  radius: 20.0,
+                  backgroundColor: Colors.white.withValues(alpha: 0.25),
+                  child: const Icon(
+                    Icons.person_rounded,
+                    color: Colors.white,
+                    size: 24.0,
+                  ),
+                ),
+                const SizedBox(width: 12.0),
                 Expanded(
-                  child: Text(
-                    buName,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    overflow: TextOverflow.ellipsis,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        userName,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15.0,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2.0),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Text(
+                          userRole,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10.0,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 12.0),
+          InkWell(
+            onTap: () {
+              navProvider.navigateTo(AppRoutes.businessUnits);
+              onNavigate?.call();
+            },
+            borderRadius: BorderRadius.circular(8.0),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.storefront_rounded, size: 14.0, color: Colors.white70),
+                  const SizedBox(width: 6.0),
+                  Expanded(
+                    child: Text(
+                      buName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const Icon(Icons.swap_horiz_rounded, size: 14.0, color: Colors.white70),
+                ],
+              ),
             ),
           ),
         ],
@@ -236,7 +292,7 @@ class AppNavigationDrawer extends StatelessWidget {
                 context: context,
                 builder: (ctx) => AlertDialog(
                   title: Text(l10n.logout),
-                  content: Text(l10n.deleteConfirmation),
+                  content: Text(l10n.logoutConfirmation),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(ctx).pop(false),

@@ -35,8 +35,16 @@ import 'app_routes.dart';
 import 'navigation_drawer.dart';
 import 'navigation_provider.dart';
 
+enum NavModuleGroup {
+  operations,
+  inventory,
+  catalogs,
+  finance,
+  system,
+}
+
 /// Universal multiplatform application shell hosting top navigation bar,
-/// responsive Material 3 Drawer, BottomNavigationBar for mobile modules,
+/// responsive Material 3 Drawer, modular BottomNavigationBar per operational family,
 /// and active operational routing.
 class NavigationShell extends StatefulWidget {
   final String? initialRoute;
@@ -52,6 +60,7 @@ class _NavigationShellState extends State<NavigationShell> {
   late final NavigationProvider _navProvider;
   late final BusinessContextProvider _contextProvider;
   late final LoginProvider _loginProvider;
+  bool _isSeeding = false;
 
   @override
   void initState() {
@@ -65,73 +74,8 @@ class _NavigationShellState extends State<NavigationShell> {
     }
   }
 
-  void _showOffcanvasDrawer() {
-    final l10n = AppLocalizations.of(context)!;
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        height: MediaQuery.of(ctx).size.height * 0.9,
-        decoration: BoxDecoration(
-          color: Theme.of(ctx).scaffoldBackgroundColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20.0)),
-        ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 16.0, 12.0, 12.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(6.0),
-                          decoration: BoxDecoration(
-                            color: Theme.of(ctx).colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Icon(
-                            Icons.grid_view_rounded,
-                            size: 18.0,
-                            color: Theme.of(ctx).colorScheme.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 10.0),
-                        Expanded(
-                          child: Text(
-                            l10n.navOffcanvasTitle,
-                            style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close_rounded),
-                    onPressed: () => Navigator.of(ctx).pop(),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: 1),
-            Expanded(
-              child: AppNavigationDrawer(
-                navProvider: _navProvider,
-                contextProvider: _contextProvider,
-                showHeader: false,
-                onNavigate: () => Navigator.of(ctx).pop(),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  void _openDrawer() {
+    _scaffoldKey.currentState?.openDrawer();
   }
 
   void _showFastPinModal() {
@@ -147,15 +91,23 @@ class _NavigationShellState extends State<NavigationShell> {
   }
 
   Future<void> _handleSeedDatabase() async {
-    final seeder = locator<DatabaseSeeder>();
-    await seeder.seedProductionData();
-    if (!mounted) return;
-    final l10n = AppLocalizations.of(context)!;
-    AppFeedback.showSuccess(
-      context,
-      l10n.databaseSeededSuccess,
-      title: l10n.seedDatabase,
-    );
+    if (_isSeeding) return;
+    setState(() => _isSeeding = true);
+    try {
+      final seeder = locator<DatabaseSeeder>();
+      await seeder.seedProductionData();
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      AppFeedback.showSuccess(
+        context,
+        l10n.databaseSeededSuccess,
+        title: l10n.seedDatabase,
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isSeeding = false);
+      }
+    }
   }
 
   void _showNotificationsPanel() {
@@ -334,9 +286,9 @@ class _NavigationShellState extends State<NavigationShell> {
         children: [
           if (!isDesktop) ...[
             OutlinedButton.icon(
-              icon: const Icon(Icons.menu, size: 18),
+              icon: const Icon(Icons.menu_rounded, size: 18),
               label: Text(l10n.menu),
-              onPressed: _showOffcanvasDrawer,
+              onPressed: _openDrawer,
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12.0,
@@ -356,18 +308,21 @@ class _NavigationShellState extends State<NavigationShell> {
             ),
           ),
           const SizedBox(width: 12),
-          Flexible(
-            child: InkWell(
-              onTap: () => _navProvider.navigateTo(AppRoutes.businessUnits),
-              borderRadius: BorderRadius.circular(8.0),
-              child: Chip(
-                label: Text(buName, overflow: TextOverflow.ellipsis),
-                backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                labelStyle: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: InkWell(
+                onTap: () => _navProvider.navigateTo(AppRoutes.businessUnits),
+                borderRadius: BorderRadius.circular(8.0),
+                child: Chip(
+                  label: Text(buName, overflow: TextOverflow.ellipsis),
+                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                  labelStyle: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ),
           ),
@@ -381,9 +336,15 @@ class _NavigationShellState extends State<NavigationShell> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     OutlinedButton.icon(
-                      icon: const Icon(Icons.storage, size: 16),
+                      icon: _isSeeding
+                          ? const SizedBox(
+                              width: 14,
+                              height: 14,
+                              child: CircularProgressIndicator(strokeWidth: 2.0),
+                            )
+                          : const Icon(Icons.storage, size: 16),
                       label: Text(l10n.seedDatabase),
-                      onPressed: _handleSeedDatabase,
+                      onPressed: _isSeeding ? null : _handleSeedDatabase,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10.0,
@@ -453,7 +414,6 @@ class _NavigationShellState extends State<NavigationShell> {
               ),
             ),
           ] else ...[
-            const Spacer(),
             IconButton(
               icon: const Icon(Icons.notifications_outlined, size: 20.0),
               onPressed: _showNotificationsPanel,
@@ -486,27 +446,75 @@ class _NavigationShellState extends State<NavigationShell> {
     );
   }
 
+  NavModuleGroup _getModuleGroup(String route) {
+    switch (route) {
+      case AppRoutes.dashboard:
+      case AppRoutes.pos:
+      case AppRoutes.openAccounts:
+      case AppRoutes.billiards:
+      case AppRoutes.kitchen:
+        return NavModuleGroup.operations;
+      case AppRoutes.cash:
+      case AppRoutes.inventory:
+      case AppRoutes.kardex:
+      case AppRoutes.invoices:
+        return NavModuleGroup.inventory;
+      case AppRoutes.products:
+      case AppRoutes.customers:
+      case AppRoutes.suppliers:
+        return NavModuleGroup.catalogs;
+      case AppRoutes.purchasing:
+      case AppRoutes.receivables:
+      case AppRoutes.payables:
+      case AppRoutes.reports:
+        return NavModuleGroup.finance;
+      case AppRoutes.businessUnits:
+      case AppRoutes.users:
+      case AppRoutes.audit:
+      case AppRoutes.settings:
+      case AppRoutes.onboarding:
+      default:
+        return NavModuleGroup.system;
+    }
+  }
+
   Widget _buildBottomNavigationBar() {
     final l10n = AppLocalizations.of(context)!;
     final route = _navProvider.currentRoute;
+    final group = _getModuleGroup(route);
 
-    int selectedIndex = 0;
+    switch (group) {
+      case NavModuleGroup.operations:
+        return _buildOperationsNav(l10n, route);
+      case NavModuleGroup.inventory:
+        return _buildInventoryNav(l10n, route);
+      case NavModuleGroup.catalogs:
+        return _buildCatalogsNav(l10n, route);
+      case NavModuleGroup.finance:
+        return _buildFinanceNav(l10n, route);
+      case NavModuleGroup.system:
+        return _buildSystemNav(l10n, route);
+    }
+  }
+
+  Widget _buildOperationsNav(AppLocalizations l10n, String route) {
+    int index = 0;
     if (route == AppRoutes.dashboard) {
-      selectedIndex = 0;
+      index = 0;
     } else if (route == AppRoutes.pos) {
-      selectedIndex = 1;
-    } else if (route == AppRoutes.openAccounts || route == AppRoutes.billiards) {
-      selectedIndex = 2;
-    } else if (route == AppRoutes.cash || route == AppRoutes.inventory) {
-      selectedIndex = 3;
+      index = 1;
+    } else if (route == AppRoutes.openAccounts) {
+      index = 2;
+    } else if (route == AppRoutes.billiards || route == AppRoutes.kitchen) {
+      index = 3;
     } else {
-      selectedIndex = 4;
+      index = 4;
     }
 
     return NavigationBar(
-      selectedIndex: selectedIndex,
-      onDestinationSelected: (index) {
-        switch (index) {
+      selectedIndex: index,
+      onDestinationSelected: (i) {
+        switch (i) {
           case 0:
             _navProvider.navigateTo(AppRoutes.dashboard);
             break;
@@ -514,17 +522,17 @@ class _NavigationShellState extends State<NavigationShell> {
             _navProvider.navigateTo(AppRoutes.pos);
             break;
           case 2:
+            _navProvider.navigateTo(AppRoutes.openAccounts);
+            break;
+          case 3:
             _navProvider.navigateTo(
               _contextProvider.isBilliardActive
                   ? AppRoutes.billiards
-                  : AppRoutes.openAccounts,
+                  : AppRoutes.kitchen,
             );
             break;
-          case 3:
-            _navProvider.navigateTo(AppRoutes.cash);
-            break;
           case 4:
-            _showOffcanvasDrawer();
+            _openDrawer();
             break;
         }
       },
@@ -534,24 +542,284 @@ class _NavigationShellState extends State<NavigationShell> {
           selectedIcon: const Icon(Icons.dashboard_rounded),
           label: l10n.dashboard,
         ),
-        NavigationDestination(
-          icon: const Icon(Icons.point_of_sale_outlined),
-          selectedIcon: const Icon(Icons.point_of_sale_rounded),
+        const NavigationDestination(
+          icon: Icon(Icons.point_of_sale_outlined),
+          selectedIcon: Icon(Icons.point_of_sale_rounded),
           label: 'POS',
         ),
         NavigationDestination(
-          icon: const Icon(Icons.receipt_long_outlined),
-          selectedIcon: const Icon(Icons.receipt_long_rounded),
-          label: _contextProvider.isBilliardActive ? l10n.billiards : l10n.openAccounts,
+          icon: const Icon(Icons.checklist_outlined),
+          selectedIcon: const Icon(Icons.checklist_rounded),
+          label: l10n.openAccounts,
         ),
+        NavigationDestination(
+          icon: Icon(
+            _contextProvider.isBilliardActive
+                ? Icons.sports_esports_outlined
+                : Icons.restaurant_outlined,
+          ),
+          selectedIcon: Icon(
+            _contextProvider.isBilliardActive
+                ? Icons.sports_esports_rounded
+                : Icons.restaurant_rounded,
+          ),
+          label: _contextProvider.isBilliardActive
+              ? l10n.billiards
+              : l10n.kitchen,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.menu_rounded),
+          selectedIcon: const Icon(Icons.menu_open_rounded),
+          label: l10n.modules,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInventoryNav(AppLocalizations l10n, String route) {
+    int index = 0;
+    if (route == AppRoutes.cash) {
+      index = 0;
+    } else if (route == AppRoutes.inventory) {
+      index = 1;
+    } else if (route == AppRoutes.kardex) {
+      index = 2;
+    } else if (route == AppRoutes.invoices) {
+      index = 3;
+    } else {
+      index = 4;
+    }
+
+    return NavigationBar(
+      selectedIndex: index,
+      onDestinationSelected: (i) {
+        switch (i) {
+          case 0:
+            _navProvider.navigateTo(AppRoutes.cash);
+            break;
+          case 1:
+            _navProvider.navigateTo(AppRoutes.inventory);
+            break;
+          case 2:
+            _navProvider.navigateTo(AppRoutes.kardex);
+            break;
+          case 3:
+            _navProvider.navigateTo(AppRoutes.invoices);
+            break;
+          case 4:
+            _openDrawer();
+            break;
+        }
+      },
+      destinations: [
         NavigationDestination(
           icon: const Icon(Icons.payments_outlined),
           selectedIcon: const Icon(Icons.payments_rounded),
           label: l10n.cash,
         ),
         NavigationDestination(
-          icon: const Icon(Icons.apps_rounded),
-          selectedIcon: const Icon(Icons.grid_view_rounded),
+          icon: const Icon(Icons.inventory_2_outlined),
+          selectedIcon: const Icon(Icons.inventory_2_rounded),
+          label: l10n.warehouses,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.menu_book_outlined),
+          selectedIcon: const Icon(Icons.menu_book_rounded),
+          label: l10n.kardex,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.receipt_long_outlined),
+          selectedIcon: const Icon(Icons.receipt_long_rounded),
+          label: l10n.invoices,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.menu_rounded),
+          selectedIcon: const Icon(Icons.menu_open_rounded),
+          label: l10n.modules,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCatalogsNav(AppLocalizations l10n, String route) {
+    int index = 0;
+    if (route == AppRoutes.products) {
+      index = 0;
+    } else if (route == AppRoutes.customers) {
+      index = 1;
+    } else if (route == AppRoutes.suppliers) {
+      index = 2;
+    } else {
+      index = 3;
+    }
+
+    return NavigationBar(
+      selectedIndex: index,
+      onDestinationSelected: (i) {
+        switch (i) {
+          case 0:
+            _navProvider.navigateTo(AppRoutes.products);
+            break;
+          case 1:
+            _navProvider.navigateTo(AppRoutes.customers);
+            break;
+          case 2:
+            _navProvider.navigateTo(AppRoutes.suppliers);
+            break;
+          case 3:
+            _openDrawer();
+            break;
+        }
+      },
+      destinations: [
+        NavigationDestination(
+          icon: const Icon(Icons.shopping_bag_outlined),
+          selectedIcon: const Icon(Icons.shopping_bag_rounded),
+          label: l10n.products,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.people_outline),
+          selectedIcon: const Icon(Icons.people_rounded),
+          label: l10n.customers,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.local_shipping_outlined),
+          selectedIcon: const Icon(Icons.local_shipping_rounded),
+          label: l10n.suppliers,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.menu_rounded),
+          selectedIcon: const Icon(Icons.menu_open_rounded),
+          label: l10n.modules,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFinanceNav(AppLocalizations l10n, String route) {
+    int index = 0;
+    if (route == AppRoutes.purchasing) {
+      index = 0;
+    } else if (route == AppRoutes.receivables) {
+      index = 1;
+    } else if (route == AppRoutes.payables) {
+      index = 2;
+    } else if (route == AppRoutes.reports) {
+      index = 3;
+    } else {
+      index = 4;
+    }
+
+    return NavigationBar(
+      selectedIndex: index,
+      onDestinationSelected: (i) {
+        switch (i) {
+          case 0:
+            _navProvider.navigateTo(AppRoutes.purchasing);
+            break;
+          case 1:
+            _navProvider.navigateTo(AppRoutes.receivables);
+            break;
+          case 2:
+            _navProvider.navigateTo(AppRoutes.payables);
+            break;
+          case 3:
+            _navProvider.navigateTo(AppRoutes.reports);
+            break;
+          case 4:
+            _openDrawer();
+            break;
+        }
+      },
+      destinations: [
+        NavigationDestination(
+          icon: const Icon(Icons.shopping_cart_checkout_outlined),
+          selectedIcon: const Icon(Icons.shopping_cart_checkout_rounded),
+          label: l10n.purchasing,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.account_balance_wallet_outlined),
+          selectedIcon: const Icon(Icons.account_balance_wallet_rounded),
+          label: l10n.receivables,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.credit_card_outlined),
+          selectedIcon: const Icon(Icons.credit_card_rounded),
+          label: l10n.payables,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.bar_chart_outlined),
+          selectedIcon: const Icon(Icons.bar_chart_rounded),
+          label: l10n.reports,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.menu_rounded),
+          selectedIcon: const Icon(Icons.menu_open_rounded),
+          label: l10n.modules,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSystemNav(AppLocalizations l10n, String route) {
+    int index = 0;
+    if (route == AppRoutes.businessUnits) {
+      index = 0;
+    } else if (route == AppRoutes.users) {
+      index = 1;
+    } else if (route == AppRoutes.audit) {
+      index = 2;
+    } else if (route == AppRoutes.settings) {
+      index = 3;
+    } else {
+      index = 4;
+    }
+
+    return NavigationBar(
+      selectedIndex: index,
+      onDestinationSelected: (i) {
+        switch (i) {
+          case 0:
+            _navProvider.navigateTo(AppRoutes.businessUnits);
+            break;
+          case 1:
+            _navProvider.navigateTo(AppRoutes.users);
+            break;
+          case 2:
+            _navProvider.navigateTo(AppRoutes.audit);
+            break;
+          case 3:
+            _navProvider.navigateTo(AppRoutes.settings);
+            break;
+          case 4:
+            _openDrawer();
+            break;
+        }
+      },
+      destinations: [
+        NavigationDestination(
+          icon: const Icon(Icons.business_outlined),
+          selectedIcon: const Icon(Icons.business_rounded),
+          label: l10n.businessUnits,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.manage_accounts_outlined),
+          selectedIcon: const Icon(Icons.manage_accounts_rounded),
+          label: l10n.users,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.security_outlined),
+          selectedIcon: const Icon(Icons.security_rounded),
+          label: l10n.audit,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.settings_outlined),
+          selectedIcon: const Icon(Icons.settings_rounded),
+          label: l10n.settings,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.menu_rounded),
+          selectedIcon: const Icon(Icons.menu_open_rounded),
           label: l10n.modules,
         ),
       ],

@@ -1,6 +1,7 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../common/app_feedback.dart';
 import '../../navigation/navigation_shell.dart';
 
 /// Top navigation bar using Flutter Material Design 3.
@@ -52,7 +53,12 @@ class HomeNavbar extends StatelessWidget {
     return [
       const SizedBox(width: 16),
       TextButton(
-        onPressed: () {},
+        onPressed: () {
+          AppFeedback.showInfo(
+            context,
+            '${l10n.overview}: Vista general del sistema',
+          );
+        },
         child: Text(
           l10n.overview,
           style: TextStyle(
@@ -61,7 +67,15 @@ class HomeNavbar extends StatelessWidget {
           ),
         ),
       ),
-      TextButton(onPressed: () {}, child: Text(l10n.metrics)),
+      TextButton(
+        onPressed: () {
+          AppFeedback.showInfo(
+            context,
+            '${l10n.metrics}: Métricas de rendimiento activas',
+          );
+        },
+        child: Text(l10n.metrics),
+      ),
       TextButton(
         onPressed: () {
           Navigator.of(context).push(
