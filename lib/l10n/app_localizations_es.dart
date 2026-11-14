@@ -2772,4 +2772,93 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get emailNotVerifiedYet =>
       'El correo aún no ha sido verificado. Revise su bandeja o solicite reenvío.';
+
+  @override
+  String get printerManagementTitle => 'Administración de Impresoras';
+
+  @override
+  String get printerManagementSubtitle =>
+      'Configuración y conexión de impresoras térmicas, USB y Bluetooth';
+
+  @override
+  String get printersSectionTitle => 'Impresoras y Tickets';
+
+  @override
+  String get printersSectionSubtitle =>
+      'Configurar tickets térmicos, matriciales, USB y Bluetooth';
+
+  @override
+  String get activePrinter => 'Impresora Conectada / Activa';
+
+  @override
+  String get noActivePrinter =>
+      'No hay ninguna impresora vinculada actualmente.';
+
+  @override
+  String get scanBluetoothPrinters => 'Buscar Impresoras Bluetooth / USB';
+
+  @override
+  String get scanningPrinters => 'Buscando dispositivos cercanos...';
+
+  @override
+  String get discoveredPrinters => 'Dispositivos Disponibles';
+
+  @override
+  String get noDiscoveredPrinters =>
+      'No se encontraron impresoras disponibles.';
+
+  @override
+  String get connectPrinter => 'Conectar';
+
+  @override
+  String get disconnectPrinter => 'Desvincular';
+
+  @override
+  String get editPrinterAlias => 'Editar Nombre / Alias';
+
+  @override
+  String get printerAliasLabel => 'Nombre amigable (Alias)';
+
+  @override
+  String get printerAliasPlaceholder => 'Ej. Caja Principal - Mostrador';
+
+  @override
+  String get printerTypeLabel => 'Formato de Papel / Tecnología';
+
+  @override
+  String get printerTypeThermal80 => 'Térmica 80 mm (Estándar POS)';
+
+  @override
+  String get printerTypeThermal58 => 'Térmica 58 mm (Portátil)';
+
+  @override
+  String get printerTypeDotMatrix => 'Matricial (Papel Continuo)';
+
+  @override
+  String get macAddressLabel => 'Dirección MAC / Identificador';
+
+  @override
+  String get connectionTypeLabel => 'Tipo de Conexión';
+
+  @override
+  String get autoPrintOnSaleLabel => 'Impresión automática al cobrar';
+
+  @override
+  String get autoPrintOnSaleSubtitle =>
+      'Enviar el comprobante directamente a la impresora al completar una venta';
+
+  @override
+  String get printTestTicket => 'Imprimir Prueba';
+
+  @override
+  String get testTicketSent => 'Ticket de prueba enviado con éxito.';
+
+  @override
+  String get reprintVoucher => 'Reimprimir Voucher';
+
+  @override
+  String get shareVoucher => 'Compartir PDF';
+
+  @override
+  String get previewVoucher => 'Vista Previa';
 }

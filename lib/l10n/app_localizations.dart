@@ -5167,6 +5167,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Email is not verified yet. Please check your inbox or click resend.'**
   String get emailNotVerifiedYet;
+
+  /// No description provided for @printerManagementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Printer Management'**
+  String get printerManagementTitle;
+
+  /// No description provided for @printerManagementSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Configuration and pairing of thermal, USB, and Bluetooth printers'**
+  String get printerManagementSubtitle;
+
+  /// No description provided for @printersSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Printers & Receipts'**
+  String get printersSectionTitle;
+
+  /// No description provided for @printersSectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure thermal, dot-matrix, USB, and Bluetooth receipt printers'**
+  String get printersSectionSubtitle;
+
+  /// No description provided for @activePrinter.
+  ///
+  /// In en, this message translates to:
+  /// **'Active / Connected Printer'**
+  String get activePrinter;
+
+  /// No description provided for @noActivePrinter.
+  ///
+  /// In en, this message translates to:
+  /// **'No printer is currently paired.'**
+  String get noActivePrinter;
+
+  /// No description provided for @scanBluetoothPrinters.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Bluetooth / USB Printers'**
+  String get scanBluetoothPrinters;
+
+  /// No description provided for @scanningPrinters.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning for nearby devices...'**
+  String get scanningPrinters;
+
+  /// No description provided for @discoveredPrinters.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Devices'**
+  String get discoveredPrinters;
+
+  /// No description provided for @noDiscoveredPrinters.
+  ///
+  /// In en, this message translates to:
+  /// **'No available printers found.'**
+  String get noDiscoveredPrinters;
+
+  /// No description provided for @connectPrinter.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get connectPrinter;
+
+  /// No description provided for @disconnectPrinter.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpair'**
+  String get disconnectPrinter;
+
+  /// No description provided for @editPrinterAlias.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Name / Alias'**
+  String get editPrinterAlias;
+
+  /// No description provided for @printerAliasLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Friendly Name (Alias)'**
+  String get printerAliasLabel;
+
+  /// No description provided for @printerAliasPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Main Counter - 80mm'**
+  String get printerAliasPlaceholder;
+
+  /// No description provided for @printerTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Paper Format / Technology'**
+  String get printerTypeLabel;
+
+  /// No description provided for @printerTypeThermal80.
+  ///
+  /// In en, this message translates to:
+  /// **'Thermal 80 mm (POS Standard)'**
+  String get printerTypeThermal80;
+
+  /// No description provided for @printerTypeThermal58.
+  ///
+  /// In en, this message translates to:
+  /// **'Thermal 58 mm (Mobile)'**
+  String get printerTypeThermal58;
+
+  /// No description provided for @printerTypeDotMatrix.
+  ///
+  /// In en, this message translates to:
+  /// **'Dot Matrix (Continuous)'**
+  String get printerTypeDotMatrix;
+
+  /// No description provided for @macAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'MAC Address / Hardware ID'**
+  String get macAddressLabel;
+
+  /// No description provided for @connectionTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Interface'**
+  String get connectionTypeLabel;
+
+  /// No description provided for @autoPrintOnSaleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-print on checkout'**
+  String get autoPrintOnSaleLabel;
+
+  /// No description provided for @autoPrintOnSaleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Directly dispatch voucher to default printer upon completed checkout'**
+  String get autoPrintOnSaleSubtitle;
+
+  /// No description provided for @printTestTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'Print Test Ticket'**
+  String get printTestTicket;
+
+  /// No description provided for @testTicketSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Test ticket dispatched successfully.'**
+  String get testTicketSent;
+
+  /// No description provided for @reprintVoucher.
+  ///
+  /// In en, this message translates to:
+  /// **'Reprint Voucher'**
+  String get reprintVoucher;
+
+  /// No description provided for @shareVoucher.
+  ///
+  /// In en, this message translates to:
+  /// **'Share PDF'**
+  String get shareVoucher;
+
+  /// No description provided for @previewVoucher.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get previewVoucher;
 }
 
 class _AppLocalizationsDelegate

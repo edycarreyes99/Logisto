@@ -7,7 +7,9 @@ import '../common/logisto_scaffold.dart';
 import 'settings_provider.dart';
 import 'widgets/appearance_settings_card.dart';
 import 'widgets/org_settings_card.dart';
+import 'widgets/printer_settings_card.dart';
 import 'widgets/rbac_matrix_card.dart';
+import 'printer_management_provider.dart';
 
 /// Screen for managing corporate preferences, appearance, tax parameters, exchange rates,
 /// and RBAC security policies.
@@ -93,6 +95,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(width: 8),
                 _buildSectionBtn(
+                  key: 'printers',
+                  label: l10n.printersSectionTitle,
+                  icon: Icons.print_outlined,
+                ),
+                const SizedBox(width: 8),
+                _buildSectionBtn(
                   key: 'appearance',
                   label: l10n.appearance,
                   icon: Icons.palette_outlined,
@@ -113,6 +121,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildActiveSection() {
     switch (_provider.selectedSection) {
+      case 'printers':
+        final printerProvider = locator<PrinterManagementProvider>();
+        return ListenableBuilder(
+          listenable: printerProvider,
+          builder: (context, _) => PrinterSettingsCard(provider: printerProvider),
+        );
       case 'appearance':
         return AppearanceSettingsCard(provider: _provider);
       case 'rbac':

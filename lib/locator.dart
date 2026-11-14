@@ -4,6 +4,9 @@ import 'data/firestore/firestore_client.dart';
 import 'data/preferences/app_preferences.dart';
 import 'data/services/firebase_auth_service.dart';
 import 'domain/services/auth_service.dart';
+import 'domain/services/receipt_pdf_generator.dart';
+import 'domain/services/printer_service.dart';
+import 'data/services/printing_service_adapter.dart';
 import 'data/repositories/account_payable_repository.dart';
 import 'data/repositories/account_receivable_repository.dart';
 import 'data/repositories/audit_log_repository.dart';
@@ -44,6 +47,7 @@ import 'presentation/products/product_catalog_provider.dart';
 import 'presentation/purchasing/purchase_order_provider.dart';
 import 'presentation/receivables/accounts_receivable_provider.dart';
 import 'presentation/reports/reports_provider.dart';
+import 'presentation/settings/printer_management_provider.dart';
 import 'presentation/settings/settings_provider.dart';
 import 'presentation/suppliers/supplier_catalog_provider.dart';
 import 'presentation/users/user_management_provider.dart';
@@ -92,6 +96,15 @@ Future<void> setupLocator({
   );
   locator.registerLazySingleton<CashShiftCalculator>(
     () => const CashShiftCalculator(),
+  );
+
+  // Printing & Thermal Voucher Generation Engines
+  locator.registerLazySingleton<IReceiptPdfGenerator>(() => ThermalReceiptPdfGenerator());
+  locator.registerLazySingleton<IPrinterService>(
+    () => PrintingServiceAdapter(
+      receiptPdfGenerator: locator<IReceiptPdfGenerator>(),
+      appPreferences: locator<AppPreferences>(),
+    ),
   );
 
   // Enterprise data repositories
@@ -258,6 +271,12 @@ Future<void> setupLocator({
   );
   locator.registerLazySingleton<SettingsProvider>(
     () => SettingsProvider(preferences: locator<AppPreferences>()),
+  );
+  locator.registerLazySingleton<PrinterManagementProvider>(
+    () => PrinterManagementProvider(
+      printerService: locator<IPrinterService>(),
+      appPreferences: locator<AppPreferences>(),
+    ),
   );
   locator.registerLazySingleton<ReportsProvider>(() => ReportsProvider());
   locator.registerLazySingleton<AuditLogProvider>(

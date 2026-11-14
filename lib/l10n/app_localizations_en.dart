@@ -2749,4 +2749,91 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get emailNotVerifiedYet =>
       'Email is not verified yet. Please check your inbox or click resend.';
+
+  @override
+  String get printerManagementTitle => 'Printer Management';
+
+  @override
+  String get printerManagementSubtitle =>
+      'Configuration and pairing of thermal, USB, and Bluetooth printers';
+
+  @override
+  String get printersSectionTitle => 'Printers & Receipts';
+
+  @override
+  String get printersSectionSubtitle =>
+      'Configure thermal, dot-matrix, USB, and Bluetooth receipt printers';
+
+  @override
+  String get activePrinter => 'Active / Connected Printer';
+
+  @override
+  String get noActivePrinter => 'No printer is currently paired.';
+
+  @override
+  String get scanBluetoothPrinters => 'Search Bluetooth / USB Printers';
+
+  @override
+  String get scanningPrinters => 'Scanning for nearby devices...';
+
+  @override
+  String get discoveredPrinters => 'Available Devices';
+
+  @override
+  String get noDiscoveredPrinters => 'No available printers found.';
+
+  @override
+  String get connectPrinter => 'Connect';
+
+  @override
+  String get disconnectPrinter => 'Unpair';
+
+  @override
+  String get editPrinterAlias => 'Edit Name / Alias';
+
+  @override
+  String get printerAliasLabel => 'Friendly Name (Alias)';
+
+  @override
+  String get printerAliasPlaceholder => 'e.g. Main Counter - 80mm';
+
+  @override
+  String get printerTypeLabel => 'Paper Format / Technology';
+
+  @override
+  String get printerTypeThermal80 => 'Thermal 80 mm (POS Standard)';
+
+  @override
+  String get printerTypeThermal58 => 'Thermal 58 mm (Mobile)';
+
+  @override
+  String get printerTypeDotMatrix => 'Dot Matrix (Continuous)';
+
+  @override
+  String get macAddressLabel => 'MAC Address / Hardware ID';
+
+  @override
+  String get connectionTypeLabel => 'Connection Interface';
+
+  @override
+  String get autoPrintOnSaleLabel => 'Auto-print on checkout';
+
+  @override
+  String get autoPrintOnSaleSubtitle =>
+      'Directly dispatch voucher to default printer upon completed checkout';
+
+  @override
+  String get printTestTicket => 'Print Test Ticket';
+
+  @override
+  String get testTicketSent => 'Test ticket dispatched successfully.';
+
+  @override
+  String get reprintVoucher => 'Reprint Voucher';
+
+  @override
+  String get shareVoucher => 'Share PDF';
+
+  @override
+  String get previewVoucher => 'Preview';
 }
