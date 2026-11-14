@@ -2728,4 +2728,48 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get demoProfilesPrompt => 'Perfiles demo de acceso rápido:';
+
+  @override
+  String get signUp => 'Crear Cuenta';
+
+  @override
+  String get signUpSubtitle =>
+      'Registre una nueva cuenta de usuario empresarial';
+
+  @override
+  String get fullName => 'Nombre Completo';
+
+  @override
+  String get fullNamePlaceholder => 'Carlos Machado';
+
+  @override
+  String get alreadyHaveAccount => '¿Ya tiene una cuenta? Iniciar Sesión';
+
+  @override
+  String get dontHaveAccount => '¿No tiene una cuenta? Registrarse';
+
+  @override
+  String get accountCreatedSuccess => 'Cuenta creada exitosamente.';
+
+  @override
+  String get verifyEmailTitle => 'Verifique su Correo Electrónico';
+
+  @override
+  String verifyEmailPrompt(String email) {
+    return 'Hemos enviado un correo de verificación a $email. Por favor verifique su correo para acceder a todas las funciones empresariales.';
+  }
+
+  @override
+  String get resendVerificationEmail => 'Reenviar Correo de Verificación';
+
+  @override
+  String get verificationEmailSent =>
+      'Correo de verificación reenviado. Por favor revise su bandeja de entrada.';
+
+  @override
+  String get iHaveVerified => 'Ya verifiqué mi correo';
+
+  @override
+  String get emailNotVerifiedYet =>
+      'El correo aún no ha sido verificado. Revise su bandeja o solicite reenvío.';
 }

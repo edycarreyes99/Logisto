@@ -1208,5 +1208,25 @@
   "hidePassword": "Ocultar contraseña",
   "rememberMe": "Recordar sesión",
   "forgotPassword": "¿Olvidó su contraseña?",
-  "demoProfilesPrompt": "Perfiles demo de acceso rápido:"
+  "demoProfilesPrompt": "Perfiles demo de acceso rápido:",
+  "signUp": "Crear Cuenta",
+  "signUpSubtitle": "Registre una nueva cuenta de usuario empresarial",
+  "fullName": "Nombre Completo",
+  "fullNamePlaceholder": "Carlos Machado",
+  "alreadyHaveAccount": "¿Ya tiene una cuenta? Iniciar Sesión",
+  "dontHaveAccount": "¿No tiene una cuenta? Registrarse",
+  "accountCreatedSuccess": "Cuenta creada exitosamente.",
+  "verifyEmailTitle": "Verifique su Correo Electrónico",
+  "verifyEmailPrompt": "Hemos enviado un correo de verificación a {email}. Por favor verifique su correo para acceder a todas las funciones empresariales.",
+  "@verifyEmailPrompt": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "resendVerificationEmail": "Reenviar Correo de Verificación",
+  "verificationEmailSent": "Correo de verificación reenviado. Por favor revise su bandeja de entrada.",
+  "iHaveVerified": "Ya verifiqué mi correo",
+  "emailNotVerifiedYet": "El correo aún no ha sido verificado. Revise su bandeja o solicite reenvío."
 }

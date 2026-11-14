@@ -2706,4 +2706,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoProfilesPrompt => 'Quick access demo profiles:';
+
+  @override
+  String get signUp => 'Create Account';
+
+  @override
+  String get signUpSubtitle => 'Register a new enterprise user account';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get fullNamePlaceholder => 'John Doe';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account? Sign In';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account? Sign Up';
+
+  @override
+  String get accountCreatedSuccess => 'Account created successfully.';
+
+  @override
+  String get verifyEmailTitle => 'Verify Your Email';
+
+  @override
+  String verifyEmailPrompt(String email) {
+    return 'We have sent a verification email to $email. Please verify your email to access all corporate features.';
+  }
+
+  @override
+  String get resendVerificationEmail => 'Resend Verification Email';
+
+  @override
+  String get verificationEmailSent =>
+      'Verification email sent. Please check your inbox.';
+
+  @override
+  String get iHaveVerified => 'I have verified my email';
+
+  @override
+  String get emailNotVerifiedYet =>
+      'Email is not verified yet. Please check your inbox or click resend.';
 }
