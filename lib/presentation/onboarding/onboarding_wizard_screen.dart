@@ -1,7 +1,9 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
 import '../navigation/app_routes.dart';
 import '../navigation/navigation_provider.dart';
 import 'onboarding_provider.dart';
@@ -50,6 +52,8 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
     final ok = await _provider.completeOnboarding();
     if (!mounted) return;
     if (ok) {
+      final l10n = AppLocalizations.of(context)!;
+      AppFeedback.showSuccess(context, l10n.databaseSeededSuccess);
       locator<NavigationProvider>().navigateTo(AppRoutes.dashboard);
     }
   }
@@ -114,18 +118,31 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
 
   Widget _buildNavigationButtons(AppLocalizations l10n) {
     final isLast = _provider.currentStep == 4;
+    final isLoading = _provider.status == FeatureStatusEnum.loading;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         OutlinedButton.icon(
           icon: const Icon(Icons.arrow_back, size: 18),
           label: Text(l10n.previousStep),
-          onPressed: _provider.currentStep == 1 ? null : _provider.previousStep,
+          onPressed:
+              (_provider.currentStep == 1 || isLoading)
+                  ? null
+                  : _provider.previousStep,
         ),
         FilledButton.icon(
-          icon: Icon(isLast ? Icons.check : Icons.arrow_forward, size: 18),
+          icon: isLoading
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : Icon(isLast ? Icons.check : Icons.arrow_forward, size: 18),
           label: Text(isLast ? l10n.launchSystem : l10n.nextStep),
-          onPressed: isLast ? _handleComplete : _provider.nextStep,
+          onPressed: isLoading ? null : (isLast ? _handleComplete : _provider.nextStep),
         ),
       ],
     );

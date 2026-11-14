@@ -1,10 +1,13 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/business_type_enum.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/business_unit_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../context/business_context_provider.dart';
 import '../navigation/app_routes.dart';
 import '../navigation/navigation_provider.dart';
@@ -38,8 +41,19 @@ class _BusinessUnitSelectorScreenState
     });
   }
 
+  void _refresh() {
+    final orgId =
+        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
+    _provider.loadBusinessUnits(orgId);
+    final l10n = AppLocalizations.of(context)!;
+    AppFeedback.showInfo(context, l10n.refresh);
+  }
+
   void _handleSelectUnit(BusinessUnitModel unit) async {
     await _provider.selectUnit(unit);
+    if (mounted) {
+      AppFeedback.showSuccess(context, unit.name);
+    }
     locator<NavigationProvider>().navigateTo(AppRoutes.dashboard);
   }
 
@@ -86,13 +100,15 @@ class _BusinessUnitSelectorScreenState
               final orgId =
                   _contextProvider.activeOrganization?.id ??
                   DatabaseSeeder.defaultOrgId;
+              final bName = nameCtrl.text;
               _provider.addUnit(
                 orgId: orgId,
-                name: nameCtrl.text,
+                name: bName,
                 type: BusinessTypeEnum.retail,
                 address: addressCtrl.text,
               );
               Navigator.of(ctx).pop();
+              AppFeedback.showSuccess(context, '${l10n.createBranch}: $bName');
             },
             child: Text(l10n.createBranch),
           ),
@@ -128,6 +144,11 @@ class _BusinessUnitSelectorScreenState
       elevation: 0,
       scrolledUnderElevation: 1,
       actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          tooltip: l10n.refresh,
+          onPressed: _refresh,
+        ),
         FilledButton.icon(
           onPressed: () => _showAddUnitModal(l10n),
           icon: const Icon(Icons.add, size: 18),
@@ -139,6 +160,11 @@ class _BusinessUnitSelectorScreenState
   }
 
   Widget _buildUnitGrid() {
+    if (_provider.status == FeatureStatusEnum.loading &&
+        _provider.units.isEmpty) {
+      return const AppSkeletonKpiGrid(cardCount: 3);
+    }
+
     final activeId = _contextProvider.activeBusinessUnit?.id;
     return BsRow(
       children: _provider.units.map((unit) {

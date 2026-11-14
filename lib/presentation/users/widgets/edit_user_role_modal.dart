@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/enums/user_role_enum.dart';
 import '../../../domain/models/user_profile_model.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../common/app_feedback.dart';
 import '../../common/enum_localization_extensions.dart';
 import '../user_management_provider.dart';
 
@@ -71,6 +72,8 @@ class _EditUserRoleModalState extends State<EditUserRoleModal> {
 
     if (mounted) {
       Navigator.of(context).pop();
+      final l10n = AppLocalizations.of(context)!;
+      AppFeedback.showSuccess(context, '${l10n.save}: ${widget.user.displayName}');
     }
   }
 
@@ -81,6 +84,8 @@ class _EditUserRoleModalState extends State<EditUserRoleModal> {
     );
     if (mounted) {
       Navigator.of(context).pop();
+      final l10n = AppLocalizations.of(context)!;
+      AppFeedback.showWarning(context, '${l10n.delete}: ${widget.user.displayName}');
     }
   }
 

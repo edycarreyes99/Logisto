@@ -1,7 +1,10 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import 'reports_provider.dart';
 import 'widgets/reports_list_mobile.dart';
 import 'widgets/reports_table_desktop.dart';
@@ -94,17 +97,24 @@ class _ReportsScreenState extends State<ReportsScreen> {
               padding: const EdgeInsets.all(16.0),
               child: ListenableBuilder(
                 listenable: _provider,
-                builder: (context, _) => isDesktop
-                    ? ReportsTableDesktop(
-                        rows: _provider.getLocalizedReportRows(l10n),
-                        title: _getCategoryTitle(
-                          l10n,
-                          _provider.selectedCategory,
-                        ),
-                      )
-                    : ReportsListMobile(
-                        rows: _provider.getLocalizedReportRows(l10n),
-                      ),
+                builder: (context, _) {
+                  if (_provider.status == FeatureStatusEnum.loading) {
+                    return isDesktop
+                        ? const AppSkeletonTable(rowCount: 6, columnCount: 4)
+                        : const AppSkeletonList(itemCount: 4);
+                  }
+                  return isDesktop
+                      ? ReportsTableDesktop(
+                          rows: _provider.getLocalizedReportRows(l10n),
+                          title: _getCategoryTitle(
+                            l10n,
+                            _provider.selectedCategory,
+                          ),
+                        )
+                      : ReportsListMobile(
+                          rows: _provider.getLocalizedReportRows(l10n),
+                        );
+                },
               ),
             ),
           ),
@@ -134,10 +144,23 @@ class _ReportsScreenState extends State<ReportsScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          FilledButton.icon(
-            icon: const Icon(Icons.file_download_outlined, size: 18),
-            label: Text(l10n.exportCsv),
-            onPressed: _showExportSuccessModal,
+          Wrap(
+            spacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                tooltip: l10n.refresh,
+                onPressed: () {
+                  AppFeedback.showInfo(context, l10n.refresh);
+                },
+              ),
+              FilledButton.icon(
+                icon: const Icon(Icons.file_download_outlined, size: 18),
+                label: Text(l10n.exportCsv),
+                onPressed: _showExportSuccessModal,
+              ),
+            ],
           ),
         ],
       ),

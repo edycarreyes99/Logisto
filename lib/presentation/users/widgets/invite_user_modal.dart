@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/enums/user_role_enum.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../common/app_feedback.dart';
 import '../../common/enum_localization_extensions.dart';
 import '../user_management_provider.dart';
 
@@ -48,6 +49,8 @@ class _InviteUserModalState extends State<InviteUserModal> {
       initialRoles: {'bu_matriz_central': _selectedRole},
     );
     Navigator.of(context).pop();
+    final l10n = AppLocalizations.of(context)!;
+    AppFeedback.showSuccess(context, '${l10n.inviteEmployee}: $name');
   }
 
   @override

@@ -1,9 +1,12 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/audit_action_enum.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../data/firestore/database_seeder.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../common/enum_localization_extensions.dart';
 import '../context/business_context_provider.dart';
 import 'audit_log_provider.dart';
@@ -36,6 +39,14 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
     });
   }
 
+  void _refresh() {
+    final orgId =
+        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
+    _provider.loadAuditLogs(orgId);
+    final l10n = AppLocalizations.of(context)!;
+    AppFeedback.showInfo(context, l10n.refresh);
+  }
+
   @override
   void dispose() {
     _searchCtrl.dispose();
@@ -59,9 +70,17 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
               padding: const EdgeInsets.all(16.0),
               child: ListenableBuilder(
                 listenable: _provider,
-                builder: (context, _) => isDesktop
-                    ? AuditLogTableDesktop(logs: _provider.filteredLogs)
-                    : AuditLogListMobile(logs: _provider.filteredLogs),
+                builder: (context, _) {
+                  if (_provider.status == FeatureStatusEnum.loading &&
+                      _provider.logs.isEmpty) {
+                    return isDesktop
+                        ? const AppSkeletonTable(rowCount: 6, columnCount: 5)
+                        : const AppSkeletonList(itemCount: 4);
+                  }
+                  return isDesktop
+                      ? AuditLogTableDesktop(logs: _provider.filteredLogs)
+                      : AuditLogListMobile(logs: _provider.filteredLogs);
+                },
               ),
             ),
           ),
@@ -92,23 +111,34 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          if (isDesktop)
-            SizedBox(
-              width: 260,
-              height: 40,
-              child: TextField(
-                controller: _searchCtrl,
-                decoration: InputDecoration(
-                  hintText: l10n.filterAuditLogsPlaceholder,
-                  prefixIcon: const Icon(Icons.search, size: 20),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+          Wrap(
+            spacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                tooltip: l10n.refresh,
+                onPressed: _refresh,
+              ),
+              if (isDesktop)
+                SizedBox(
+                  width: 260,
+                  height: 40,
+                  child: TextField(
+                    controller: _searchCtrl,
+                    decoration: InputDecoration(
+                      hintText: l10n.filterAuditLogsPlaceholder,
+                      prefixIcon: const Icon(Icons.search, size: 20),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onChanged: _provider.setSearchQuery,
                   ),
                 ),
-                onChanged: _provider.setSearchQuery,
-              ),
-            ),
+            ],
+          ),
         ],
       ),
     );

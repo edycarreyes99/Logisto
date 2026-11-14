@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../common/app_feedback.dart';
 import '../settings_provider.dart';
 
 /// Card managing enterprise corporate metadata, currency exchange rates, and tax policies.
@@ -60,6 +61,8 @@ class _OrgSettingsCardState extends State<OrgSettingsCard> {
     if (tax != null) {
       widget.provider.updateTaxRate(tax / 100.0);
     }
+    final l10n = AppLocalizations.of(context)!;
+    AppFeedback.showSuccess(context, l10n.changesSavedSuccess);
   }
 
   @override

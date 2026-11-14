@@ -1,8 +1,11 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/feature_status_enum.dart';
 import '../../domain/models/user_profile_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
+import '../common/app_feedback.dart';
+import '../common/app_skeleton.dart';
 import '../context/business_context_provider.dart';
 import 'user_management_provider.dart';
 import 'widgets/edit_user_role_modal.dart';
@@ -34,6 +37,14 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _provider.loadUsers(orgId);
     });
+  }
+
+  void _refresh() {
+    final orgId =
+        _contextProvider.activeOrganization?.id ?? 'org_logisto_matriz';
+    _provider.loadUsers(orgId);
+    final l10n = AppLocalizations.of(context)!;
+    AppFeedback.showInfo(context, l10n.refresh);
   }
 
   @override
@@ -76,12 +87,20 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               padding: const EdgeInsets.all(16.0),
               child: ListenableBuilder(
                 listenable: _provider,
-                builder: (context, _) => isDesktop
-                    ? UserTableDesktop(
-                        users: _provider.filteredUsers,
-                        onEditRole: _showRoleModal,
-                      )
-                    : _buildMobileContent(l10n),
+                builder: (context, _) {
+                  if (_provider.status == FeatureStatusEnum.loading &&
+                      _provider.users.isEmpty) {
+                    return isDesktop
+                        ? const AppSkeletonTable(rowCount: 5, columnCount: 4)
+                        : const AppSkeletonList(itemCount: 4);
+                  }
+                  return isDesktop
+                      ? UserTableDesktop(
+                          users: _provider.filteredUsers,
+                          onEditRole: _showRoleModal,
+                        )
+                      : _buildMobileContent(l10n);
+                },
               ),
             ),
           ),
@@ -165,6 +184,11 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                     onChanged: _provider.setSearchQuery,
                   ),
                 ),
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                tooltip: l10n.refresh,
+                onPressed: _refresh,
+              ),
               FilledButton.icon(
                 icon: const Icon(Icons.person_add_outlined, size: 18),
                 label: Text(l10n.inviteEmployee),
