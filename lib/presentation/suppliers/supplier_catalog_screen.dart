@@ -1,12 +1,12 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/supplier_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import 'supplier_catalog_provider.dart';
 import 'widgets/supplier_list_mobile.dart';
@@ -31,11 +31,12 @@ class _SupplierCatalogScreenState extends State<SupplierCatalogScreen> {
     super.initState();
     _provider = locator<SupplierCatalogProvider>();
     _contextProvider = locator<BusinessContextProvider>();
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadSuppliers(orgId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadSuppliers(orgId);
+      });
+    }
   }
 
   @override
@@ -141,9 +142,7 @@ class _SupplierCatalogScreenState extends State<SupplierCatalogScreen> {
                   ? null
                   : () async {
                       setModalState(() => isSaving = true);
-                      final orgId =
-                          _contextProvider.activeOrganization?.id ??
-                          DatabaseSeeder.defaultOrgId;
+                      final orgId = _contextProvider.activeOrganization?.id ?? '';
                       final days = int.tryParse(daysCtrl.text) ?? 30;
                       final sup = SupplierModel(
                         id:
@@ -181,35 +180,26 @@ class _SupplierCatalogScreenState extends State<SupplierCatalogScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          l10n.suppliers,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-        scrolledUnderElevation: 1,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            tooltip: l10n.refresh,
-            onPressed: () {
-              final orgId =
-                  _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
+    return LogistoScaffold(
+      title: l10n.suppliers,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh_rounded),
+          tooltip: l10n.refresh,
+          onPressed: () {
+            final orgId = _contextProvider.activeOrganization?.id ?? '';
+            if (orgId.isNotEmpty) {
               _provider.loadSuppliers(orgId);
               AppFeedback.showSuccess(context, 'Directorio de proveedores sincronizado');
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: FilledButton.icon(
-              icon: const Icon(Icons.add_business, size: 18),
-              label: Text(l10n.registerSupplier),
-              onPressed: () => _showSupplierModal(),
-            ),
-          ),
-        ],
-      ),
+            }
+          },
+        ),
+        FilledButton.icon(
+          icon: const Icon(Icons.add_business, size: 18),
+          label: Text(l10n.registerSupplier),
+          onPressed: () => _showSupplierModal(),
+        ),
+      ],
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

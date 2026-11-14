@@ -1,12 +1,12 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/customer_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import 'customer_catalog_provider.dart';
 import 'widgets/customer_list_mobile.dart';
@@ -30,11 +30,12 @@ class _CustomerCatalogScreenState extends State<CustomerCatalogScreen> {
     super.initState();
     _provider = locator<CustomerCatalogProvider>();
     _contextProvider = locator<BusinessContextProvider>();
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadCustomers(orgId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadCustomers(orgId);
+      });
+    }
   }
 
   @override
@@ -139,9 +140,7 @@ class _CustomerCatalogScreenState extends State<CustomerCatalogScreen> {
                   ? null
                   : () async {
                       setModalState(() => isSaving = true);
-                      final orgId =
-                          _contextProvider.activeOrganization?.id ??
-                          DatabaseSeeder.defaultOrgId;
+                      final orgId = _contextProvider.activeOrganization?.id ?? '';
                       final limit = double.tryParse(limitCtrl.text) ?? 0.0;
                       final cust = CustomerModel(
                         id:
@@ -182,35 +181,26 @@ class _CustomerCatalogScreenState extends State<CustomerCatalogScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          l10n.customers,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-        scrolledUnderElevation: 1,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            tooltip: l10n.refresh,
-            onPressed: () {
-              final orgId =
-                  _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
+    return LogistoScaffold(
+      title: l10n.customers,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh_rounded),
+          tooltip: l10n.refresh,
+          onPressed: () {
+            final orgId = _contextProvider.activeOrganization?.id ?? '';
+            if (orgId.isNotEmpty) {
               _provider.loadCustomers(orgId);
               AppFeedback.showSuccess(context, 'Directorio de clientes sincronizado');
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: FilledButton.icon(
-              icon: const Icon(Icons.person_add, size: 18),
-              label: Text(l10n.registerCustomer),
-              onPressed: () => _showCustomerModal(),
-            ),
-          ),
-        ],
-      ),
+            }
+          },
+        ),
+        FilledButton.icon(
+          icon: const Icon(Icons.person_add, size: 18),
+          label: Text(l10n.registerCustomer),
+          onPressed: () => _showCustomerModal(),
+        ),
+      ],
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

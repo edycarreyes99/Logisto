@@ -1,11 +1,11 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import 'inventory_warehouse_provider.dart';
 import 'widgets/kardex_list_mobile.dart';
@@ -37,14 +37,13 @@ class _InventoryWarehouseScreenState extends State<InventoryWarehouseScreen> {
     if (widget.initialView != null) {
       _provider.setViewMode(widget.initialView!);
     }
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    final buId =
-        _contextProvider.activeBusinessUnit?.id ??
-        DatabaseSeeder.defaultBuCentralId;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadWarehouses(orgId: orgId, buId: buId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadWarehouses(orgId: orgId, buId: buId);
+      });
+    }
   }
 
   void _showTransferModal(Map<String, dynamic> item) {
@@ -195,8 +194,50 @@ class _InventoryWarehouseScreenState extends State<InventoryWarehouseScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: _buildHeader(l10n),
+    final bottomTabs = PreferredSize(
+      preferredSize: const Size.fromHeight(48),
+      child: Container(
+        height: 48,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        alignment: Alignment.centerLeft,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              ChoiceChip(
+                label: Text(l10n.stockLevels),
+                selected: _provider.viewMode == 'stock',
+                onSelected: (_) => _provider.setViewMode('stock'),
+              ),
+              const SizedBox(width: 8),
+              ChoiceChip(
+                label: Text(l10n.kardexLedger),
+                selected: _provider.viewMode == 'kardex',
+                onSelected: (_) => _provider.setViewMode('kardex'),
+              ),
+              if (_provider.viewMode == 'stock') ...[
+                const SizedBox(width: 16),
+                ..._provider.warehouses.map((wh) {
+                  final isSel = _provider.selectedWarehouse?.id == wh.id;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: ChoiceChip(
+                      label: Text(wh.name),
+                      selected: isSel,
+                      onSelected: (_) => _provider.selectWarehouse(wh),
+                    ),
+                  );
+                }),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+
+    return LogistoScaffold(
+      title: l10n.warehouses,
+      bottom: bottomTabs,
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -205,57 +246,6 @@ class _InventoryWarehouseScreenState extends State<InventoryWarehouseScreen> {
             builder: (context, _) => _provider.viewMode == 'kardex'
                 ? _buildKardexView(l10n)
                 : _buildStockMatrix(l10n),
-          ),
-        ),
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildHeader(AppLocalizations l10n) {
-    return AppBar(
-      title: Text(
-        l10n.warehouses,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      elevation: 0,
-      scrolledUnderElevation: 1,
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(48),
-        child: Container(
-          height: 48,
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          alignment: Alignment.centerLeft,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                ChoiceChip(
-                  label: Text(l10n.stockLevels),
-                  selected: _provider.viewMode == 'stock',
-                  onSelected: (_) => _provider.setViewMode('stock'),
-                ),
-                const SizedBox(width: 8),
-                ChoiceChip(
-                  label: Text(l10n.kardexLedger),
-                  selected: _provider.viewMode == 'kardex',
-                  onSelected: (_) => _provider.setViewMode('kardex'),
-                ),
-                if (_provider.viewMode == 'stock') ...[
-                  const SizedBox(width: 16),
-                  ..._provider.warehouses.map((wh) {
-                    final isSel = _provider.selectedWarehouse?.id == wh.id;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: ChoiceChip(
-                        label: Text(wh.name),
-                        selected: isSel,
-                        onSelected: (_) => _provider.selectWarehouse(wh),
-                      ),
-                    );
-                  }),
-                ],
-              ],
-            ),
           ),
         ),
       ),

@@ -8,6 +8,7 @@ import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
 import '../common/enum_localization_extensions.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import 'product_catalog_provider.dart';
 import 'widgets/product_list_mobile.dart';
@@ -31,11 +32,12 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
     super.initState();
     _provider = locator<ProductCatalogProvider>();
     _contextProvider = locator<BusinessContextProvider>();
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? 'org_logisto_matriz';
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadProducts(orgId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadProducts(orgId);
+      });
+    }
   }
 
   @override
@@ -183,9 +185,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                   ? null
                   : () async {
                       setModalState(() => isSaving = true);
-                      final orgId =
-                          _contextProvider.activeOrganization?.id ??
-                          'org_logisto_matriz';
+                      final orgId = _contextProvider.activeOrganization?.id ?? '';
                       final cost = double.tryParse(costCtrl.text) ?? 1.0;
                       final sale = double.tryParse(saleCtrl.text) ?? 2.0;
                       final item = ProductModel(
@@ -225,35 +225,26 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          l10n.products,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-        scrolledUnderElevation: 1,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            tooltip: l10n.refresh,
-            onPressed: () {
-              final orgId =
-                  _contextProvider.activeOrganization?.id ?? 'org_logisto_matriz';
+    return LogistoScaffold(
+      title: l10n.products,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh_rounded),
+          tooltip: l10n.refresh,
+          onPressed: () {
+            final orgId = _contextProvider.activeOrganization?.id ?? '';
+            if (orgId.isNotEmpty) {
               _provider.loadProducts(orgId);
               AppFeedback.showSuccess(context, 'Catálogo de productos sincronizado');
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: FilledButton.icon(
-              icon: const Icon(Icons.add, size: 18),
-              label: Text(l10n.newProduct),
-              onPressed: () => _showProductModal(),
-            ),
-          ),
-        ],
-      ),
+            }
+          },
+        ),
+        FilledButton.icon(
+          icon: const Icon(Icons.add, size: 18),
+          label: Text(l10n.newProduct),
+          onPressed: () => _showProductModal(),
+        ),
+      ],
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
