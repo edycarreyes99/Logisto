@@ -1,31 +1,273 @@
 import 'package:flutter/material.dart';
+import '../../core/enums/language_enum.dart';
+import '../../core/enums/theme_mode_enum.dart';
 import '../../l10n/app_localizations.dart';
+import '../../locator.dart';
 import '../../theme/app_colors.dart';
+import '../auth/login_provider.dart';
+import '../common/app_feedback.dart';
 import '../context/business_context_provider.dart';
+import '../settings/settings_provider.dart';
 import 'app_routes.dart';
 import 'navigation_provider.dart';
 
 /// Navigation menu listing all enterprise Logisto modules grouped by capability.
+/// Features a Material 3 Drawer header, user profile badge, active branch context,
+/// and accessible high-contrast navigation targets.
 class AppNavigationDrawer extends StatelessWidget {
   final NavigationProvider navProvider;
   final BusinessContextProvider contextProvider;
   final VoidCallback? onNavigate;
+  final bool showHeader;
+  final bool showFooter;
 
   const AppNavigationDrawer({
     super.key,
     required this.navProvider,
     required this.contextProvider,
     this.onNavigate,
+    this.showHeader = true,
+    this.showFooter = true,
   });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return SingleChildScrollView(
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final body = SingleChildScrollView(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: _buildAllSections(context, l10n),
+      ),
+    );
+
+    if (!showHeader && !showFooter) {
+      return Container(
+        color: isDark ? const Color(0xFF131A26) : Colors.white,
+        child: body,
+      );
+    }
+
+    return Container(
+      color: isDark ? const Color(0xFF131A26) : Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (showHeader) _buildDrawerHeader(context, l10n, theme, isDark),
+          Expanded(child: body),
+          if (showFooter) _buildDrawerFooter(context, l10n, theme, isDark),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerHeader(
+    BuildContext context,
+    AppLocalizations l10n,
+    ThemeData theme,
+    bool isDark,
+  ) {
+    final buName = contextProvider.activeBusinessUnit?.name ?? l10n.defaultBranchName;
+    final userRole = navProvider.currentUserRole.name.toUpperCase();
+    final loginProvider = locator.isRegistered<LoginProvider>()
+        ? locator<LoginProvider>()
+        : null;
+    final userName = loginProvider?.currentUserName ?? 'Administrador';
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 16.0),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [
+                  const Color(0xFF1E293B),
+                  const Color(0xFF0F172A),
+                ]
+              : [
+                  theme.colorScheme.primary,
+                  theme.colorScheme.tertiary,
+                ],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 20.0,
+                backgroundColor: Colors.white.withValues(alpha: 0.25),
+                child: const Icon(
+                  Icons.person_rounded,
+                  color: Colors.white,
+                  size: 24.0,
+                ),
+              ),
+              const SizedBox(width: 12.0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      userName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15.0,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2.0),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Text(
+                        userRole,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10.0,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12.0),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.storefront_rounded, size: 14.0, color: Colors.white70),
+                const SizedBox(width: 6.0),
+                Expanded(
+                  child: Text(
+                    buName,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerFooter(
+    BuildContext context,
+    AppLocalizations l10n,
+    ThemeData theme,
+    bool isDark,
+  ) {
+    final settings = locator.isRegistered<SettingsProvider>()
+        ? locator<SettingsProvider>()
+        : null;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+        border: Border(
+          top: BorderSide(
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+          ),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          if (settings != null) ...[
+            IconButton(
+              icon: Icon(
+                settings.themeMode == ThemeModeEnum.dark
+                    ? Icons.light_mode_rounded
+                    : Icons.dark_mode_rounded,
+                size: 20.0,
+              ),
+              tooltip: settings.themeMode == ThemeModeEnum.dark ? 'Modo Claro' : 'Modo Oscuro',
+              onPressed: () {
+                final next = settings.themeMode == ThemeModeEnum.dark
+                    ? ThemeModeEnum.light
+                    : ThemeModeEnum.dark;
+                settings.setThemeMode(next);
+              },
+            ),
+            TextButton.icon(
+              icon: const Icon(Icons.language_rounded, size: 16.0),
+              label: Text(
+                settings.language == LanguageEnum.es ? 'ES' : 'EN',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12.0),
+              ),
+              onPressed: () {
+                final next = settings.language == LanguageEnum.es
+                    ? LanguageEnum.en
+                    : LanguageEnum.es;
+                settings.setLanguage(next);
+              },
+            ),
+          ],
+          IconButton(
+            icon: const Icon(Icons.logout_rounded, size: 20.0),
+            tooltip: l10n.logout,
+            color: theme.colorScheme.error,
+            onPressed: () async {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text(l10n.logout),
+                  content: Text(l10n.deleteConfirmation),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(false),
+                      child: Text(l10n.cancel),
+                    ),
+                    FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: theme.colorScheme.error,
+                      ),
+                      onPressed: () => Navigator.of(ctx).pop(true),
+                      child: Text(l10n.confirm),
+                    ),
+                  ],
+                ),
+              );
+
+              if (confirmed == true && context.mounted) {
+                final login = locator.isRegistered<LoginProvider>()
+                    ? locator<LoginProvider>()
+                    : null;
+                await login?.signOut();
+                await contextProvider.clearContext();
+                navProvider.navigateTo(AppRoutes.login);
+                onNavigate?.call();
+                if (context.mounted) {
+                  AppFeedback.showInfo(context, l10n.logout);
+                }
+              }
+            },
+          ),
+        ],
       ),
     );
   }
