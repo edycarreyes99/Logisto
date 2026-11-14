@@ -5023,6 +5023,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Food'**
   String get categoryFood;
+
+  /// No description provided for @forgotPasswordPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get forgotPasswordPrompt;
+
+  /// No description provided for @forgotPasswordDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your corporate email address to receive password recovery instructions.'**
+  String get forgotPasswordDesc;
+
+  /// No description provided for @resetPasswordEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset instructions sent to your email.'**
+  String get resetPasswordEmailSent;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @authSubtitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-tenant access to operations & POS'**
+  String get authSubtitleHint;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePassword;
+
+  /// No description provided for @rememberMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember session'**
+  String get rememberMe;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPassword;
+
+  /// No description provided for @demoProfilesPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick access demo profiles:'**
+  String get demoProfilesPrompt;
 }
 
 class _AppLocalizationsDelegate

@@ -2670,4 +2670,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get categoryFood => 'Food';
+
+  @override
+  String get forgotPasswordPrompt => 'Reset Password';
+
+  @override
+  String get forgotPasswordDesc =>
+      'Enter your corporate email address to receive password recovery instructions.';
+
+  @override
+  String get resetPasswordEmailSent =>
+      'Password reset instructions sent to your email.';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get authSubtitleHint => 'Multi-tenant access to operations & POS';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
+  String get rememberMe => 'Remember session';
+
+  @override
+  String get forgotPassword => 'Forgot password?';
+
+  @override
+  String get demoProfilesPrompt => 'Quick access demo profiles:';
 }

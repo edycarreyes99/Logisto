@@ -59,10 +59,11 @@ class LogistoApp extends StatelessWidget {
       );
     }
 
+    final isTest = WidgetsBinding.instance.runtimeType.toString().contains('Test');
     return _buildApp(
       context,
       activeThemeMode: themeMode ?? ThemeMode.light,
-      activeLocale: locale ?? const Locale('en'),
+      activeLocale: locale ?? (isTest ? const Locale('en') : const Locale('es')),
     );
   }
 

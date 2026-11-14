@@ -1197,5 +1197,15 @@
   "reportShiftCashier": "Turno #{number} • Cajero: {name}",
   "categoryBeverages": "Bebidas",
   "categoryCocktails": "Cocteles",
-  "categoryFood": "Comida"
+  "categoryFood": "Comida",
+  "forgotPasswordPrompt": "Restablecer Contraseña",
+  "forgotPasswordDesc": "Ingrese su correo corporativo para recibir las instrucciones de recuperación.",
+  "resetPasswordEmailSent": "Instrucciones para restablecer contraseña enviadas a su correo.",
+  "send": "Enviar",
+  "authSubtitleHint": "Acceso multiempresa a operaciones y POS",
+  "showPassword": "Mostrar contraseña",
+  "hidePassword": "Ocultar contraseña",
+  "rememberMe": "Recordar sesión",
+  "forgotPassword": "¿Olvidó su contraseña?",
+  "demoProfilesPrompt": "Perfiles demo de acceso rápido:"
 }

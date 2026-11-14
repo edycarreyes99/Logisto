@@ -2692,4 +2692,36 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get categoryFood => 'Comida';
+
+  @override
+  String get forgotPasswordPrompt => 'Restablecer Contraseña';
+
+  @override
+  String get forgotPasswordDesc =>
+      'Ingrese su correo corporativo para recibir las instrucciones de recuperación.';
+
+  @override
+  String get resetPasswordEmailSent =>
+      'Instrucciones para restablecer contraseña enviadas a su correo.';
+
+  @override
+  String get send => 'Enviar';
+
+  @override
+  String get authSubtitleHint => 'Acceso multiempresa a operaciones y POS';
+
+  @override
+  String get showPassword => 'Mostrar contraseña';
+
+  @override
+  String get hidePassword => 'Ocultar contraseña';
+
+  @override
+  String get rememberMe => 'Recordar sesión';
+
+  @override
+  String get forgotPassword => '¿Olvidó su contraseña?';
+
+  @override
+  String get demoProfilesPrompt => 'Perfiles demo de acceso rápido:';
 }

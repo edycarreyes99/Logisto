@@ -1390,5 +1390,15 @@
   },
   "categoryBeverages": "Beverages",
   "categoryCocktails": "Cocktails",
-  "categoryFood": "Food"
+  "categoryFood": "Food",
+  "forgotPasswordPrompt": "Reset Password",
+  "forgotPasswordDesc": "Enter your corporate email address to receive password recovery instructions.",
+  "resetPasswordEmailSent": "Password reset instructions sent to your email.",
+  "send": "Send",
+  "authSubtitleHint": "Multi-tenant access to operations & POS",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "rememberMe": "Remember session",
+  "forgotPassword": "Forgot password?",
+  "demoProfilesPrompt": "Quick access demo profiles:"
 }
