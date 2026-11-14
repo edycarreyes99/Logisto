@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logisto/main.dart';
 import 'package:logisto/presentation/home/home_screen.dart';
+import 'package:logisto/theme/app_colors.dart';
 
 void main() {
   const viewportMatrix = <String, Size>{
@@ -40,6 +41,15 @@ void main() {
         expect(find.text('Operational Controls'), findsOneWidget);
         expect(find.text('Telemetry & Status'), findsOneWidget);
         expect(find.text('Live Event Stream'), findsOneWidget);
+
+        // Verify adaptive view representation (RULE-UI-007):
+        // Desktop (width >= 992px) renders DataTable; mobile/compact renders ListTile
+        final isDesktop = entry.value.width >= BsBreakpoints.lg;
+        if (isDesktop) {
+          expect(find.byType(DataTable), findsOneWidget);
+        } else {
+          expect(find.byType(ListTile), findsWidgets);
+        }
       },
     );
   }
@@ -63,7 +73,7 @@ void main() {
       // Deep assertion: verify Dark Theme is actively resolved and applied to root Material
       final context = tester.element(find.byType(HomeScreen));
       expect(Theme.of(context).brightness, Brightness.dark);
-      expect(context.bs.bodyBg, BsThemeData.darkTheme.bodyBg);
+      expect(Theme.of(context).scaffoldBackgroundColor, AppColors.backgroundDark);
 
       final material = tester.widget<Material>(
         find.ancestor(
@@ -71,7 +81,7 @@ void main() {
           matching: find.byType(Material),
         ),
       );
-      expect(material.color, BsThemeData.darkTheme.bodyBg);
+      expect(material.color, AppColors.backgroundDark);
     },
   );
 
@@ -88,7 +98,7 @@ void main() {
 
       BuildContext context = tester.element(find.byType(HomeScreen));
       expect(Theme.of(context).brightness, Brightness.light);
-      expect(context.bs.bodyBg, BsThemeData.lightTheme.bodyBg);
+      expect(Theme.of(context).scaffoldBackgroundColor, AppColors.backgroundLight);
 
       Material material = tester.widget<Material>(
         find.ancestor(
@@ -96,7 +106,7 @@ void main() {
           matching: find.byType(Material),
         ),
       );
-      expect(material.color, BsThemeData.lightTheme.bodyBg);
+      expect(material.color, AppColors.backgroundLight);
 
       // 2. Dynamic switch to Dark Mode without restarting the app
       await tester.pumpWidget(const LogistoApp(themeMode: ThemeMode.dark));
@@ -104,7 +114,7 @@ void main() {
 
       context = tester.element(find.byType(HomeScreen));
       expect(Theme.of(context).brightness, Brightness.dark);
-      expect(context.bs.bodyBg, BsThemeData.darkTheme.bodyBg);
+      expect(Theme.of(context).scaffoldBackgroundColor, AppColors.backgroundDark);
 
       material = tester.widget<Material>(
         find.ancestor(
@@ -112,7 +122,7 @@ void main() {
           matching: find.byType(Material),
         ),
       );
-      expect(material.color, BsThemeData.darkTheme.bodyBg);
+      expect(material.color, AppColors.backgroundDark);
 
       // 3. Switch to System Mode reacting to platform brightness
       tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
@@ -123,6 +133,7 @@ void main() {
 
       context = tester.element(find.byType(HomeScreen));
       expect(Theme.of(context).brightness, Brightness.dark);
+      expect(Theme.of(context).scaffoldBackgroundColor, AppColors.backgroundDark);
 
       tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
       await tester.pumpWidget(const LogistoApp(themeMode: ThemeMode.system));
@@ -130,6 +141,7 @@ void main() {
 
       context = tester.element(find.byType(HomeScreen));
       expect(Theme.of(context).brightness, Brightness.light);
+      expect(Theme.of(context).scaffoldBackgroundColor, AppColors.backgroundLight);
     },
   );
 }
