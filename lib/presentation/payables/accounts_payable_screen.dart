@@ -1,12 +1,12 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/account_payable_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import 'accounts_payable_provider.dart';
 import 'widgets/payable_list_mobile.dart';
@@ -29,14 +29,13 @@ class _AccountsPayableScreenState extends State<AccountsPayableScreen> {
     super.initState();
     _provider = locator<AccountsPayableProvider>();
     _contextProvider = locator<BusinessContextProvider>();
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    final buId =
-        _contextProvider.activeBusinessUnit?.id ??
-        DatabaseSeeder.defaultBuCentralId;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadPayables(orgId: orgId, buId: buId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadPayables(orgId: orgId, buId: buId);
+      });
+    }
   }
 
   void _showPaymentModal(AccountPayableModel p) {
@@ -119,32 +118,22 @@ class _AccountsPayableScreenState extends State<AccountsPayableScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          l10n.payables,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-        scrolledUnderElevation: 1,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Chip(
-              label: Text(
-                l10n.totalLiabilitiesAmount(
-                  _provider.totalLiabilities.toStringAsFixed(2),
-                ),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
-              ),
-              visualDensity: VisualDensity.compact,
+    return LogistoScaffold(
+      title: l10n.payables,
+      actions: [
+        Chip(
+          label: Text(
+            l10n.totalLiabilitiesAmount(
+              _provider.totalLiabilities.toStringAsFixed(2),
+            ),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
             ),
           ),
-        ],
-      ),
+          visualDensity: VisualDensity.compact,
+        ),
+      ],
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

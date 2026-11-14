@@ -1,12 +1,12 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/invoice_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import 'invoice_history_provider.dart';
 import 'widgets/invoice_list_mobile.dart';
@@ -30,14 +30,13 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
     super.initState();
     _provider = locator<InvoiceHistoryProvider>();
     _contextProvider = locator<BusinessContextProvider>();
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    final buId =
-        _contextProvider.activeBusinessUnit?.id ??
-        DatabaseSeeder.defaultBuCentralId;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadInvoices(orgId: orgId, buId: buId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadInvoices(orgId: orgId, buId: buId);
+      });
+    }
   }
 
   @override
@@ -174,30 +173,22 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          l10n.invoices,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-        scrolledUnderElevation: 1,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            tooltip: l10n.refresh,
-            onPressed: () {
-              final orgId =
-                  _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-              final buId =
-                  _contextProvider.activeBusinessUnit?.id ??
-                  DatabaseSeeder.defaultBuCentralId;
+    return LogistoScaffold(
+      title: l10n.invoices,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh_rounded),
+          tooltip: l10n.refresh,
+          onPressed: () {
+            final orgId = _contextProvider.activeOrganization?.id ?? '';
+            final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+            if (orgId.isNotEmpty) {
               _provider.loadInvoices(orgId: orgId, buId: buId);
               AppFeedback.showSuccess(context, 'Historial de facturas actualizado');
-            },
-          ),
-        ],
-      ),
+            }
+          },
+        ),
+      ],
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
