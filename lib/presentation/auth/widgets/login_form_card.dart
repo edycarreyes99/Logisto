@@ -5,7 +5,7 @@ import '../../common/app_feedback.dart';
 import '../login_provider.dart';
 
 /// Highly attractive, modern credentials submission card with password visibility toggle,
-/// interactive demo role autofills, remember me toggle, and responsive Material 3 styling.
+/// Firebase Auth sign-in, account creation (sign up), password reset dialog, and email verification.
 class LoginFormCard extends StatefulWidget {
   final LoginProvider provider;
   final TextEditingController emailController;
@@ -29,12 +29,15 @@ class LoginFormCard extends StatefulWidget {
 }
 
 class _LoginFormCardState extends State<LoginFormCard> {
+  bool _isSignUpMode = false;
   bool _obscurePassword = true;
   bool _rememberMe = true;
+  final TextEditingController _nameController = TextEditingController();
 
-  void _fillCredentials(String email, String password) {
-    widget.emailController.text = email;
-    widget.passwordController.text = password;
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
   }
 
   void _showForgotPasswordDialog() {
@@ -95,18 +98,50 @@ class _LoginFormCardState extends State<LoginFormCard> {
             child: Text(l10n.cancel),
           ),
           FilledButton(
-            onPressed: () {
+            onPressed: () async {
+              final email = resetEmailController.text.trim();
+              if (email.isEmpty) return;
               Navigator.of(ctx).pop();
-              AppFeedback.showSuccess(
-                context,
-                l10n.resetPasswordEmailSent,
-              );
+              final success = await widget.provider.sendPasswordResetEmail(email);
+              if (!mounted) return;
+              if (success) {
+                AppFeedback.showSuccess(
+                  context,
+                  l10n.resetPasswordEmailSent,
+                );
+              } else {
+                AppFeedback.showError(
+                  context,
+                  widget.provider.errorMessage ?? 'Error enviando correo de recuperación.',
+                );
+              }
             },
             child: Text(l10n.send),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _handleSignUp() async {
+    final l10n = AppLocalizations.of(context)!;
+    final success = await widget.provider.registerWithEmailPassword(
+      email: widget.emailController.text,
+      password: widget.passwordController.text,
+      displayName: _nameController.text.trim(),
+    );
+    if (!mounted) return;
+    if (success) {
+      AppFeedback.showSuccess(
+        context,
+        l10n.accountCreatedSuccess,
+      );
+    } else {
+      AppFeedback.showError(
+        context,
+        widget.provider.errorMessage ?? l10n.invalidCredentials,
+      );
+    }
   }
 
   @override
@@ -151,8 +186,8 @@ class _LoginFormCardState extends State<LoginFormCard> {
                     ),
                     borderRadius: BorderRadius.circular(12.0),
                   ),
-                  child: const Icon(
-                    Icons.security_rounded,
+                  child: Icon(
+                    _isSignUpMode ? Icons.person_add_rounded : Icons.security_rounded,
                     color: Colors.white,
                     size: 22.0,
                   ),
@@ -163,14 +198,14 @@ class _LoginFormCardState extends State<LoginFormCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        l10n.corporatePortalLogin,
+                        _isSignUpMode ? l10n.signUp : l10n.corporatePortalLogin,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           letterSpacing: -0.2,
                         ),
                       ),
                       Text(
-                        l10n.authSubtitleHint,
+                        _isSignUpMode ? l10n.signUpSubtitle : l10n.authSubtitleHint,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -190,8 +225,6 @@ class _LoginFormCardState extends State<LoginFormCard> {
             _buildOptionsRow(theme, l10n),
             const SizedBox(height: 16.0),
             _buildActionButtons(theme, l10n),
-            const SizedBox(height: 20.0),
-            _buildDemoPresets(theme, l10n),
           ],
         ),
       ),
@@ -200,6 +233,21 @@ class _LoginFormCardState extends State<LoginFormCard> {
 
   List<Widget> _buildInputFields(ThemeData theme, AppLocalizations l10n) {
     return [
+      if (_isSignUpMode) ...[
+        TextField(
+          controller: _nameController,
+          decoration: InputDecoration(
+            labelText: l10n.fullName,
+            hintText: l10n.fullNamePlaceholder,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+            prefixIcon: const Icon(Icons.person_outline_rounded),
+            filled: true,
+            fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+          ),
+          textInputAction: TextInputAction.next,
+        ),
+        const SizedBox(height: 16.0),
+      ],
       TextField(
         controller: widget.emailController,
         decoration: InputDecoration(
@@ -234,7 +282,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
           ),
         ),
         textInputAction: TextInputAction.done,
-        onSubmitted: (_) => widget.onLogin(),
+        onSubmitted: (_) => _isSignUpMode ? _handleSignUp() : widget.onLogin(),
       ),
     ];
   }
@@ -246,46 +294,48 @@ class _LoginFormCardState extends State<LoginFormCard> {
       spacing: 8.0,
       runSpacing: 4.0,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: 24.0,
-              width: 24.0,
-              child: Checkbox(
-                value: _rememberMe,
-                onChanged: (val) => setState(() => _rememberMe = val ?? true),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-              ),
-            ),
-            const SizedBox(width: 8.0),
-            GestureDetector(
-              onTap: () => setState(() => _rememberMe = !_rememberMe),
-              child: Text(
-                l10n.rememberMe,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface,
+        if (!_isSignUpMode)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: 24.0,
+                width: 24.0,
+                child: Checkbox(
+                  value: _rememberMe,
+                  onChanged: (val) => setState(() => _rememberMe = val ?? true),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
                 ),
               ),
-            ),
-          ],
-        ),
-        TextButton(
-          onPressed: _showForgotPasswordDialog,
-          style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 6.0),
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              const SizedBox(width: 8.0),
+              GestureDetector(
+                onTap: () => setState(() => _rememberMe = !_rememberMe),
+                child: Text(
+                  l10n.rememberMe,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+              ),
+            ],
           ),
-          child: Text(
-            l10n.forgotPassword,
-            style: TextStyle(
-              fontSize: 12.0,
-              fontWeight: FontWeight.w600,
-              color: theme.colorScheme.primary,
+        if (!_isSignUpMode)
+          TextButton(
+            onPressed: _showForgotPasswordDialog,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 6.0),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              l10n.forgotPassword,
+              style: TextStyle(
+                fontSize: 12.0,
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.primary,
+              ),
             ),
           ),
-        ),
       ],
     );
   }
@@ -330,7 +380,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
         SizedBox(
           height: 48.0,
           child: FilledButton.icon(
-            onPressed: isLoading ? null : widget.onLogin,
+            onPressed: isLoading ? null : (_isSignUpMode ? _handleSignUp : widget.onLogin),
             style: FilledButton.styleFrom(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
               elevation: 2.0,
@@ -344,14 +394,32 @@ class _LoginFormCardState extends State<LoginFormCard> {
                       color: Colors.white,
                     ),
                   )
-                : const Icon(Icons.login_rounded, size: 20.0),
+                : Icon(_isSignUpMode ? Icons.person_add_rounded : Icons.login_rounded, size: 20.0),
             label: Text(
-              l10n.login,
+              _isSignUpMode ? l10n.signUp : l10n.login,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),
             ),
           ),
         ),
-        const SizedBox(height: 12.0),
+        const SizedBox(height: 8.0),
+        Center(
+          child: TextButton(
+            onPressed: () {
+              setState(() {
+                _isSignUpMode = !_isSignUpMode;
+              });
+            },
+            child: Text(
+              _isSignUpMode ? l10n.alreadyHaveAccount : l10n.dontHaveAccount,
+              style: TextStyle(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.w600,
+                fontSize: 13.0,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8.0),
         Row(
           children: [
             Expanded(
@@ -380,98 +448,6 @@ class _LoginFormCardState extends State<LoginFormCard> {
           ],
         ),
       ],
-    );
-  }
-
-  Widget _buildDemoPresets(ThemeData theme, AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.flash_on_rounded,
-              size: 14.0,
-              color: theme.colorScheme.primary,
-            ),
-            const SizedBox(width: 4.0),
-            Expanded(
-              child: Text(
-                l10n.demoProfilesPrompt,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8.0),
-        Wrap(
-          spacing: 6.0,
-          runSpacing: 6.0,
-          children: [
-            _buildRoleChip(
-              theme,
-              label: 'Admin',
-              icon: Icons.shield_rounded,
-              email: 'admin@logisto.io',
-              pass: 'secret123',
-            ),
-            _buildRoleChip(
-              theme,
-              label: 'Cajero POS',
-              icon: Icons.point_of_sale_rounded,
-              email: 'cajero@logisto.io',
-              pass: 'pos123',
-            ),
-            _buildRoleChip(
-              theme,
-              label: 'Cocina KDS',
-              icon: Icons.restaurant_rounded,
-              email: 'cocina@logisto.io',
-              pass: 'kds123',
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRoleChip(
-    ThemeData theme, {
-    required String label,
-    required IconData icon,
-    required String email,
-    required String pass,
-  }) {
-    final isSelected = widget.emailController.text == email;
-
-    return ActionChip(
-      avatar: Icon(
-        icon,
-        size: 14.0,
-        color: isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.primary,
-      ),
-      label: Text(
-        label,
-        style: TextStyle(
-          fontSize: 11.5,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
-        ),
-      ),
-      backgroundColor: isSelected
-          ? theme.colorScheme.primary
-          : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-      side: BorderSide(
-        color: isSelected
-            ? theme.colorScheme.primary
-            : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      onPressed: () => _fillCredentials(email, pass),
     );
   }
 }
