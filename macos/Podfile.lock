@@ -1,0 +1,22 @@
+PODS:
+  - desktop_webview_auth (0.0.1):
+    - FlutterMacOS
+  - FlutterMacOS (1.0.0)
+
+DEPENDENCIES:
+  - desktop_webview_auth (from `Flutter/ephemeral/.symlinks/plugins/desktop_webview_auth/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+
+EXTERNAL SOURCES:
+  desktop_webview_auth:
+    :path: Flutter/ephemeral/.symlinks/plugins/desktop_webview_auth/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+
+SPEC CHECKSUMS:
+  desktop_webview_auth: d7fba72ef3ee2292cf66d464eede3c1a4690da83
+  FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
+
+PODFILE CHECKSUM: f6cdc7b110cd684a3b21329c1e9a3e436e4e91ca
+
+COCOAPODS: 1.17.0

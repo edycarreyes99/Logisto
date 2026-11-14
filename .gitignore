@@ -12,6 +12,9 @@
 .history
 .svn/
 .swiftpm/
+**/swiftpm/
+*.swiftpm
+**/.swiftpm/
 migrate_working_dir/
 .AppleDouble
 .LSOverride
