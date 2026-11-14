@@ -1,8 +1,8 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
+import '../common/logisto_app_bar.dart';
 import 'widgets/control_panel_card.dart';
-import 'widgets/home_navbar.dart';
 import 'widgets/log_table_card.dart';
 import 'widgets/telemetry_metrics_card.dart';
 
@@ -48,18 +48,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BsContainer.fluid(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          HomeNavbar(onInfoPressed: _showInfoModal),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: _buildDashboardGrid(),
-            ),
+    final l10n = AppLocalizations.of(context)!;
+    return Scaffold(
+      appBar: LogistoAppBar(
+        title: 'Logisto',
+        actions: [
+          TextButton.icon(
+            onPressed: _showInfoModal,
+            icon: const Icon(Icons.info_outline, size: 16),
+            label: Text(l10n.systemInfo),
           ),
         ],
+      ),
+      body: BsContainer.fluid(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: _buildDashboardGrid(),
+        ),
       ),
     );
   }

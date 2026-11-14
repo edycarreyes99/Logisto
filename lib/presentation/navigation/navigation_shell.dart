@@ -2,7 +2,6 @@ import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/language_enum.dart';
 import '../../core/enums/theme_mode_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../audit/audit_log_screen.dart';
@@ -36,17 +35,13 @@ import 'app_routes.dart';
 import 'navigation_drawer.dart';
 import 'navigation_provider.dart';
 
-enum NavModuleGroup {
-  operations,
-  inventory,
-  catalogs,
-  finance,
-  system,
-}
-
-/// Universal multiplatform application shell hosting top navigation bar,
-/// responsive Material 3 Drawer, modular BottomNavigationBar per operational family,
-/// and active operational routing.
+/// Universal multiplatform application shell.
+///
+/// On mobile viewports (<lg), screens are rendered directly, each hosting
+/// its own unified [LogistoScaffold] with [LogistoAppBar] and [AppNavigationDrawer],
+/// eliminating top navbar status bar conflicts and bottom navigation clutter.
+/// On desktop viewports (>=lg), renders a dedicated top corporate header,
+/// a permanent navigation sidebar, and the active operational screen.
 class NavigationShell extends StatefulWidget {
   final String? initialRoute;
 
@@ -57,11 +52,9 @@ class NavigationShell extends StatefulWidget {
 }
 
 class _NavigationShellState extends State<NavigationShell> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late final NavigationProvider _navProvider;
   late final BusinessContextProvider _contextProvider;
   late final LoginProvider _loginProvider;
-  bool _isSeeding = false;
 
   @override
   void initState() {
@@ -75,10 +68,6 @@ class _NavigationShellState extends State<NavigationShell> {
     }
   }
 
-  void _openDrawer() {
-    _scaffoldKey.currentState?.openDrawer();
-  }
-
   void _showFastPinModal() {
     showDialog<void>(
       context: context,
@@ -89,26 +78,6 @@ class _NavigationShellState extends State<NavigationShell> {
         },
       ),
     );
-  }
-
-  Future<void> _handleSeedDatabase() async {
-    if (_isSeeding) return;
-    setState(() => _isSeeding = true);
-    try {
-      final seeder = locator<DatabaseSeeder>();
-      await seeder.seedProductionData();
-      if (!mounted) return;
-      final l10n = AppLocalizations.of(context)!;
-      AppFeedback.showSuccess(
-        context,
-        l10n.databaseSeededSuccess,
-        title: l10n.seedDatabase,
-      );
-    } finally {
-      if (mounted) {
-        setState(() => _isSeeding = false);
-      }
-    }
   }
 
   void _showNotificationsPanel() {
@@ -133,11 +102,16 @@ class _NavigationShellState extends State<NavigationShell> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.notifications_active_rounded, color: theme.colorScheme.primary),
+                    Icon(
+                      Icons.notifications_active_rounded,
+                      color: theme.colorScheme.primary,
+                    ),
                     const SizedBox(width: 10.0),
                     Text(
                       'Notificaciones y Alertas del Sistema',
-                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -198,7 +172,9 @@ class _NavigationShellState extends State<NavigationShell> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3)),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         children: [
@@ -208,13 +184,31 @@ class _NavigationShellState extends State<NavigationShell> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.0)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13.0,
+                  ),
+                ),
                 const SizedBox(height: 2.0),
-                Text(subtitle, style: TextStyle(fontSize: 12.0, color: theme.colorScheme.onSurfaceVariant)),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),
-          Text(time, style: TextStyle(fontSize: 11.0, color: theme.colorScheme.onSurfaceVariant)),
+          Text(
+            time,
+            style: TextStyle(
+              fontSize: 11.0,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
@@ -224,30 +218,33 @@ class _NavigationShellState extends State<NavigationShell> {
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
 
+    // Mobile: Render active module directly. Each screen hosts its own
+    // LogistoScaffold with LogistoAppBar and AppNavigationDrawer.
+    if (!isDesktop) {
+      return ListenableBuilder(
+        listenable: Listenable.merge([_contextProvider, _navProvider]),
+        builder: (context, _) => _resolveScreen(_navProvider.currentRoute),
+      );
+    }
+
+    // Desktop: Render top corporate header, persistent left sidebar, and active screen
     return Scaffold(
-      key: _scaffoldKey,
-      drawer: Drawer(
-        width: 310.0,
-        child: AppNavigationDrawer(
-          navProvider: _navProvider,
-          contextProvider: _contextProvider,
-          onNavigate: () => Navigator.of(context).pop(),
-        ),
-      ),
       body: ListenableBuilder(
         listenable: _contextProvider,
         builder: (context, _) => BsContainer.fluid(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildNavbar(isDesktop),
+              _buildDesktopNavbar(),
               Expanded(
                 child: ListenableBuilder(
                   listenable: _navProvider,
                   builder: (context, _) => Row(
                     children: [
-                      if (isDesktop) _buildDesktopSidebar(),
-                      Expanded(child: _resolveScreen(_navProvider.currentRoute)),
+                      _buildDesktopSidebar(),
+                      Expanded(
+                        child: _resolveScreen(_navProvider.currentRoute),
+                      ),
                     ],
                   ),
                 ),
@@ -256,27 +253,23 @@ class _NavigationShellState extends State<NavigationShell> {
           ),
         ),
       ),
-      bottomNavigationBar: isDesktop ? null : _buildBottomNavigationBar(),
     );
   }
 
-  Widget _buildNavbar(bool isDesktop) {
+  Widget _buildDesktopNavbar() {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final rawBuName =
         _contextProvider.activeBusinessUnit?.name ?? l10n.defaultBranchName;
-    final buName = rawBuName.length > 20
-        ? '${rawBuName.substring(0, 18)}...'
+    final buName = rawBuName.length > 24
+        ? '${rawBuName.substring(0, 22)}...'
         : rawBuName;
     final settings = locator.isRegistered<SettingsProvider>()
         ? locator<SettingsProvider>()
         : null;
 
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 16.0 : 8.0,
-        vertical: 4.0,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         border: Border(
@@ -288,203 +281,131 @@ class _NavigationShellState extends State<NavigationShell> {
       ),
       child: Row(
         children: [
-          if (!isDesktop) ...[
-            OutlinedButton.icon(
-              icon: const Icon(Icons.menu_rounded, size: 16),
-              label: Text(l10n.menu),
-              onPressed: _openDrawer,
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 4.0,
-                ),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-            ),
-            const SizedBox(width: 6),
-          ],
           Text(
             'Logisto',
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: isDesktop ? 18 : 16,
+              fontSize: 18,
             ),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                if (constraints.maxWidth < 40) {
-                  return const SizedBox.shrink();
-                }
-                return InkWell(
-                  onTap: () => _navProvider.navigateTo(AppRoutes.businessUnits),
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6.0,
-                      vertical: 3.0,
-                    ),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(6.0),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.storefront_rounded,
-                          size: 13.0,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(width: 4.0),
-                        Expanded(
-                          child: Text(
-                            buName,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                              fontSize: 11.5,
-                            ),
-                          ),
-                        ),
-                      ],
+          const SizedBox(width: 12),
+          InkWell(
+            onTap: () => _navProvider.navigateTo(AppRoutes.businessUnits),
+            borderRadius: BorderRadius.circular(8.0),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 4.0,
+              ),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(6.0),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.storefront_rounded,
+                    size: 14.0,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 5.0),
+                  Text(
+                    buName,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                );
-              },
-            ),
-          ),
-          if (isDesktop) ...[
-            const SizedBox(width: 12),
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                reverse: true,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    OutlinedButton.icon(
-                      icon: _isSeeding
-                          ? const SizedBox(
-                              width: 14,
-                              height: 14,
-                              child: CircularProgressIndicator(strokeWidth: 2.0),
-                            )
-                          : const Icon(Icons.storage, size: 16),
-                      label: Text(l10n.seedDatabase),
-                      onPressed: _isSeeding ? null : _handleSeedDatabase,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 6.0,
-                        ),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    OutlinedButton.icon(
-                      icon: const Icon(Icons.key, size: 16),
-                      label: Text(l10n.fastPin),
-                      onPressed: _showFastPinModal,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 6.0,
-                        ),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    // Notifications button
-                    IconButton(
-                      icon: const Icon(Icons.notifications_outlined, size: 20.0),
-                      tooltip: 'Notificaciones',
-                      onPressed: _showNotificationsPanel,
-                    ),
-                    if (settings != null) ...[
-                      // Language button
-                      TextButton.icon(
-                        icon: const Icon(Icons.language_rounded, size: 16.0),
-                        label: Text(
-                          settings.language == LanguageEnum.es ? 'ES' : 'EN',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        onPressed: () {
-                          final next = settings.language == LanguageEnum.es
-                              ? LanguageEnum.en
-                              : LanguageEnum.es;
-                          settings.setLanguage(next);
-                        },
-                      ),
-                      // Theme toggle
-                      IconButton(
-                        icon: Icon(
-                          theme.brightness == Brightness.dark
-                              ? Icons.light_mode_rounded
-                              : Icons.dark_mode_rounded,
-                          size: 20.0,
-                        ),
-                        tooltip: theme.brightness == Brightness.dark
-                            ? 'Modo Claro'
-                            : 'Modo Oscuro',
-                        onPressed: () {
-                          final next = theme.brightness == Brightness.dark
-                              ? ThemeModeEnum.light
-                              : ThemeModeEnum.dark;
-                          settings.setThemeMode(next);
-                        },
-                      ),
-                    ],
-                    const SizedBox(width: 6),
-                    OutlinedButton.icon(
-                      icon: const Icon(Icons.logout_rounded, size: 16),
-                      label: Text(l10n.logout),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: theme.colorScheme.error,
-                        side: BorderSide(
-                          color: theme.colorScheme.error.withValues(alpha: 0.5),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 6.0,
-                        ),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () => showLogoutDialog(context),
-                    ),
-                  ],
-                ),
+                ],
               ),
             ),
-          ] else ...[
-            IconButton(
-              visualDensity: VisualDensity.compact,
-              padding: const EdgeInsets.all(4.0),
-              constraints: const BoxConstraints(),
-              icon: const Icon(Icons.notifications_outlined, size: 20.0),
-              tooltip: 'Notificaciones',
-              onPressed: _showNotificationsPanel,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              reverse: true,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.key, size: 16),
+                  label: Text(l10n.fastPin),
+                  onPressed: _showFastPinModal,
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 6.0,
+                    ),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                IconButton(
+                  icon: const Icon(Icons.notifications_outlined, size: 20.0),
+                  tooltip: 'Notificaciones',
+                  onPressed: _showNotificationsPanel,
+                ),
+                if (settings != null) ...[
+                  TextButton.icon(
+                    icon: const Icon(Icons.language_rounded, size: 16.0),
+                    label: Text(
+                      settings.language == LanguageEnum.es ? 'ES' : 'EN',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      final next = settings.language == LanguageEnum.es
+                          ? LanguageEnum.en
+                          : LanguageEnum.es;
+                      settings.setLanguage(next);
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      theme.brightness == Brightness.dark
+                          ? Icons.light_mode_rounded
+                          : Icons.dark_mode_rounded,
+                      size: 20.0,
+                    ),
+                    tooltip: theme.brightness == Brightness.dark
+                        ? 'Modo Claro'
+                        : 'Modo Oscuro',
+                    onPressed: () {
+                      final next = theme.brightness == Brightness.dark
+                          ? ThemeModeEnum.light
+                          : ThemeModeEnum.dark;
+                      settings.setThemeMode(next);
+                    },
+                  ),
+                ],
+                const SizedBox(width: 6),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.logout_rounded, size: 16),
+                  label: Text(l10n.logout),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: theme.colorScheme.error,
+                    side: BorderSide(
+                      color: theme.colorScheme.error.withValues(alpha: 0.5),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 6.0,
+                    ),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: () => showLogoutDialog(context),
+                ),
+              ],
             ),
-            const SizedBox(width: 4),
-            IconButton(
-              visualDensity: VisualDensity.compact,
-              padding: const EdgeInsets.all(4.0),
-              constraints: const BoxConstraints(),
-              icon: const Icon(Icons.logout_rounded, size: 20.0),
-              tooltip: l10n.logout,
-              color: theme.colorScheme.error,
-              onPressed: () => showLogoutDialog(context),
-            ),
-          ],
-        ],
-      ),
-    );
+          ),
+        ),
+      ],
+    ),
+  );
   }
 
   Widget _buildDesktopSidebar() {
@@ -506,386 +427,6 @@ class _NavigationShellState extends State<NavigationShell> {
         showHeader: false,
         showFooter: false,
       ),
-    );
-  }
-
-  NavModuleGroup _getModuleGroup(String route) {
-    switch (route) {
-      case AppRoutes.dashboard:
-      case AppRoutes.pos:
-      case AppRoutes.openAccounts:
-      case AppRoutes.billiards:
-      case AppRoutes.kitchen:
-        return NavModuleGroup.operations;
-      case AppRoutes.cash:
-      case AppRoutes.inventory:
-      case AppRoutes.kardex:
-      case AppRoutes.invoices:
-        return NavModuleGroup.inventory;
-      case AppRoutes.products:
-      case AppRoutes.customers:
-      case AppRoutes.suppliers:
-        return NavModuleGroup.catalogs;
-      case AppRoutes.purchasing:
-      case AppRoutes.receivables:
-      case AppRoutes.payables:
-      case AppRoutes.reports:
-        return NavModuleGroup.finance;
-      case AppRoutes.businessUnits:
-      case AppRoutes.users:
-      case AppRoutes.audit:
-      case AppRoutes.settings:
-      case AppRoutes.onboarding:
-      default:
-        return NavModuleGroup.system;
-    }
-  }
-
-  Widget _buildBottomNavigationBar() {
-    final l10n = AppLocalizations.of(context)!;
-    final route = _navProvider.currentRoute;
-    final group = _getModuleGroup(route);
-
-    switch (group) {
-      case NavModuleGroup.operations:
-        return _buildOperationsNav(l10n, route);
-      case NavModuleGroup.inventory:
-        return _buildInventoryNav(l10n, route);
-      case NavModuleGroup.catalogs:
-        return _buildCatalogsNav(l10n, route);
-      case NavModuleGroup.finance:
-        return _buildFinanceNav(l10n, route);
-      case NavModuleGroup.system:
-        return _buildSystemNav(l10n, route);
-    }
-  }
-
-  Widget _buildOperationsNav(AppLocalizations l10n, String route) {
-    int index = 0;
-    if (route == AppRoutes.dashboard) {
-      index = 0;
-    } else if (route == AppRoutes.pos) {
-      index = 1;
-    } else if (route == AppRoutes.openAccounts) {
-      index = 2;
-    } else if (route == AppRoutes.billiards || route == AppRoutes.kitchen) {
-      index = 3;
-    } else {
-      index = 4;
-    }
-
-    return NavigationBar(
-      selectedIndex: index,
-      onDestinationSelected: (i) {
-        switch (i) {
-          case 0:
-            _navProvider.navigateTo(AppRoutes.dashboard);
-            break;
-          case 1:
-            _navProvider.navigateTo(AppRoutes.pos);
-            break;
-          case 2:
-            _navProvider.navigateTo(AppRoutes.openAccounts);
-            break;
-          case 3:
-            _navProvider.navigateTo(
-              _contextProvider.isBilliardActive
-                  ? AppRoutes.billiards
-                  : AppRoutes.kitchen,
-            );
-            break;
-          case 4:
-            _openDrawer();
-            break;
-        }
-      },
-      destinations: [
-        NavigationDestination(
-          icon: const Icon(Icons.dashboard_outlined),
-          selectedIcon: const Icon(Icons.dashboard_rounded),
-          label: l10n.dashboard,
-        ),
-        const NavigationDestination(
-          icon: Icon(Icons.point_of_sale_outlined),
-          selectedIcon: Icon(Icons.point_of_sale_rounded),
-          label: 'POS',
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.checklist_outlined),
-          selectedIcon: const Icon(Icons.checklist_rounded),
-          label: l10n.openAccounts,
-        ),
-        NavigationDestination(
-          icon: Icon(
-            _contextProvider.isBilliardActive
-                ? Icons.sports_esports_outlined
-                : Icons.restaurant_outlined,
-          ),
-          selectedIcon: Icon(
-            _contextProvider.isBilliardActive
-                ? Icons.sports_esports_rounded
-                : Icons.restaurant_rounded,
-          ),
-          label: _contextProvider.isBilliardActive
-              ? l10n.billiards
-              : l10n.kitchen,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.menu_rounded),
-          selectedIcon: const Icon(Icons.menu_open_rounded),
-          label: l10n.modules,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInventoryNav(AppLocalizations l10n, String route) {
-    int index = 0;
-    if (route == AppRoutes.cash) {
-      index = 0;
-    } else if (route == AppRoutes.inventory) {
-      index = 1;
-    } else if (route == AppRoutes.kardex) {
-      index = 2;
-    } else if (route == AppRoutes.invoices) {
-      index = 3;
-    } else {
-      index = 4;
-    }
-
-    return NavigationBar(
-      selectedIndex: index,
-      onDestinationSelected: (i) {
-        switch (i) {
-          case 0:
-            _navProvider.navigateTo(AppRoutes.cash);
-            break;
-          case 1:
-            _navProvider.navigateTo(AppRoutes.inventory);
-            break;
-          case 2:
-            _navProvider.navigateTo(AppRoutes.kardex);
-            break;
-          case 3:
-            _navProvider.navigateTo(AppRoutes.invoices);
-            break;
-          case 4:
-            _openDrawer();
-            break;
-        }
-      },
-      destinations: [
-        NavigationDestination(
-          icon: const Icon(Icons.payments_outlined),
-          selectedIcon: const Icon(Icons.payments_rounded),
-          label: l10n.cash,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.inventory_2_outlined),
-          selectedIcon: const Icon(Icons.inventory_2_rounded),
-          label: l10n.warehouses,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.menu_book_outlined),
-          selectedIcon: const Icon(Icons.menu_book_rounded),
-          label: l10n.kardex,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.receipt_long_outlined),
-          selectedIcon: const Icon(Icons.receipt_long_rounded),
-          label: l10n.invoices,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.menu_rounded),
-          selectedIcon: const Icon(Icons.menu_open_rounded),
-          label: l10n.modules,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCatalogsNav(AppLocalizations l10n, String route) {
-    int index = 0;
-    if (route == AppRoutes.products) {
-      index = 0;
-    } else if (route == AppRoutes.customers) {
-      index = 1;
-    } else if (route == AppRoutes.suppliers) {
-      index = 2;
-    } else {
-      index = 3;
-    }
-
-    return NavigationBar(
-      selectedIndex: index,
-      onDestinationSelected: (i) {
-        switch (i) {
-          case 0:
-            _navProvider.navigateTo(AppRoutes.products);
-            break;
-          case 1:
-            _navProvider.navigateTo(AppRoutes.customers);
-            break;
-          case 2:
-            _navProvider.navigateTo(AppRoutes.suppliers);
-            break;
-          case 3:
-            _openDrawer();
-            break;
-        }
-      },
-      destinations: [
-        NavigationDestination(
-          icon: const Icon(Icons.shopping_bag_outlined),
-          selectedIcon: const Icon(Icons.shopping_bag_rounded),
-          label: l10n.products,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.people_outline),
-          selectedIcon: const Icon(Icons.people_rounded),
-          label: l10n.customers,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.local_shipping_outlined),
-          selectedIcon: const Icon(Icons.local_shipping_rounded),
-          label: l10n.suppliers,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.menu_rounded),
-          selectedIcon: const Icon(Icons.menu_open_rounded),
-          label: l10n.modules,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFinanceNav(AppLocalizations l10n, String route) {
-    int index = 0;
-    if (route == AppRoutes.purchasing) {
-      index = 0;
-    } else if (route == AppRoutes.receivables) {
-      index = 1;
-    } else if (route == AppRoutes.payables) {
-      index = 2;
-    } else if (route == AppRoutes.reports) {
-      index = 3;
-    } else {
-      index = 4;
-    }
-
-    return NavigationBar(
-      selectedIndex: index,
-      onDestinationSelected: (i) {
-        switch (i) {
-          case 0:
-            _navProvider.navigateTo(AppRoutes.purchasing);
-            break;
-          case 1:
-            _navProvider.navigateTo(AppRoutes.receivables);
-            break;
-          case 2:
-            _navProvider.navigateTo(AppRoutes.payables);
-            break;
-          case 3:
-            _navProvider.navigateTo(AppRoutes.reports);
-            break;
-          case 4:
-            _openDrawer();
-            break;
-        }
-      },
-      destinations: [
-        NavigationDestination(
-          icon: const Icon(Icons.shopping_cart_checkout_outlined),
-          selectedIcon: const Icon(Icons.shopping_cart_checkout_rounded),
-          label: l10n.purchasing,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.account_balance_wallet_outlined),
-          selectedIcon: const Icon(Icons.account_balance_wallet_rounded),
-          label: l10n.receivables,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.credit_card_outlined),
-          selectedIcon: const Icon(Icons.credit_card_rounded),
-          label: l10n.payables,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.bar_chart_outlined),
-          selectedIcon: const Icon(Icons.bar_chart_rounded),
-          label: l10n.reports,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.menu_rounded),
-          selectedIcon: const Icon(Icons.menu_open_rounded),
-          label: l10n.modules,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSystemNav(AppLocalizations l10n, String route) {
-    int index = 0;
-    if (route == AppRoutes.businessUnits) {
-      index = 0;
-    } else if (route == AppRoutes.users) {
-      index = 1;
-    } else if (route == AppRoutes.audit) {
-      index = 2;
-    } else if (route == AppRoutes.settings) {
-      index = 3;
-    } else {
-      index = 4;
-    }
-
-    return NavigationBar(
-      selectedIndex: index,
-      onDestinationSelected: (i) {
-        switch (i) {
-          case 0:
-            _navProvider.navigateTo(AppRoutes.businessUnits);
-            break;
-          case 1:
-            _navProvider.navigateTo(AppRoutes.users);
-            break;
-          case 2:
-            _navProvider.navigateTo(AppRoutes.audit);
-            break;
-          case 3:
-            _navProvider.navigateTo(AppRoutes.settings);
-            break;
-          case 4:
-            _openDrawer();
-            break;
-        }
-      },
-      destinations: [
-        NavigationDestination(
-          icon: const Icon(Icons.business_outlined),
-          selectedIcon: const Icon(Icons.business_rounded),
-          label: l10n.businessUnits,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.manage_accounts_outlined),
-          selectedIcon: const Icon(Icons.manage_accounts_rounded),
-          label: l10n.users,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.security_outlined),
-          selectedIcon: const Icon(Icons.security_rounded),
-          label: l10n.audit,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.settings_outlined),
-          selectedIcon: const Icon(Icons.settings_rounded),
-          label: l10n.settings,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.menu_rounded),
-          selectedIcon: const Icon(Icons.menu_open_rounded),
-          label: l10n.modules,
-        ),
-      ],
     );
   }
 

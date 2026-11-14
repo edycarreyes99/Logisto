@@ -2,13 +2,13 @@ import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/business_type_enum.dart';
 import '../../core/enums/feature_status_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/business_unit_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../auth/logout_dialog.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import '../navigation/app_routes.dart';
 import '../navigation/navigation_provider.dart';
@@ -35,19 +35,21 @@ class _BusinessUnitSelectorScreenState
     super.initState();
     _provider = locator<BusinessUnitSelectorProvider>();
     _contextProvider = locator<BusinessContextProvider>();
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadBusinessUnits(orgId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadBusinessUnits(orgId);
+      });
+    }
   }
 
   void _refresh() {
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    _provider.loadBusinessUnits(orgId);
-    final l10n = AppLocalizations.of(context)!;
-    AppFeedback.showInfo(context, l10n.refresh);
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    if (orgId.isNotEmpty) {
+      _provider.loadBusinessUnits(orgId);
+      final l10n = AppLocalizations.of(context)!;
+      AppFeedback.showInfo(context, l10n.refresh);
+    }
   }
 
   void _handleSelectUnit(BusinessUnitModel unit) async {
@@ -115,9 +117,7 @@ class _BusinessUnitSelectorScreenState
                   ? null
                   : () async {
                       setModalState(() => isSaving = true);
-                      final orgId =
-                          _contextProvider.activeOrganization?.id ??
-                          DatabaseSeeder.defaultOrgId;
+                      final orgId = _contextProvider.activeOrganization?.id ?? '';
                       final bName = nameCtrl.text;
                       await _provider.addUnit(
                         orgId: orgId,
@@ -143,29 +143,12 @@ class _BusinessUnitSelectorScreenState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final hasActiveUnit = _contextProvider.activeBusinessUnit != null;
 
-    return Scaffold(
-      appBar: _buildHeader(l10n),
-      body: BsContainer.fluid(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: ListenableBuilder(
-            listenable: _provider,
-            builder: (context, _) => _buildUnitGrid(),
-          ),
-        ),
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildHeader(AppLocalizations l10n) {
-    return AppBar(
-      title: Text(
-        l10n.selectOperatingBusinessUnit,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      elevation: 0,
-      scrolledUnderElevation: 1,
+    return LogistoScaffold(
+      title: l10n.selectOperatingBusinessUnit,
+      isChild: hasActiveUnit,
+      onBack: () => locator<NavigationProvider>().navigateTo(AppRoutes.dashboard),
       actions: [
         IconButton(
           icon: const Icon(Icons.refresh),
@@ -184,8 +167,16 @@ class _BusinessUnitSelectorScreenState
           tooltip: l10n.logout,
           onPressed: () => showLogoutDialog(context),
         ),
-        const SizedBox(width: 16),
       ],
+      body: BsContainer.fluid(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: ListenableBuilder(
+            listenable: _provider,
+            builder: (context, _) => _buildUnitGrid(),
+          ),
+        ),
+      ),
     );
   }
 
