@@ -2,6 +2,7 @@ import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../domain/models/invoice_model.dart';
+import '../../domain/services/printer_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
@@ -107,6 +108,31 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
           ),
         ),
         actions: [
+          OutlinedButton.icon(
+            icon: const Icon(Icons.print_rounded, size: 16),
+            label: Text(l10n.reprintVoucher),
+            onPressed: () {
+              final printerService = locator<IPrinterService>();
+              printerService.printReceipt(
+                invoice: inv,
+                businessName: _contextProvider.activeOrganization?.commercialName,
+                branchName: _contextProvider.activeBusinessUnit?.name,
+              );
+              AppFeedback.showSuccess(context, 'Enviando voucher a impresión...');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.share_outlined, size: 18),
+            tooltip: l10n.shareVoucher,
+            onPressed: () {
+              final printerService = locator<IPrinterService>();
+              printerService.shareReceiptPdf(
+                invoice: inv,
+                businessName: _contextProvider.activeOrganization?.commercialName,
+                branchName: _contextProvider.activeBusinessUnit?.name,
+              );
+            },
+          ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(l10n.close),

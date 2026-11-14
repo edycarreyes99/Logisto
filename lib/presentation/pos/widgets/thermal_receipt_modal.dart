@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../../domain/models/invoice_model.dart';
+import '../../../domain/models/printer_device_model.dart';
+import '../../../domain/services/printer_service.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../locator.dart';
+import '../../settings/printer_management_provider.dart';
 
-/// Simulated 80mm ESC/POS thermal receipt modal for sales and billing verification.
-class ThermalReceiptModal extends StatelessWidget {
+/// Interactive modal displaying the receipt and offering immediate thermal/matrix printing,
+/// OS preview dialog, and PDF sharing.
+class ThermalReceiptModal extends StatefulWidget {
   final InvoiceModel invoice;
   final String organizationName;
   final String branchName;
@@ -18,23 +23,102 @@ class ThermalReceiptModal extends StatelessWidget {
   });
 
   @override
+  State<ThermalReceiptModal> createState() => _ThermalReceiptModalState();
+}
+
+class _ThermalReceiptModalState extends State<ThermalReceiptModal> {
+  bool _isPrinting = false;
+
+  Future<void> _handleDirectPrint(BuildContext context) async {
+    setState(() => _isPrinting = true);
+    final printerService = locator<IPrinterService>();
+    try {
+      await printerService.printReceipt(
+        invoice: widget.invoice,
+        businessName: widget.organizationName,
+        branchName: widget.branchName,
+      );
+    } finally {
+      if (mounted) setState(() => _isPrinting = false);
+    }
+  }
+
+  Future<void> _handlePreview(BuildContext context) async {
+    final printerService = locator<IPrinterService>();
+    await printerService.openPrintDialog(
+      invoice: widget.invoice,
+      businessName: widget.organizationName,
+      branchName: widget.branchName,
+    );
+  }
+
+  Future<void> _handleShare(BuildContext context) async {
+    final printerService = locator<IPrinterService>();
+    await printerService.shareReceiptPdf(
+      invoice: widget.invoice,
+      businessName: widget.organizationName,
+      branchName: widget.branchName,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final printerProvider = locator<PrinterManagementProvider>();
+    final activePrinter = printerProvider.savedPrinter;
 
     return AlertDialog(
-      title: _buildTitle(l10n),
+      title: _buildTitle(l10n, activePrinter?.displayName),
       content: SizedBox(
-        width: 360,
+        width: 380,
         child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: theme.colorScheme.outlineVariant),
-            ),
-            child: _buildReceiptContent(l10n),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (activePrinter != null)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        activePrinter.connectionType == PrinterConnectionType.usb
+                            ? Icons.usb_rounded
+                            : Icons.bluetooth_rounded,
+                        size: 16,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          'Impresora: ${activePrinter.displayName}',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onPrimaryContainer,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: theme.colorScheme.outlineVariant),
+                ),
+                child: _buildReceiptContent(l10n),
+              ),
+            ],
           ),
         ),
       ),
@@ -42,14 +126,16 @@ class ThermalReceiptModal extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle(AppLocalizations l10n) {
+  Widget _buildTitle(AppLocalizations l10n, String? printerName) {
     return Row(
       children: [
-        const Icon(Icons.receipt_long),
+        const Icon(Icons.receipt_long_rounded),
         const SizedBox(width: 8),
-        Text(
-          l10n.salesReceipt,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        Expanded(
+          child: Text(
+            l10n.salesReceipt,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     );
@@ -57,37 +143,54 @@ class ThermalReceiptModal extends StatelessWidget {
 
   List<Widget> _buildActions(BuildContext context, AppLocalizations l10n) {
     return [
+      IconButton(
+        icon: const Icon(Icons.share_outlined),
+        tooltip: l10n.shareVoucher,
+        onPressed: () => _handleShare(context),
+      ),
+      IconButton(
+        icon: const Icon(Icons.preview_outlined),
+        tooltip: l10n.previewVoucher,
+        onPressed: () => _handlePreview(context),
+      ),
       OutlinedButton.icon(
-        icon: const Icon(Icons.print, size: 18),
-        label: Text(l10n.printAction),
-        onPressed: () => Navigator.of(context).pop(),
+        icon: _isPrinting
+            ? const SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.print_rounded, size: 18),
+        label: Text(l10n.printTicket),
+        onPressed: _isPrinting ? null : () => _handleDirectPrint(context),
       ),
       FilledButton.icon(
         icon: const Icon(Icons.add_shopping_cart, size: 18),
         label: Text(l10n.newSaleAction),
         onPressed: () {
           Navigator.of(context).pop();
-          onNewSale();
+          widget.onNewSale();
         },
       ),
     ];
   }
 
   Widget _buildReceiptContent(AppLocalizations l10n) {
+    final invoice = widget.invoice;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
         Center(
           child: Text(
-            organizationName.toUpperCase(),
+            widget.organizationName.toUpperCase(),
             textAlign: TextAlign.center,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
         ),
         Center(
           child: Text(
-            branchName,
+            widget.branchName,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 12),
           ),
@@ -172,11 +275,11 @@ class ThermalReceiptModal extends StatelessWidget {
           children: [
             Text(
               l10n.total,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
             ),
             Text(
               '\$${invoice.totalAmount.toStringAsFixed(2)}',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
             ),
           ],
         ),
