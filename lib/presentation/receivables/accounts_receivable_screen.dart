@@ -44,54 +44,73 @@ class _AccountsReceivableScreenState extends State<AccountsReceivableScreen> {
   void _showCollectModal(AccountReceivableModel r) {
     final l10n = AppLocalizations.of(context)!;
     final amtCtrl = TextEditingController(text: '${r.balance}');
+    bool isSaving = false;
+
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          l10n.collectPaymentCustomer(r.customerName),
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(l10n.outstandingBalanceAmount(r.balance.toStringAsFixed(2))),
-            const SizedBox(height: 12),
-            TextField(
-              controller: amtCtrl,
-              decoration: InputDecoration(
-                labelText: l10n.paymentAmountDollar,
-                hintText: l10n.paymentAmountDollar,
-                border: const OutlineInputBorder(),
-                prefixText: '\$ ',
+      barrierDismissible: !isSaving,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          title: Text(
+            l10n.collectPaymentCustomer(r.customerName),
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l10n.outstandingBalanceAmount(r.balance.toStringAsFixed(2))),
+              const SizedBox(height: 12),
+              TextField(
+                controller: amtCtrl,
+                decoration: InputDecoration(
+                  labelText: l10n.paymentAmountDollar,
+                  hintText: l10n.paymentAmountDollar,
+                  border: const OutlineInputBorder(),
+                  prefixText: '\$ ',
+                ),
+                keyboardType: TextInputType.number,
               ),
-              keyboardType: TextInputType.number,
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton.icon(
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.check, size: 18),
+              label: Text(l10n.emitReceiptAndApply),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setModalState(() => isSaving = true);
+                      final val = double.tryParse(amtCtrl.text) ?? r.balance;
+                      await _provider.recordPayment(
+                        receivableId: r.id,
+                        amount: val,
+                        method: PaymentMethodEnum.cash,
+                      );
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                      if (mounted) {
+                        AppFeedback.showSuccess(
+                          context,
+                          'Abono de \$${val.toStringAsFixed(2)} aplicado a ${r.customerName}',
+                        );
+                      }
+                    },
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              final val = double.tryParse(amtCtrl.text) ?? r.balance;
-              _provider.recordPayment(
-                receivableId: r.id,
-                amount: val,
-                method: PaymentMethodEnum.cash,
-              );
-              Navigator.of(ctx).pop();
-              AppFeedback.showSuccess(
-                context,
-                'Abono de \$${val.toStringAsFixed(2)} aplicado a ${r.customerName}',
-              );
-            },
-            child: Text(l10n.emitReceiptAndApply),
-          ),
-        ],
       ),
     );
   }

@@ -42,53 +42,76 @@ class _AccountsPayableScreenState extends State<AccountsPayableScreen> {
   void _showPaymentModal(AccountPayableModel p) {
     final l10n = AppLocalizations.of(context)!;
     final amtCtrl = TextEditingController(text: '${p.remainingBalance}');
+    bool isSaving = false;
+
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          l10n.paySupplierTitle(p.supplierName),
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(l10n.invoiceLabel(p.invoiceNumber)),
-            Text(
-              l10n.remainingDebtLabel(p.remainingBalance.toStringAsFixed(2)),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: amtCtrl,
-              decoration: InputDecoration(
-                labelText: l10n.paymentAmountDollar,
-                hintText: l10n.paymentAmountDollar,
-                border: const OutlineInputBorder(),
-                prefixText: '\$ ',
+      barrierDismissible: !isSaving,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          title: Text(
+            l10n.paySupplierTitle(p.supplierName),
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l10n.invoiceLabel(p.invoiceNumber)),
+              Text(
+                l10n.remainingDebtLabel(p.remainingBalance.toStringAsFixed(2)),
               ),
-              keyboardType: TextInputType.number,
+              const SizedBox(height: 12),
+              TextField(
+                controller: amtCtrl,
+                decoration: InputDecoration(
+                  labelText: l10n.paymentAmountDollar,
+                  hintText: l10n.paymentAmountDollar,
+                  border: const OutlineInputBorder(),
+                  prefixText: '\$ ',
+                ),
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton.icon(
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.check, size: 18),
+              label: Text(l10n.disbursePayment),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setModalState(() => isSaving = true);
+                      final val =
+                          double.tryParse(amtCtrl.text) ?? p.remainingBalance;
+                      await _provider.recordPayment(
+                        payableId: p.id,
+                        amount: val,
+                      );
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                      if (mounted) {
+                        AppFeedback.showSuccess(
+                          context,
+                          'Pago a proveedor de \$${val.toStringAsFixed(2)} emitido con éxito',
+                        );
+                      }
+                    },
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              final val = double.tryParse(amtCtrl.text) ?? p.remainingBalance;
-              _provider.recordPayment(payableId: p.id, amount: val);
-              Navigator.of(ctx).pop();
-              AppFeedback.showSuccess(
-                context,
-                'Pago a proveedor de \$${val.toStringAsFixed(2)} emitido con éxito',
-              );
-            },
-            child: Text(l10n.disbursePayment),
-          ),
-        ],
       ),
     );
   }

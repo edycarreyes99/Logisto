@@ -41,117 +41,176 @@ class _CashShiftScreenState extends State<CashShiftScreen> {
 
   void _showOpenShiftModal(AppLocalizations l10n) {
     final floatCtrl = TextEditingController(text: '100.00');
+    bool isSaving = false;
+
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.openCashShiftRegister(1)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(l10n.openingFloatPrompt),
-            const SizedBox(height: 12),
-            TextField(
-              controller: floatCtrl,
-              decoration: const InputDecoration(
-                hintText: '100.00',
-                border: OutlineInputBorder(),
+      barrierDismissible: !isSaving,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          title: Text(l10n.openCashShiftRegister(1)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l10n.openingFloatPrompt),
+              const SizedBox(height: 12),
+              TextField(
+                controller: floatCtrl,
+                decoration: const InputDecoration(
+                  hintText: '100.00',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
               ),
-              keyboardType: TextInputType.number,
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton.icon(
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.check, size: 18),
+              label: Text(l10n.openShift),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setModalState(() => isSaving = true);
+                      final buId =
+                          _contextProvider.activeBusinessUnit?.id ??
+                          DatabaseSeeder.defaultBuCentralId;
+                      final float = double.tryParse(floatCtrl.text) ?? 100.0;
+                      await _provider.openNewShift(
+                        buId: buId,
+                        registerNumber: 1,
+                        openingBalance: float,
+                        cashierId: 'usr_cashier_1',
+                      );
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                      if (mounted) {
+                        AppFeedback.showSuccess(
+                          context,
+                          'Turno de caja abierto con \$${float.toStringAsFixed(2)}',
+                        );
+                      }
+                    },
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              final buId =
-                  _contextProvider.activeBusinessUnit?.id ??
-                  DatabaseSeeder.defaultBuCentralId;
-              final float = double.tryParse(floatCtrl.text) ?? 100.0;
-              _provider.openNewShift(
-                buId: buId,
-                registerNumber: 1,
-                openingBalance: float,
-                cashierId: 'usr_cashier_1',
-              );
-              Navigator.of(ctx).pop();
-              AppFeedback.showSuccess(
-                context,
-                'Turno de caja abierto con \$${float.toStringAsFixed(2)}',
-              );
-            },
-            child: Text(l10n.openShift),
-          ),
-        ],
       ),
     );
   }
 
   void _showMovementModal(AppLocalizations l10n) {
     final amtCtrl = TextEditingController();
+    bool isSavingWithdraw = false;
+    bool isSavingDeposit = false;
+
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.recordCashMovement),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: amtCtrl,
-              decoration: InputDecoration(
-                hintText: l10n.amountPlaceholder,
-                border: const OutlineInputBorder(),
+      barrierDismissible: !isSavingWithdraw && !isSavingDeposit,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          title: Text(l10n.recordCashMovement),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: amtCtrl,
+                decoration: InputDecoration(
+                  hintText: l10n.amountPlaceholder,
+                  border: const OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
               ),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      final val = double.tryParse(amtCtrl.text) ?? 0.0;
-                      _provider.recordCashMovement(
-                        amount: val,
-                        isWithdrawal: true,
-                      );
-                      Navigator.of(ctx).pop();
-                      AppFeedback.showWarning(
-                        context,
-                        'Retiro de efectivo por \$${val.toStringAsFixed(2)} registrado',
-                      );
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.error,
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      icon: isSavingWithdraw
+                          ? const SizedBox(
+                              width: 14,
+                              height: 14,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.arrow_upward_rounded, size: 16),
+                      label: Text(l10n.withdrawalSangria),
+                      onPressed: (isSavingWithdraw || isSavingDeposit)
+                          ? null
+                          : () async {
+                              setModalState(() => isSavingWithdraw = true);
+                              final val = double.tryParse(amtCtrl.text) ?? 0.0;
+                              await _provider.recordCashMovement(
+                                amount: val,
+                                isWithdrawal: true,
+                              );
+                              if (ctx.mounted) Navigator.of(ctx).pop();
+                              if (mounted) {
+                                AppFeedback.showWarning(
+                                  context,
+                                  'Retiro de efectivo por \$${val.toStringAsFixed(2)} registrado',
+                                );
+                              }
+                            },
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Theme.of(context).colorScheme.error,
+                      ),
                     ),
-                    child: Text(l10n.withdrawalSangria),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () {
-                      final val = double.tryParse(amtCtrl.text) ?? 0.0;
-                      _provider.recordCashMovement(
-                        amount: val,
-                        isWithdrawal: false,
-                      );
-                      Navigator.of(ctx).pop();
-                      AppFeedback.showSuccess(
-                        context,
-                        'Ingreso de efectivo por \$${val.toStringAsFixed(2)} registrado',
-                      );
-                    },
-                    child: Text(l10n.cashInflow),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: FilledButton.icon(
+                      icon: isSavingDeposit
+                          ? const SizedBox(
+                              width: 14,
+                              height: 14,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.arrow_downward_rounded, size: 16),
+                      label: Text(l10n.cashInflow),
+                      onPressed: (isSavingWithdraw || isSavingDeposit)
+                          ? null
+                          : () async {
+                              setModalState(() => isSavingDeposit = true);
+                              final val = double.tryParse(amtCtrl.text) ?? 0.0;
+                              await _provider.recordCashMovement(
+                                amount: val,
+                                isWithdrawal: false,
+                              );
+                              if (ctx.mounted) Navigator.of(ctx).pop();
+                              if (mounted) {
+                                AppFeedback.showSuccess(
+                                  context,
+                                  'Ingreso de efectivo por \$${val.toStringAsFixed(2)} registrado',
+                                );
+                              }
+                            },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: (isSavingWithdraw || isSavingDeposit)
+                  ? null
+                  : () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
             ),
           ],
         ),

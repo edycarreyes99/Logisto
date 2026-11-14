@@ -20,6 +20,7 @@ class CloseShiftBlindDropModal extends StatefulWidget {
 class _CloseShiftBlindDropModalState extends State<CloseShiftBlindDropModal> {
   final TextEditingController _countedCtrl = TextEditingController();
   ShiftReconciliationResult? _result;
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -28,12 +29,17 @@ class _CloseShiftBlindDropModalState extends State<CloseShiftBlindDropModal> {
   }
 
   Future<void> _submitCount() async {
+    if (_isSubmitting) return;
+    setState(() => _isSubmitting = true);
     final counted = double.tryParse(_countedCtrl.text) ?? 0.0;
     final res = await widget.provider.closeShiftBlindDrop(
       actualCounted: counted,
     );
     if (!mounted) return;
-    setState(() => _result = res);
+    setState(() {
+      _result = res;
+      _isSubmitting = false;
+    });
     if (res != null) {
       if (res.discrepancyStatus == ShiftDiscrepancyEnum.balanced) {
         AppFeedback.showSuccess(context, 'Cierre Z procesado con balance exacto');
@@ -68,17 +74,27 @@ class _CloseShiftBlindDropModalState extends State<CloseShiftBlindDropModal> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
           child: Text(_result == null ? l10n.cancel : l10n.finishPrintZCut),
         ),
         if (_result == null)
-          FilledButton(
+          FilledButton.icon(
             style: FilledButton.styleFrom(
               backgroundColor: theme.colorScheme.error,
               foregroundColor: theme.colorScheme.onError,
             ),
-            onPressed: _submitCount,
-            child: Text(l10n.submitBlindCount),
+            icon: _isSubmitting
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Icon(Icons.point_of_sale_rounded, size: 18),
+            onPressed: _isSubmitting ? null : _submitCount,
+            label: Text(l10n.submitBlindCount),
           ),
       ],
     );
