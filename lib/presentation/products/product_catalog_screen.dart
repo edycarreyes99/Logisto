@@ -58,9 +58,11 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
     ProductTypeEnum selectedType =
         existing?.productType ?? ProductTypeEnum.standard;
 
+    bool isSaving = false;
+
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: !isSaving,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setModalState) => AlertDialog(
           title: Text(
@@ -162,41 +164,56 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
+              onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
               child: Text(l10n.cancel),
             ),
-            FilledButton(
-              onPressed: () {
-                final orgId =
-                    _contextProvider.activeOrganization?.id ??
-                    'org_logisto_matriz';
-                final cost = double.tryParse(costCtrl.text) ?? 1.0;
-                final sale = double.tryParse(saleCtrl.text) ?? 2.0;
-                final item = ProductModel(
-                  id:
-                      existing?.id ??
-                      'prod_${DateTime.now().millisecondsSinceEpoch}',
-                  orgId: orgId,
-                  sku: skuCtrl.text.isEmpty ? 'SKU-001' : skuCtrl.text,
-                  barcode: barcodeCtrl.text.isEmpty
-                      ? '0000000000'
-                      : barcodeCtrl.text,
-                  name: nameCtrl.text.isEmpty
-                      ? l10n.defaultProductName
-                      : nameCtrl.text,
-                  categoryId: 'general',
-                  productType: selectedType,
-                  costPrice: cost,
-                  salePrice: sale,
-                );
-                _provider.saveProduct(orgId: orgId, product: item);
-                Navigator.of(ctx).pop();
-                AppFeedback.showSuccess(
-                  context,
-                  'Producto "${item.name}" guardado exitosamente',
-                );
-              },
-              child: Text(l10n.saveProduct),
+            FilledButton.icon(
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.check, size: 18),
+              label: Text(l10n.saveProduct),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setModalState(() => isSaving = true);
+                      final orgId =
+                          _contextProvider.activeOrganization?.id ??
+                          'org_logisto_matriz';
+                      final cost = double.tryParse(costCtrl.text) ?? 1.0;
+                      final sale = double.tryParse(saleCtrl.text) ?? 2.0;
+                      final item = ProductModel(
+                        id:
+                            existing?.id ??
+                            'prod_${DateTime.now().millisecondsSinceEpoch}',
+                        orgId: orgId,
+                        sku: skuCtrl.text.isEmpty ? 'SKU-001' : skuCtrl.text,
+                        barcode: barcodeCtrl.text.isEmpty
+                            ? '0000000000'
+                            : barcodeCtrl.text,
+                        name: nameCtrl.text.isEmpty
+                            ? l10n.defaultProductName
+                            : nameCtrl.text,
+                        categoryId: 'general',
+                        productType: selectedType,
+                        costPrice: cost,
+                        salePrice: sale,
+                      );
+                      await _provider.saveProduct(orgId: orgId, product: item);
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                      if (mounted) {
+                        AppFeedback.showSuccess(
+                          context,
+                          'Producto "${item.name}" guardado exitosamente',
+                        );
+                      }
+                    },
             ),
           ],
         ),

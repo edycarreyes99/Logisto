@@ -45,69 +45,88 @@ class _PurchaseOrderScreenState extends State<PurchaseOrderScreen> {
     final supplierCtrl = TextEditingController(text: 'Compañía Cervecera');
     final amountCtrl = TextEditingController(text: '300.00');
 
+    bool isSaving = false;
+
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          l10n.createPurchaseOrder,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: supplierCtrl,
-              decoration: InputDecoration(
-                labelText: l10n.supplierName,
-                hintText: l10n.supplierName,
-                border: const OutlineInputBorder(),
+      barrierDismissible: !isSaving,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          title: Text(
+            l10n.createPurchaseOrder,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                controller: supplierCtrl,
+                decoration: InputDecoration(
+                  labelText: l10n.supplierName,
+                  hintText: l10n.supplierName,
+                  border: const OutlineInputBorder(),
+                ),
               ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: amountCtrl,
+                decoration: InputDecoration(
+                  labelText: l10n.estimatedTotalOrderValue,
+                  hintText: l10n.estimatedTotalOrderValue,
+                  border: const OutlineInputBorder(),
+                  prefixText: '\$ ',
+                ),
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
             ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: amountCtrl,
-              decoration: InputDecoration(
-                labelText: l10n.estimatedTotalOrderValue,
-                hintText: l10n.estimatedTotalOrderValue,
-                border: const OutlineInputBorder(),
-                prefixText: '\$ ',
-              ),
-              keyboardType: TextInputType.number,
+            FilledButton.icon(
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.check, size: 18),
+              label: Text(l10n.issueOrder),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setModalState(() => isSaving = true);
+                      final buId =
+                          _contextProvider.activeBusinessUnit?.id ??
+                          DatabaseSeeder.defaultBuCentralId;
+                      final total = double.tryParse(amountCtrl.text) ?? 100.0;
+                      final order = PurchaseOrderModel(
+                        id: 'PO-${DateTime.now().millisecondsSinceEpoch % 10000}',
+                        buId: buId,
+                        supplierId: 'sup_01',
+                        supplierName: supplierCtrl.text,
+                        orderDate: DateTime.now(),
+                        totalAmount: total,
+                        status: 'pending',
+                      );
+                      await _provider.createOrder(order);
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                      if (mounted) {
+                        AppFeedback.showSuccess(
+                          context,
+                          'Orden de compra #${order.id} creada',
+                        );
+                      }
+                    },
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              final buId =
-                  _contextProvider.activeBusinessUnit?.id ??
-                  DatabaseSeeder.defaultBuCentralId;
-              final total = double.tryParse(amountCtrl.text) ?? 100.0;
-              final order = PurchaseOrderModel(
-                id: 'PO-${DateTime.now().millisecondsSinceEpoch % 10000}',
-                buId: buId,
-                supplierId: 'sup_01',
-                supplierName: supplierCtrl.text,
-                orderDate: DateTime.now(),
-                totalAmount: total,
-                status: 'pending',
-              );
-              _provider.createOrder(order);
-              Navigator.of(ctx).pop();
-              AppFeedback.showSuccess(
-                context,
-                'Orden de compra #${order.id} creada',
-              );
-            },
-            child: Text(l10n.issueOrder),
-          ),
-        ],
       ),
     );
   }

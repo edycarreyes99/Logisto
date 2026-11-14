@@ -56,104 +56,124 @@ class _SupplierCatalogScreenState extends State<SupplierCatalogScreen> {
       text: existing != null ? '${existing.creditDays}' : '30',
     );
 
+    bool isSaving = false;
+
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          existing == null ? l10n.registerSupplier : l10n.editSupplier,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+      barrierDismissible: !isSaving,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          title: Text(
+            existing == null ? l10n.registerSupplier : l10n.editSupplier,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameCtrl,
+                  decoration: InputDecoration(
+                    labelText: l10n.companyLegalName,
+                    hintText: l10n.companyLegalName,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: taxCtrl,
+                  decoration: InputDecoration(
+                    labelText: l10n.rucTaxIdPlaceholder,
+                    hintText: l10n.rucTaxIdPlaceholder,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: contactCtrl,
+                  decoration: InputDecoration(
+                    labelText: l10n.contactRepresentative,
+                    hintText: l10n.contactRepresentative,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: phoneCtrl,
+                  decoration: InputDecoration(
+                    labelText: l10n.placeholderPhone,
+                    hintText: l10n.placeholderPhone,
+                    border: const OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: daysCtrl,
+                  decoration: InputDecoration(
+                    labelText: l10n.creditDaysExample,
+                    hintText: l10n.creditDaysExample,
+                    border: const OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton.icon(
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.check, size: 18),
+              label: Text(l10n.saveSupplier),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setModalState(() => isSaving = true);
+                      final orgId =
+                          _contextProvider.activeOrganization?.id ??
+                          DatabaseSeeder.defaultOrgId;
+                      final days = int.tryParse(daysCtrl.text) ?? 30;
+                      final sup = SupplierModel(
+                        id:
+                            existing?.id ??
+                            'sup_${DateTime.now().millisecondsSinceEpoch}',
+                        orgId: orgId,
+                        companyName: nameCtrl.text.isEmpty
+                            ? l10n.defaultSupplierName
+                            : nameCtrl.text,
+                        taxId: taxCtrl.text.isEmpty ? 'J00000000' : taxCtrl.text,
+                        contactPerson: contactCtrl.text.isEmpty
+                            ? l10n.defaultContactName
+                            : contactCtrl.text,
+                        phone: phoneCtrl.text.isEmpty ? '555-0000' : phoneCtrl.text,
+                        creditDays: days,
+                        currentPayableBalance:
+                            existing?.currentPayableBalance ?? 0.0,
+                      );
+                      await _provider.saveSupplier(orgId: orgId, supplier: sup);
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                      if (mounted) {
+                        AppFeedback.showSuccess(
+                          context,
+                          'Proveedor "${sup.companyName}" guardado exitosamente',
+                        );
+                      }
+                    },
+            ),
+          ],
         ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameCtrl,
-                decoration: InputDecoration(
-                  labelText: l10n.companyLegalName,
-                  hintText: l10n.companyLegalName,
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: taxCtrl,
-                decoration: InputDecoration(
-                  labelText: l10n.rucTaxIdPlaceholder,
-                  hintText: l10n.rucTaxIdPlaceholder,
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: contactCtrl,
-                decoration: InputDecoration(
-                  labelText: l10n.contactRepresentative,
-                  hintText: l10n.contactRepresentative,
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: phoneCtrl,
-                decoration: InputDecoration(
-                  labelText: l10n.placeholderPhone,
-                  hintText: l10n.placeholderPhone,
-                  border: const OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: daysCtrl,
-                decoration: InputDecoration(
-                  labelText: l10n.creditDaysExample,
-                  hintText: l10n.creditDaysExample,
-                  border: const OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              final orgId =
-                  _contextProvider.activeOrganization?.id ??
-                  DatabaseSeeder.defaultOrgId;
-              final days = int.tryParse(daysCtrl.text) ?? 30;
-              final sup = SupplierModel(
-                id:
-                    existing?.id ??
-                    'sup_${DateTime.now().millisecondsSinceEpoch}',
-                orgId: orgId,
-                companyName: nameCtrl.text.isEmpty
-                    ? l10n.defaultSupplierName
-                    : nameCtrl.text,
-                taxId: taxCtrl.text.isEmpty ? 'J00000000' : taxCtrl.text,
-                contactPerson: contactCtrl.text.isEmpty
-                    ? l10n.defaultContactName
-                    : contactCtrl.text,
-                phone: phoneCtrl.text.isEmpty ? '555-0000' : phoneCtrl.text,
-                creditDays: days,
-                currentPayableBalance: existing?.currentPayableBalance ?? 0.0,
-              );
-              _provider.saveSupplier(orgId: orgId, supplier: sup);
-              Navigator.of(ctx).pop();
-              AppFeedback.showSuccess(
-                context,
-                'Proveedor "${sup.companyName}" guardado exitosamente',
-              );
-            },
-            child: Text(l10n.saveSupplier),
-          ),
-        ],
       ),
     );
   }

@@ -53,109 +53,128 @@ class _CustomerCatalogScreenState extends State<CustomerCatalogScreen> {
       text: existing != null ? existing.creditLimit.toStringAsFixed(2) : '0.00',
     );
 
+    bool isSaving = false;
+
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          existing == null ? l10n.registerCustomer : l10n.editCustomer,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+      barrierDismissible: !isSaving,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          title: Text(
+            existing == null ? l10n.registerCustomer : l10n.editCustomer,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: firstCtrl,
+                  decoration: InputDecoration(
+                    labelText: l10n.placeholderFirstName,
+                    hintText: l10n.placeholderFirstName,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: lastCtrl,
+                  decoration: InputDecoration(
+                    labelText: l10n.placeholderLastName,
+                    hintText: l10n.placeholderLastName,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: taxCtrl,
+                  decoration: InputDecoration(
+                    labelText: l10n.placeholderTaxId,
+                    hintText: l10n.placeholderTaxId,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: phoneCtrl,
+                  decoration: InputDecoration(
+                    labelText: l10n.placeholderPhone,
+                    hintText: l10n.placeholderPhone,
+                    border: const OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: limitCtrl,
+                  decoration: InputDecoration(
+                    labelText: l10n.placeholderCreditLimit,
+                    hintText: l10n.placeholderCreditLimit,
+                    border: const OutlineInputBorder(),
+                    prefixText: '\$ ',
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton.icon(
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.check, size: 18),
+              label: Text(l10n.saveCustomer),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setModalState(() => isSaving = true);
+                      final orgId =
+                          _contextProvider.activeOrganization?.id ??
+                          DatabaseSeeder.defaultOrgId;
+                      final limit = double.tryParse(limitCtrl.text) ?? 0.0;
+                      final cust = CustomerModel(
+                        id:
+                            existing?.id ??
+                            'cust_${DateTime.now().millisecondsSinceEpoch}',
+                        orgId: orgId,
+                        taxId: taxCtrl.text.isEmpty
+                            ? '001-000000-0000U'
+                            : taxCtrl.text,
+                        firstName: firstCtrl.text.isEmpty
+                            ? l10n.defaultCustomerFirstName
+                            : firstCtrl.text,
+                        lastName: lastCtrl.text.isEmpty
+                            ? l10n.defaultCustomerLastName
+                            : lastCtrl.text,
+                        phone: phoneCtrl.text.isEmpty ? 'N/A' : phoneCtrl.text,
+                        creditLimit: limit,
+                        currentDebtBalance: existing?.currentDebtBalance ?? 0.0,
+                        isCreditBlocked: existing?.isCreditBlocked ?? false,
+                        createdAt: existing?.createdAt ?? DateTime.now(),
+                      );
+                      await _provider.saveCustomer(orgId: orgId, customer: cust);
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                      if (mounted) {
+                        AppFeedback.showSuccess(
+                          context,
+                          'Cliente "${cust.fullName}" guardado exitosamente',
+                        );
+                      }
+                    },
+            ),
+          ],
         ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: firstCtrl,
-                decoration: InputDecoration(
-                  labelText: l10n.placeholderFirstName,
-                  hintText: l10n.placeholderFirstName,
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: lastCtrl,
-                decoration: InputDecoration(
-                  labelText: l10n.placeholderLastName,
-                  hintText: l10n.placeholderLastName,
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: taxCtrl,
-                decoration: InputDecoration(
-                  labelText: l10n.placeholderTaxId,
-                  hintText: l10n.placeholderTaxId,
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: phoneCtrl,
-                decoration: InputDecoration(
-                  labelText: l10n.placeholderPhone,
-                  hintText: l10n.placeholderPhone,
-                  border: const OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: limitCtrl,
-                decoration: InputDecoration(
-                  labelText: l10n.placeholderCreditLimit,
-                  hintText: l10n.placeholderCreditLimit,
-                  border: const OutlineInputBorder(),
-                  prefixText: '\$ ',
-                ),
-                keyboardType: TextInputType.number,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              final orgId =
-                  _contextProvider.activeOrganization?.id ??
-                  DatabaseSeeder.defaultOrgId;
-              final limit = double.tryParse(limitCtrl.text) ?? 0.0;
-              final cust = CustomerModel(
-                id:
-                    existing?.id ??
-                    'cust_${DateTime.now().millisecondsSinceEpoch}',
-                orgId: orgId,
-                taxId: taxCtrl.text.isEmpty
-                    ? '001-000000-0000U'
-                    : taxCtrl.text,
-                firstName: firstCtrl.text.isEmpty
-                    ? l10n.defaultCustomerFirstName
-                    : firstCtrl.text,
-                lastName: lastCtrl.text.isEmpty
-                    ? l10n.defaultCustomerLastName
-                    : lastCtrl.text,
-                phone: phoneCtrl.text.isEmpty ? 'N/A' : phoneCtrl.text,
-                creditLimit: limit,
-                currentDebtBalance: existing?.currentDebtBalance ?? 0.0,
-                isCreditBlocked: existing?.isCreditBlocked ?? false,
-                createdAt: existing?.createdAt ?? DateTime.now(),
-              );
-              _provider.saveCustomer(orgId: orgId, customer: cust);
-              Navigator.of(ctx).pop();
-              AppFeedback.showSuccess(
-                context,
-                'Cliente "${cust.fullName}" guardado exitosamente',
-              );
-            },
-            child: Text(l10n.saveCustomer),
-          ),
-        ],
       ),
     );
   }
