@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../../core/enums/business_type_enum.dart';
 import '../../core/enums/feature_status_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../data/preferences/app_preferences.dart';
 import '../../data/repositories/business_unit_repository.dart';
 import '../../data/repositories/organization_repository.dart';
@@ -15,7 +14,6 @@ class OnboardingProvider extends ChangeNotifier {
   final AppPreferences preferences;
   final OrganizationRepository? orgRepository;
   final BusinessUnitRepository? buRepository;
-  final DatabaseSeeder? seeder;
 
   int _currentStep = 1;
   FeatureStatusEnum _status = FeatureStatusEnum.idle;
@@ -28,13 +26,11 @@ class OnboardingProvider extends ChangeNotifier {
   BusinessTypeEnum _businessType = BusinessTypeEnum.billiard;
   int _initialTables = 4;
   double _hourlyRate = 10.0;
-  bool _seedDemoData = true;
 
   OnboardingProvider({
     required this.preferences,
     this.orgRepository,
     this.buRepository,
-    this.seeder,
   });
 
   int get currentStep => _currentStep;
@@ -46,7 +42,6 @@ class OnboardingProvider extends ChangeNotifier {
   BusinessTypeEnum get businessType => _businessType;
   int get initialTables => _initialTables;
   double get hourlyRate => _hourlyRate;
-  bool get seedDemoData => _seedDemoData;
 
   void setOrgDetails(String name, String tax) {
     _orgName = name;
@@ -63,11 +58,6 @@ class OnboardingProvider extends ChangeNotifier {
   void setBilliardConfig(int tables, double rate) {
     _initialTables = tables;
     _hourlyRate = rate;
-    notifyListeners();
-  }
-
-  void setSeedDemo(bool seed) {
-    _seedDemoData = seed;
     notifyListeners();
   }
 
@@ -102,50 +92,20 @@ class OnboardingProvider extends ChangeNotifier {
     final org = buildOrganizationModel().copyWith(id: orgId);
     final bu = buildBusinessUnitModel().copyWith(id: buId, orgId: orgId);
 
-    if (_seedDemoData && seeder != null) {
+    if (orgRepository != null) {
       try {
-        await seeder!.seedProductionData(orgId: DatabaseSeeder.defaultOrgId);
-        await preferences.saveActiveOrgId(DatabaseSeeder.defaultOrgId);
-        await preferences.saveActiveBuId(DatabaseSeeder.defaultBuCentralId);
+        await orgRepository!.saveOrganization(org);
       } catch (_) {}
-    } else {
-      if (orgRepository != null) {
-        try {
-          await orgRepository!.saveOrganization(org);
-        } catch (_) {}
-      }
-      if (buRepository != null) {
-        try {
-          await buRepository!.saveBusinessUnit(orgId: orgId, businessUnit: bu);
-        } catch (_) {}
-      }
+    }
+    if (buRepository != null) {
+      try {
+        await buRepository!.saveBusinessUnit(orgId: orgId, businessUnit: bu);
+      } catch (_) {}
     }
 
     if (locator.isRegistered<BusinessContextProvider>()) {
       final contextProvider = locator<BusinessContextProvider>();
-      if (_seedDemoData && seeder != null) {
-        if (buRepository != null) {
-          try {
-            final units = await buRepository!.getBusinessUnits(
-              DatabaseSeeder.defaultOrgId,
-            );
-            await contextProvider.initializeContext(
-              organization: OrganizationModel(
-                id: DatabaseSeeder.defaultOrgId,
-                legalName: 'Inversiones Castillo Machado S.A.',
-                commercialName: 'Castillo Machado',
-                taxId: 'J0310000123456',
-                ownerUserId: 'user_admin',
-                hasCompletedOnboarding: true,
-                createdAt: DateTime.now(),
-              ),
-              units: units,
-            );
-          } catch (_) {}
-        }
-      } else {
-        await contextProvider.initializeContext(organization: org, units: [bu]);
-      }
+      await contextProvider.initializeContext(organization: org, units: [bu]);
     }
 
     _status = FeatureStatusEnum.loaded;

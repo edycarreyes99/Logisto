@@ -171,6 +171,9 @@ class OnboardingStepCard extends StatelessWidget {
   }
 
   Widget _buildStep4Finalize(AppLocalizations l10n, ThemeData theme) {
+    final orgName = provider.orgName.isEmpty ? l10n.companyLegalName : provider.orgName;
+    final branchName = provider.branchName.isEmpty ? l10n.defaultBranchName : provider.branchName;
+
     return Card(
       elevation: 2,
       child: Padding(
@@ -187,19 +190,39 @@ class OnboardingStepCard extends StatelessWidget {
             const Divider(height: 20),
             Text(l10n.readyToLaunch),
             const SizedBox(height: 16),
-            OutlinedButton.icon(
-              icon: Icon(
-                provider.seedDemoData
-                    ? Icons.check_box
-                    : Icons.check_box_outline_blank,
-                size: 20,
+            Container(
+              padding: const EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(
+                  color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                ),
               ),
-              label: Text(
-                provider.seedDemoData
-                    ? l10n.productionSeedsEnabled
-                    : l10n.productionSeedsDisabled,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.business_rounded, size: 18.0, color: theme.colorScheme.primary),
+                      const SizedBox(width: 8.0),
+                      Expanded(
+                        child: Text(
+                          orgName,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8.0),
+                  Row(
+                    children: [
+                      Icon(Icons.storefront_rounded, size: 18.0, color: theme.colorScheme.secondary),
+                      const SizedBox(width: 8.0),
+                      Expanded(child: Text(branchName)),
+                    ],
+                  ),
+                ],
               ),
-              onPressed: () => provider.setSeedDemo(!provider.seedDemoData),
             ),
           ],
         ),

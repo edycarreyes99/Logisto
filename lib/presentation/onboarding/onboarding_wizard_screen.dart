@@ -5,6 +5,7 @@ import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../auth/logout_dialog.dart';
 import '../common/app_feedback.dart';
+import '../common/logisto_scaffold.dart';
 import '../navigation/app_routes.dart';
 import '../navigation/navigation_provider.dart';
 import 'onboarding_provider.dart';
@@ -53,8 +54,10 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
     final ok = await _provider.completeOnboarding();
     if (!mounted) return;
     if (ok) {
-      final l10n = AppLocalizations.of(context)!;
-      AppFeedback.showSuccess(context, l10n.databaseSeededSuccess);
+      AppFeedback.showSuccess(
+        context,
+        'Organización y sucursal inicial configuradas con éxito',
+      );
       locator<NavigationProvider>().navigateTo(AppRoutes.dashboard);
     }
   }
@@ -63,14 +66,12 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          l10n.onboardingWizardTitle,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-        scrolledUnderElevation: 1,
+    return ListenableBuilder(
+      listenable: _provider,
+      builder: (context, _) => LogistoScaffold(
+        title: l10n.onboardingWizardTitle,
+        isChild: _provider.currentStep > 1,
+        onBack: _provider.previousStep,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout_rounded),
@@ -80,13 +81,10 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
           ),
           const SizedBox(width: 8),
         ],
-      ),
-      body: BsContainer.fluid(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: ListenableBuilder(
-            listenable: _provider,
-            builder: (context, _) => Column(
+        body: BsContainer.fluid(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildProgressBar(l10n),
