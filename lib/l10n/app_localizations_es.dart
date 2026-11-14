@@ -654,6 +654,10 @@ class AppLocalizationsEs extends AppLocalizations {
       '¿Está seguro de eliminar este registro permanentemente?';
 
   @override
+  String get logoutConfirmation =>
+      '¿Está seguro de que desea cerrar la sesión actual?';
+
+  @override
   String get recordDeletedSuccess => 'Registro eliminado con éxito.';
 
   @override

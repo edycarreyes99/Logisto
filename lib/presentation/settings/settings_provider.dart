@@ -23,10 +23,9 @@ class SettingsProvider extends ChangeNotifier {
 
   SettingsProvider({this.preferences}) {
     _themeMode = preferences?.getThemeMode() ?? ThemeModeEnum.light;
-    final isTest = WidgetsBinding.instance.runtimeType.toString().contains('Test');
     _language = preferences?.hasLanguage() == true
         ? preferences!.getLanguage()
-        : (isTest ? LanguageEnum.en : LanguageEnum.es);
+        : LanguageEnum.es;
   }
 
   ThemeModeEnum get themeMode => _themeMode;

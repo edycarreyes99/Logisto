@@ -258,6 +258,7 @@
   "operationFailed": "La operación no pudo completarse. Revise los datos.",
   "confirmationPrompt": "¿Está seguro de realizar esta acción?",
   "deleteConfirmation": "¿Está seguro de eliminar este registro permanentemente?",
+  "logoutConfirmation": "¿Está seguro de que desea cerrar la sesión actual?",
   "recordDeletedSuccess": "Registro eliminado con éxito.",
   "modules": "Módulos",
   "logistoEnterprise": "Logisto Empresarial",

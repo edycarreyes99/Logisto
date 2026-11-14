@@ -650,6 +650,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Are you sure you want to delete this record permanently?';
 
   @override
+  String get logoutConfirmation =>
+      'Are you sure you want to log out of your current session?';
+
+  @override
   String get recordDeletedSuccess => 'Record deleted successfully.';
 
   @override

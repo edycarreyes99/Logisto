@@ -11,7 +11,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
 
-      await tester.pumpWidget(const LogistoApp());
+      await tester.pumpWidget(const LogistoApp(locale: Locale('en')));
       await tester.pumpAndSettle();
 
       // Verify initial telemetry counter displays 0

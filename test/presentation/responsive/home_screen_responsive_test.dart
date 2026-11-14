@@ -30,7 +30,7 @@ void main() {
         tester.view.devicePixelRatio = 1.0;
         addTearDown(tester.view.resetPhysicalSize);
 
-        await tester.pumpWidget(const LogistoApp());
+        await tester.pumpWidget(const LogistoApp(locale: Locale('en')));
         await tester.pumpAndSettle();
 
         // INVARIANT: Zero uncaught exceptions and zero RenderFlex overflow
@@ -61,7 +61,12 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
 
-      await tester.pumpWidget(const LogistoApp(themeMode: ThemeMode.dark));
+      await tester.pumpWidget(
+        const LogistoApp(
+          themeMode: ThemeMode.dark,
+          locale: Locale('en'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
@@ -109,7 +114,12 @@ void main() {
       expect(material.color, AppColors.backgroundLight);
 
       // 2. Dynamic switch to Dark Mode without restarting the app
-      await tester.pumpWidget(const LogistoApp(themeMode: ThemeMode.dark));
+      await tester.pumpWidget(
+        const LogistoApp(
+          themeMode: ThemeMode.dark,
+          locale: Locale('en'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       context = tester.element(find.byType(HomeScreen));

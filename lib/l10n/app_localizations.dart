@@ -1334,6 +1334,12 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to delete this record permanently?'**
   String get deleteConfirmation;
 
+  /// No description provided for @logoutConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to log out of your current session?'**
+  String get logoutConfirmation;
+
   /// No description provided for @recordDeletedSuccess.
   ///
   /// In en, this message translates to:

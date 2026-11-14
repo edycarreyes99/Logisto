@@ -258,6 +258,7 @@
   "operationFailed": "Operation could not be completed. Check input.",
   "confirmationPrompt": "Are you sure you want to perform this action?",
   "deleteConfirmation": "Are you sure you want to delete this record permanently?",
+  "logoutConfirmation": "Are you sure you want to log out of your current session?",
   "recordDeletedSuccess": "Record deleted successfully.",
   "modules": "Modules",
   "logistoEnterprise": "Logisto Enterprise",

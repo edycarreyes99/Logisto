@@ -129,7 +129,12 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
 
-      await tester.pumpWidget(const LogistoApp(home: KitchenDisplayScreen()));
+      await tester.pumpWidget(
+        const LogistoApp(
+          locale: Locale('en'),
+          home: KitchenDisplayScreen(),
+        ),
+      );
 
       await tester.pumpAndSettle();
 
