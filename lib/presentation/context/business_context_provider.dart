@@ -81,6 +81,7 @@ class BusinessContextProvider extends ChangeNotifier {
     _status = FeatureStatusEnum.idle;
     _errorMessage = null;
     await preferences.clearSession();
+    await preferences.clearOrganizationContext();
     notifyListeners();
   }
 }

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../data/firestore/database_seeder.dart';
+import '../../data/firestore/firestore_client.dart';
 import '../../data/preferences/app_preferences.dart';
 import '../../data/repositories/business_unit_repository.dart';
 import '../../data/repositories/organization_repository.dart';
-import '../../domain/models/organization_model.dart';
 import '../../locator.dart';
 import '../auth/login_provider.dart';
 import '../auth/login_screen.dart';
@@ -29,6 +28,7 @@ class _AppFlowCoordinatorState extends State<AppFlowCoordinator> {
   late final NavigationProvider _navProvider;
   late final AppPreferences _preferences;
   bool _isInitialized = false;
+  bool _isBootstrapping = false;
 
   @override
   void initState() {
@@ -42,59 +42,76 @@ class _AppFlowCoordinatorState extends State<AppFlowCoordinator> {
   }
 
   Future<void> _bootstrapFlow() async {
-    // Check if auto-seed is required for fresh environment
-    final seeder = locator<DatabaseSeeder>();
+    if (_isBootstrapping) return;
+    _isBootstrapping = true;
+
     try {
-      await seeder.seedIfEmpty();
-    } catch (_) {}
+      var savedOrgId = _preferences.getActiveOrgId();
+      final client = locator.isRegistered<FirestoreClient>()
+          ? locator<FirestoreClient>()
+          : null;
 
-    // Check if user has an existing session in preferences
-    final token = _preferences.getToken();
-    final savedOrgId =
-        _preferences.getActiveOrgId() ?? DatabaseSeeder.defaultOrgId;
+      // 1. If no savedOrgId, try finding an existing organization in Firestore
+      if ((savedOrgId == null || savedOrgId.isEmpty) && client != null) {
+        try {
+          final snap = await client.organizations
+              .limit(1)
+              .get()
+              .timeout(const Duration(seconds: 4));
+          if (snap.docs.isNotEmpty) {
+            savedOrgId = snap.docs.first.id;
+            await _preferences.saveActiveOrgId(savedOrgId);
+          }
+        } catch (_) {}
+      }
 
-    if (token != null && token.isNotEmpty) {
-      // Restore active authentication session
-      await _loginProvider.signInWithEmailPassword(
-        'admin@logisto.com',
-        'admin123',
-      );
-    }
-
-    if (_preferences.isOnboardingCompleted()) {
-      try {
-        final orgRepo = locator<OrganizationRepository>();
-        final buRepo = locator<BusinessUnitRepository>();
-        final org =
-            await orgRepo.getOrganization(savedOrgId) ??
-            OrganizationModel(
-              id: savedOrgId,
-              legalName: 'Inversiones Castillo Machado S.A.',
-              commercialName: 'Castillo Machado',
-              taxId: 'J0310000123456',
-              ownerUserId: 'user_admin',
-              hasCompletedOnboarding: true,
-              createdAt: DateTime(2026, 1, 1),
+      // 2. If organization ID exists, fetch org and business units
+      if (savedOrgId != null && savedOrgId.isNotEmpty) {
+        try {
+          final orgRepo = locator<OrganizationRepository>();
+          final buRepo = locator<BusinessUnitRepository>();
+          final org = await orgRepo
+              .getOrganization(savedOrgId)
+              .timeout(const Duration(seconds: 4));
+          if (org != null) {
+            final units = await buRepo
+                .getBusinessUnits(savedOrgId)
+                .timeout(const Duration(seconds: 4));
+            await _contextProvider.initializeContext(
+              organization: org,
+              units: units,
             );
-        final units = await buRepo.getBusinessUnits(savedOrgId);
-        await _contextProvider.initializeContext(
-          organization: org,
-          units: units,
-        );
-      } catch (_) {}
-    }
-
-    if (mounted) {
-      setState(() {
-        _isInitialized = true;
-      });
+          } else {
+            // Organization was removed or environment reset; trigger genuine onboarding
+            await _preferences.setOnboardingCompleted(false);
+            await _preferences.saveActiveOrgId('');
+            await _preferences.saveActiveBuId('');
+          }
+        } catch (_) {
+          if (_contextProvider.activeOrganization == null) {
+            await _preferences.setOnboardingCompleted(false);
+          }
+        }
+      } else if (_preferences.isOnboardingCompleted()) {
+        // Onboarding was flagged true, but no organization ID exists in preferences or DB
+        await _preferences.setOnboardingCompleted(false);
+      }
+    } finally {
+      _isBootstrapping = false;
+      if (mounted) {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (!_isInitialized) {
-      return const Center(child: CircularProgressIndicator());
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
 
     return ListenableBuilder(
@@ -107,6 +124,19 @@ class _AppFlowCoordinatorState extends State<AppFlowCoordinator> {
         // Step 1: Authentication Check
         if (!_loginProvider.isAuthenticated) {
           return const LoginScreen();
+        }
+
+        // Check if organization context needs resolution upon authentication
+        if (_contextProvider.activeOrganization == null &&
+            _preferences.isOnboardingCompleted()) {
+          if (!_isBootstrapping) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _bootstrapFlow();
+            });
+          }
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
         }
 
         // Step 2: First-time Onboarding Check
