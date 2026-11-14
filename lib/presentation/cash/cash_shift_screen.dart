@@ -1,11 +1,11 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import 'cash_shift_provider.dart';
 import 'widgets/close_shift_blind_drop_modal.dart';
@@ -29,14 +29,13 @@ class _CashShiftScreenState extends State<CashShiftScreen> {
     super.initState();
     _provider = locator<CashShiftProvider>();
     _contextProvider = locator<BusinessContextProvider>();
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    final buId =
-        _contextProvider.activeBusinessUnit?.id ??
-        DatabaseSeeder.defaultBuCentralId;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadShifts(orgId: orgId, buId: buId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadShifts(orgId: orgId, buId: buId);
+      });
+    }
   }
 
   void _showOpenShiftModal(AppLocalizations l10n) {
@@ -86,9 +85,7 @@ class _CashShiftScreenState extends State<CashShiftScreen> {
                   ? null
                   : () async {
                       setModalState(() => isSaving = true);
-                      final buId =
-                          _contextProvider.activeBusinessUnit?.id ??
-                          DatabaseSeeder.defaultBuCentralId;
+                      final buId = _contextProvider.activeBusinessUnit?.id ?? '';
                       final float = double.tryParse(floatCtrl.text) ?? 100.0;
                       await _provider.openNewShift(
                         buId: buId,
@@ -229,8 +226,16 @@ class _CashShiftScreenState extends State<CashShiftScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: _buildHeader(l10n),
+    return LogistoScaffold(
+      title: l10n.cashShiftsTitle,
+      actions: [
+        if (!_provider.hasActiveShift)
+          FilledButton.icon(
+            icon: const Icon(Icons.add, size: 18),
+            label: Text(l10n.openNewShift),
+            onPressed: () => _showOpenShiftModal(l10n),
+          ),
+      ],
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -266,28 +271,6 @@ class _CashShiftScreenState extends State<CashShiftScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  PreferredSizeWidget _buildHeader(AppLocalizations l10n) {
-    return AppBar(
-      title: Text(
-        l10n.cashShiftsTitle,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      elevation: 0,
-      scrolledUnderElevation: 1,
-      actions: [
-        if (!_provider.hasActiveShift)
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: FilledButton.icon(
-              icon: const Icon(Icons.add, size: 18),
-              label: Text(l10n.openNewShift),
-              onPressed: () => _showOpenShiftModal(l10n),
-            ),
-          ),
-      ],
     );
   }
 

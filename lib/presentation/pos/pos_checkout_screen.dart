@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../cash/cash_shift_provider.dart';
 import '../common/app_feedback.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import 'pos_checkout_provider.dart';
 import 'widgets/checkout_cart_panel.dart';
@@ -267,8 +268,15 @@ class _PosCheckoutScreenState extends State<PosCheckoutScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: _buildHeader(l10n),
+    return LogistoScaffold(
+      title: l10n.pos,
+      actions: [
+        FilledButton.icon(
+          icon: const Icon(Icons.add_shopping_cart, size: 18),
+          label: Text(l10n.addItem),
+          onPressed: _showAddProductModal,
+        ),
+      ],
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -299,27 +307,6 @@ class _PosCheckoutScreenState extends State<PosCheckoutScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  PreferredSizeWidget _buildHeader(AppLocalizations l10n) {
-    return AppBar(
-      title: Text(
-        l10n.pos,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      elevation: 0,
-      scrolledUnderElevation: 1,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: FilledButton.icon(
-            icon: const Icon(Icons.add_shopping_cart, size: 18),
-            label: Text(l10n.addItem),
-            onPressed: _showAddProductModal,
-          ),
-        ),
-      ],
     );
   }
 }

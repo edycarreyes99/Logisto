@@ -2,12 +2,12 @@ import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/table_status_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../domain/models/billiard_table_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import 'billiard_provider.dart';
 import 'widgets/billiard_table_card.dart';
@@ -32,14 +32,13 @@ class _BilliardFloorPlanScreenState extends State<BilliardFloorPlanScreen> {
     super.initState();
     _provider = locator<BilliardProvider>();
     _contextProvider = locator<BusinessContextProvider>();
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    final buId =
-        _contextProvider.activeBusinessUnit?.id ??
-        DatabaseSeeder.defaultBuCentralId;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadTables(orgId: orgId, buId: buId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadTables(orgId: orgId, buId: buId);
+      });
+    }
   }
 
   void _showStartModal(BilliardTableModel table) {
@@ -120,8 +119,20 @@ class _BilliardFloorPlanScreenState extends State<BilliardFloorPlanScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: _buildHeader(l10n),
+    final occupied = _provider.tables
+        .where((t) => t.status == TableStatusEnum.occupied)
+        .length;
+
+    return LogistoScaffold(
+      title: l10n.billiardFloorPlanTitle,
+      actions: [
+        Chip(
+          label: Text(
+            '$occupied / ${_provider.tables.length} ${l10n.tableStatusOccupied}',
+          ),
+          visualDensity: VisualDensity.compact,
+        ),
+      ],
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -136,31 +147,6 @@ class _BilliardFloorPlanScreenState extends State<BilliardFloorPlanScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  PreferredSizeWidget _buildHeader(AppLocalizations l10n) {
-    final occupied = _provider.tables
-        .where((t) => t.status == TableStatusEnum.occupied)
-        .length;
-    return AppBar(
-      title: Text(
-        l10n.billiardFloorPlanTitle,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      elevation: 0,
-      scrolledUnderElevation: 1,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: Chip(
-            label: Text(
-              '$occupied / ${_provider.tables.length} ${l10n.tableStatusOccupied}',
-            ),
-            visualDensity: VisualDensity.compact,
-          ),
-        ),
-      ],
     );
   }
 

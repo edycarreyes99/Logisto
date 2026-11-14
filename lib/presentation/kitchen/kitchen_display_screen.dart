@@ -2,11 +2,11 @@ import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/kds_status_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import 'kitchen_provider.dart';
 import 'widgets/kds_order_card.dart';
@@ -29,52 +29,30 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
     super.initState();
     _provider = locator<KitchenProvider>();
     _contextProvider = locator<BusinessContextProvider>();
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    final buId =
-        _contextProvider.activeBusinessUnit?.id ??
-        DatabaseSeeder.defaultBuCentralId;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadOrders(orgId: orgId, buId: buId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadOrders(orgId: orgId, buId: buId);
+      });
+    }
   }
 
   void _refresh() {
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    final buId =
-        _contextProvider.activeBusinessUnit?.id ??
-        DatabaseSeeder.defaultBuCentralId;
-    _provider.loadOrders(orgId: orgId, buId: buId);
-    final l10n = AppLocalizations.of(context)!;
-    AppFeedback.showInfo(context, l10n.refresh);
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+    if (orgId.isNotEmpty) {
+      _provider.loadOrders(orgId: orgId, buId: buId);
+      final l10n = AppLocalizations.of(context)!;
+      AppFeedback.showInfo(context, l10n.refresh);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: _buildHeader(l10n),
-      body: BsContainer.fluid(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: ListenableBuilder(
-            listenable: _provider,
-            builder: (context, _) => _buildOrdersGrid(l10n),
-          ),
-        ),
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildHeader(AppLocalizations l10n) {
-    return AppBar(
-      title: Text(
-        l10n.kitchenKdsTitle,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      elevation: 0,
-      scrolledUnderElevation: 1,
+    return LogistoScaffold(
+      title: l10n.kitchenKdsTitle,
       actions: [
         IconButton(
           icon: const Icon(Icons.refresh),
@@ -95,6 +73,15 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
           ),
         ),
       ],
+      body: BsContainer.fluid(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: ListenableBuilder(
+            listenable: _provider,
+            builder: (context, _) => _buildOrdersGrid(l10n),
+          ),
+        ),
+      ),
     );
   }
 

@@ -1,11 +1,11 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
-import '../../data/firestore/database_seeder.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
+import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
 import '../navigation/app_routes.dart';
 import '../navigation/navigation_provider.dart';
@@ -32,25 +32,23 @@ class _OpenAccountsScreenState extends State<OpenAccountsScreen> {
     super.initState();
     _provider = locator<OpenAccountsProvider>();
     _contextProvider = locator<BusinessContextProvider>();
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    final buId =
-        _contextProvider.activeBusinessUnit?.id ??
-        DatabaseSeeder.defaultBuCentralId;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _provider.loadAccounts(orgId: orgId, buId: buId);
-    });
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+    if (orgId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _provider.loadAccounts(orgId: orgId, buId: buId);
+      });
+    }
   }
 
   void _refresh() {
-    final orgId =
-        _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    final buId =
-        _contextProvider.activeBusinessUnit?.id ??
-        DatabaseSeeder.defaultBuCentralId;
-    _provider.loadAccounts(orgId: orgId, buId: buId);
-    final l10n = AppLocalizations.of(context)!;
-    AppFeedback.showInfo(context, l10n.refresh);
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+    if (orgId.isNotEmpty) {
+      _provider.loadAccounts(orgId: orgId, buId: buId);
+      final l10n = AppLocalizations.of(context)!;
+      AppFeedback.showInfo(context, l10n.refresh);
+    }
   }
 
   void _showNewTabModal() {
@@ -160,8 +158,50 @@ class _OpenAccountsScreenState extends State<OpenAccountsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: _buildHeader(l10n),
+    final bottomWidget = _provider.accounts.isEmpty
+        ? null
+        : PreferredSize(
+            preferredSize: const Size.fromHeight(48),
+            child: Container(
+              height: 48,
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              alignment: Alignment.centerLeft,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _provider.accounts.map((acc) {
+                    final isSel = _provider.selectedAccount?.id == acc.id;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: ChoiceChip(
+                        label: Text(
+                          '${acc.code} (${acc.customerDisplayName})',
+                        ),
+                        selected: isSel,
+                        onSelected: (_) => _provider.selectAccount(acc.id),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          );
+
+    return LogistoScaffold(
+      title: l10n.openAccountsAndTabs,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          tooltip: l10n.refresh,
+          onPressed: _refresh,
+        ),
+        FilledButton.icon(
+          icon: const Icon(Icons.add, size: 18),
+          label: Text(l10n.newTab),
+          onPressed: _showNewTabModal,
+        ),
+      ],
+      bottom: bottomWidget,
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -211,59 +251,5 @@ class _OpenAccountsScreenState extends State<OpenAccountsScreen> {
       locator<PosCheckoutProvider>().loadFromOpenAccount(acc);
     }
     locator<NavigationProvider>().navigateTo(AppRoutes.pos);
-  }
-
-  PreferredSizeWidget _buildHeader(AppLocalizations l10n) {
-    return AppBar(
-      title: Text(
-        l10n.openAccountsAndTabs,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      elevation: 0,
-      scrolledUnderElevation: 1,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh),
-          tooltip: l10n.refresh,
-          onPressed: _refresh,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: FilledButton.icon(
-            icon: const Icon(Icons.add, size: 18),
-            label: Text(l10n.newTab),
-            onPressed: _showNewTabModal,
-          ),
-        ),
-      ],
-      bottom: _provider.accounts.isEmpty
-          ? null
-          : PreferredSize(
-              preferredSize: const Size.fromHeight(48),
-              child: Container(
-                height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                alignment: Alignment.centerLeft,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: _provider.accounts.map((acc) {
-                      final isSel = _provider.selectedAccount?.id == acc.id;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ChoiceChip(
-                          label: Text(
-                            '${acc.code} (${acc.customerDisplayName})',
-                          ),
-                          selected: isSel,
-                          onSelected: (_) => _provider.selectAccount(acc.id),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-            ),
-    );
   }
 }
