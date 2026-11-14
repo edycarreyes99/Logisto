@@ -19,6 +19,7 @@ class _OrgSettingsCardState extends State<OrgSettingsCard> {
   late final TextEditingController _taxIdCtrl;
   late final TextEditingController _rateCtrl;
   late final TextEditingController _taxRateCtrl;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -44,7 +45,10 @@ class _OrgSettingsCardState extends State<OrgSettingsCard> {
     super.dispose();
   }
 
-  void _save() {
+  Future<void> _save() async {
+    setState(() => _isSaving = true);
+    await Future.delayed(const Duration(milliseconds: 200));
+    if (!mounted) return;
     widget.provider.updateOrganization(
       legalName: _legalCtrl.text,
       commercialName: _commCtrl.text,
@@ -63,6 +67,9 @@ class _OrgSettingsCardState extends State<OrgSettingsCard> {
     }
     final l10n = AppLocalizations.of(context)!;
     AppFeedback.showSuccess(context, l10n.changesSavedSuccess);
+    if (mounted) {
+      setState(() => _isSaving = false);
+    }
   }
 
   @override
@@ -95,9 +102,18 @@ class _OrgSettingsCardState extends State<OrgSettingsCard> {
             Align(
               alignment: Alignment.centerLeft,
               child: FilledButton.icon(
-                icon: const Icon(Icons.check, size: 18),
+                icon: _isSaving
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(Icons.check, size: 18),
                 label: Text(l10n.saveChanges),
-                onPressed: _save,
+                onPressed: _isSaving ? null : _save,
               ),
             ),
           ],

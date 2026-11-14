@@ -54,9 +54,10 @@ class _SupervisorPinModalState extends State<SupervisorPinModal> {
           onPressed: () => Navigator.of(context).maybePop(),
           child: Text(l10n.cancel),
         ),
-        FilledButton(
+        FilledButton.icon(
+          icon: const Icon(Icons.verified_user_outlined, size: 16),
           onPressed: () => _verifyPin(l10n),
-          child: Text(l10n.authorizeAction),
+          label: Text(l10n.authorizeAction),
         ),
       ],
     );

@@ -151,8 +151,14 @@ class _ReportsScreenState extends State<ReportsScreen> {
               IconButton(
                 icon: const Icon(Icons.refresh),
                 tooltip: l10n.refresh,
-                onPressed: () {
-                  AppFeedback.showInfo(context, l10n.refresh);
+                onPressed: () async {
+                  await _provider.refresh();
+                  if (mounted) {
+                    AppFeedback.showSuccess(
+                      context,
+                      '${l10n.reportsAndBi}: ${l10n.refresh}',
+                    );
+                  }
                 },
               ),
               FilledButton.icon(

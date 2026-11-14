@@ -39,12 +39,14 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
     });
   }
 
-  void _refresh() {
+  Future<void> _refresh() async {
     final orgId =
         _contextProvider.activeOrganization?.id ?? DatabaseSeeder.defaultOrgId;
-    _provider.loadAuditLogs(orgId);
-    final l10n = AppLocalizations.of(context)!;
-    AppFeedback.showInfo(context, l10n.refresh);
+    await _provider.loadAuditLogs(orgId);
+    if (mounted) {
+      final l10n = AppLocalizations.of(context)!;
+      AppFeedback.showSuccess(context, '${l10n.auditTrail}: ${l10n.refresh}');
+    }
   }
 
   @override

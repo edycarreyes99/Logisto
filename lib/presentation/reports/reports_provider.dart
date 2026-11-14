@@ -26,11 +26,19 @@ class ReportRowItem {
 class ReportsProvider extends ChangeNotifier {
   String _selectedCategory = 'sales';
   String _dateFilter = 'Today';
-  final FeatureStatusEnum _status = FeatureStatusEnum.loaded;
+  FeatureStatusEnum _status = FeatureStatusEnum.loaded;
 
   String get selectedCategory => _selectedCategory;
   String get dateFilter => _dateFilter;
   FeatureStatusEnum get status => _status;
+
+  Future<void> refresh() async {
+    _status = FeatureStatusEnum.loading;
+    notifyListeners();
+    await Future.delayed(const Duration(milliseconds: 300));
+    _status = FeatureStatusEnum.loaded;
+    notifyListeners();
+  }
 
   void setCategory(String category) {
     _selectedCategory = category;

@@ -27,6 +27,8 @@ class _InviteUserModalState extends State<InviteUserModal> {
   bool _isSuperAdmin = false;
   UserRoleEnum _selectedRole = UserRoleEnum.cashier;
 
+  bool _isSubmitting = false;
+
   @override
   void dispose() {
     _nameCtrl.dispose();
@@ -35,12 +37,13 @@ class _InviteUserModalState extends State<InviteUserModal> {
     super.dispose();
   }
 
-  void _handleSubmit() {
+  Future<void> _handleSubmit() async {
     final name = _nameCtrl.text.trim();
     final email = _emailCtrl.text.trim();
-    if (name.isEmpty || email.isEmpty) return;
+    if (name.isEmpty || email.isEmpty || _isSubmitting) return;
 
-    widget.provider.createUser(
+    setState(() => _isSubmitting = true);
+    await widget.provider.createUser(
       orgId: widget.orgId,
       email: email,
       displayName: name,
@@ -48,6 +51,7 @@ class _InviteUserModalState extends State<InviteUserModal> {
       terminalPin: _pinCtrl.text.trim(),
       initialRoles: {'bu_matriz_central': _selectedRole},
     );
+    if (!mounted) return;
     Navigator.of(context).pop();
     final l10n = AppLocalizations.of(context)!;
     AppFeedback.showSuccess(context, '${l10n.inviteEmployee}: $name');
@@ -70,12 +74,22 @@ class _InviteUserModalState extends State<InviteUserModal> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
           child: Text(l10n.cancel),
         ),
-        FilledButton(
-          onPressed: _handleSubmit,
-          child: Text(l10n.save),
+        FilledButton.icon(
+          icon: _isSubmitting
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : const Icon(Icons.send_rounded, size: 18),
+          label: Text(l10n.save),
+          onPressed: _isSubmitting ? null : _handleSubmit,
         ),
       ],
     );

@@ -60,59 +60,81 @@ class _BusinessUnitSelectorScreenState
   void _showAddUnitModal(AppLocalizations l10n) {
     final nameCtrl = TextEditingController();
     final addressCtrl = TextEditingController();
+    bool isSaving = false;
+
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          l10n.registerNewBranch,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameCtrl,
-              decoration: InputDecoration(
-                labelText: l10n.branchName,
-                hintText: l10n.branchName,
-                border: const OutlineInputBorder(),
+      barrierDismissible: !isSaving,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          title: Text(
+            l10n.registerNewBranch,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameCtrl,
+                decoration: InputDecoration(
+                  labelText: l10n.branchName,
+                  hintText: l10n.branchName,
+                  border: const OutlineInputBorder(),
+                ),
               ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: addressCtrl,
+                decoration: InputDecoration(
+                  labelText: l10n.physicalAddress,
+                  hintText: l10n.physicalAddress,
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
             ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: addressCtrl,
-              decoration: InputDecoration(
-                labelText: l10n.physicalAddress,
-                hintText: l10n.physicalAddress,
-                border: const OutlineInputBorder(),
-              ),
+            FilledButton.icon(
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.check, size: 18),
+              label: Text(l10n.createBranch),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setModalState(() => isSaving = true);
+                      final orgId =
+                          _contextProvider.activeOrganization?.id ??
+                          DatabaseSeeder.defaultOrgId;
+                      final bName = nameCtrl.text;
+                      await _provider.addUnit(
+                        orgId: orgId,
+                        name: bName,
+                        type: BusinessTypeEnum.retail,
+                        address: addressCtrl.text,
+                      );
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                      if (mounted) {
+                        AppFeedback.showSuccess(
+                          context,
+                          '${l10n.createBranch}: $bName',
+                        );
+                      }
+                    },
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              final orgId =
-                  _contextProvider.activeOrganization?.id ??
-                  DatabaseSeeder.defaultOrgId;
-              final bName = nameCtrl.text;
-              _provider.addUnit(
-                orgId: orgId,
-                name: bName,
-                type: BusinessTypeEnum.retail,
-                address: addressCtrl.text,
-              );
-              Navigator.of(ctx).pop();
-              AppFeedback.showSuccess(context, '${l10n.createBranch}: $bName');
-            },
-            child: Text(l10n.createBranch),
-          ),
-        ],
       ),
     );
   }

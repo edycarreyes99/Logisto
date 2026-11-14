@@ -30,6 +30,8 @@ class _EditUserRoleModalState extends State<EditUserRoleModal> {
   late String _status;
   late final TextEditingController _pinController;
   late final TextEditingController _nameController;
+  bool _isSaving = false;
+  bool _isDeleting = false;
 
   @override
   void initState() {
@@ -53,39 +55,49 @@ class _EditUserRoleModalState extends State<EditUserRoleModal> {
   }
 
   Future<void> _handleSave() async {
-    final updated = widget.user.copyWith(
-      displayName: _nameController.text.trim().isNotEmpty
-          ? _nameController.text.trim()
-          : widget.user.displayName,
-      isSuperAdmin: _isSuperAdmin,
-      pinHash: _pinController.text.trim(),
-      status: _status,
-    );
+    setState(() => _isSaving = true);
+    try {
+      final updated = widget.user.copyWith(
+        displayName: _nameController.text.trim().isNotEmpty
+            ? _nameController.text.trim()
+            : widget.user.displayName,
+        isSuperAdmin: _isSuperAdmin,
+        pinHash: _pinController.text.trim(),
+        status: _status,
+      );
 
-    await widget.provider.updateUser(updated);
-    await widget.provider.updateUserRole(
-      orgId: widget.user.orgId,
-      userId: widget.user.uid,
-      buId: widget.activeBuId,
-      role: _selectedRole,
-    );
+      await widget.provider.updateUser(updated);
+      await widget.provider.updateUserRole(
+        orgId: widget.user.orgId,
+        userId: widget.user.uid,
+        buId: widget.activeBuId,
+        role: _selectedRole,
+      );
 
-    if (mounted) {
-      Navigator.of(context).pop();
-      final l10n = AppLocalizations.of(context)!;
-      AppFeedback.showSuccess(context, '${l10n.save}: ${widget.user.displayName}');
+      if (mounted) {
+        Navigator.of(context).pop();
+        final l10n = AppLocalizations.of(context)!;
+        AppFeedback.showSuccess(context, '${l10n.save}: ${widget.user.displayName}');
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
     }
   }
 
   Future<void> _handleDelete() async {
-    await widget.provider.deleteUser(
-      orgId: widget.user.orgId,
-      userId: widget.user.uid,
-    );
-    if (mounted) {
-      Navigator.of(context).pop();
-      final l10n = AppLocalizations.of(context)!;
-      AppFeedback.showWarning(context, '${l10n.delete}: ${widget.user.displayName}');
+    setState(() => _isDeleting = true);
+    try {
+      await widget.provider.deleteUser(
+        orgId: widget.user.orgId,
+        userId: widget.user.uid,
+      );
+      if (mounted) {
+        Navigator.of(context).pop();
+        final l10n = AppLocalizations.of(context)!;
+        AppFeedback.showWarning(context, '${l10n.delete}: ${widget.user.displayName}');
+      }
+    } finally {
+      if (mounted) setState(() => _isDeleting = false);
     }
   }
 
@@ -105,20 +117,39 @@ class _EditUserRoleModalState extends State<EditUserRoleModal> {
         ),
       ),
       actions: [
-        OutlinedButton(
+        OutlinedButton.icon(
           style: OutlinedButton.styleFrom(
             foregroundColor: Theme.of(context).colorScheme.error,
           ),
-          onPressed: _handleDelete,
-          child: Text(l10n.delete),
+          icon: _isDeleting
+              ? const SizedBox(
+                  width: 14,
+                  height: 14,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.delete_outline, size: 16),
+          onPressed: (_isSaving || _isDeleting) ? null : _handleDelete,
+          label: Text(l10n.delete),
         ),
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: (_isSaving || _isDeleting)
+              ? null
+              : () => Navigator.of(context).pop(),
           child: Text(l10n.close),
         ),
-        FilledButton(
-          onPressed: _handleSave,
-          child: Text(l10n.save),
+        FilledButton.icon(
+          icon: _isSaving
+              ? const SizedBox(
+                  width: 14,
+                  height: 14,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : const Icon(Icons.check, size: 16),
+          onPressed: (_isSaving || _isDeleting) ? null : _handleSave,
+          label: Text(l10n.save),
         ),
       ],
     );
