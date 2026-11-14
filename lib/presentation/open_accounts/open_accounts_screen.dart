@@ -56,44 +56,66 @@ class _OpenAccountsScreenState extends State<OpenAccountsScreen> {
   void _showNewTabModal() {
     final l10n = AppLocalizations.of(context)!;
     final nameCtrl = TextEditingController();
+    bool isSaving = false;
+
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.openNewTabTitle),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: nameCtrl,
-              decoration: InputDecoration(
-                labelText: l10n.customerTableAliasPlaceholder,
-                hintText: l10n.customerTableAliasPlaceholder,
-                border: const OutlineInputBorder(),
+      barrierDismissible: !isSaving,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          title: Text(l10n.openNewTabTitle),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                controller: nameCtrl,
+                decoration: InputDecoration(
+                  labelText: l10n.customerTableAliasPlaceholder,
+                  hintText: l10n.customerTableAliasPlaceholder,
+                  border: const OutlineInputBorder(),
+                ),
               ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton.icon(
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.check, size: 18),
+              label: Text(l10n.openTabAction),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setModalState(() => isSaving = true);
+                      final tabName =
+                          nameCtrl.text.isEmpty ? 'Cliente Barra' : nameCtrl.text;
+                      await _provider.createNewAccount(
+                        name: tabName,
+                        originType: 'counter',
+                      );
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                      if (mounted) {
+                        AppFeedback.showSuccess(
+                          context,
+                          '${l10n.openTabAction}: $tabName',
+                        );
+                      }
+                    },
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              final tabName =
-                  nameCtrl.text.isEmpty ? 'Cliente Barra' : nameCtrl.text;
-              _provider.createNewAccount(
-                name: tabName,
-                originType: 'counter',
-              );
-              Navigator.of(ctx).pop();
-              AppFeedback.showSuccess(context, '${l10n.openTabAction}: $tabName');
-            },
-            child: Text(l10n.openTabAction),
-          ),
-        ],
       ),
     );
   }

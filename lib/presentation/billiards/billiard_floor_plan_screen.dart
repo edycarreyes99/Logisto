@@ -45,47 +45,65 @@ class _BilliardFloorPlanScreenState extends State<BilliardFloorPlanScreen> {
   void _showStartModal(BilliardTableModel table) {
     final l10n = AppLocalizations.of(context)!;
     final customerCtrl = TextEditingController();
+    bool isStarting = false;
     showDialog<void>(
       context: context,
       barrierDismissible: true,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.startTableNamed(table.name)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(l10n.enterCustomerPrompt),
-            const SizedBox(height: 12),
-            TextField(
-              controller: customerCtrl,
-              decoration: InputDecoration(
-                labelText: l10n.tableCustomerAliasPlaceholder,
-                hintText: l10n.tableCustomerAliasPlaceholder,
-                border: const OutlineInputBorder(),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          title: Text(l10n.startTableNamed(table.name)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l10n.enterCustomerPrompt),
+              const SizedBox(height: 12),
+              TextField(
+                controller: customerCtrl,
+                decoration: InputDecoration(
+                  labelText: l10n.tableCustomerAliasPlaceholder,
+                  hintText: l10n.tableCustomerAliasPlaceholder,
+                  border: const OutlineInputBorder(),
+                ),
               ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isStarting ? null : () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton.icon(
+              icon: isStarting
+                  ? const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.play_arrow, size: 16),
+              onPressed: isStarting
+                  ? null
+                  : () async {
+                      setModalState(() => isStarting = true);
+                      await _provider.startSession(
+                        tableId: table.id,
+                        customerName: customerCtrl.text,
+                      );
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                      if (mounted) {
+                        AppFeedback.showSuccess(
+                          context,
+                          'Sesión iniciada en ${table.name}',
+                        );
+                      }
+                    },
+              label: Text(l10n.startSessionAction),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              _provider.startSession(
-                tableId: table.id,
-                customerName: customerCtrl.text,
-              );
-              Navigator.of(ctx).pop();
-              AppFeedback.showSuccess(
-                context,
-                'Sesión iniciada en ${table.name}',
-              );
-            },
-            child: Text(l10n.startSessionAction),
-          ),
-        ],
       ),
     );
   }

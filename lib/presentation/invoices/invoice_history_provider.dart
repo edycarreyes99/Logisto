@@ -207,7 +207,7 @@ class InvoiceHistoryProvider extends ChangeNotifier {
     }
   }
 
-  void voidInvoice(String invoiceId) {
+  Future<void> voidInvoice(String invoiceId) async {
     final idx = _invoices.indexWhere((i) => i.id == invoiceId);
     if (idx != -1) {
       final updated = _invoices[idx].copyWith(
@@ -216,7 +216,7 @@ class InvoiceHistoryProvider extends ChangeNotifier {
       _invoices[idx] = updated;
       if (_activeOrgId != null && _activeBuId != null) {
         try {
-          repository.createInvoice(
+          await repository.createInvoice(
             orgId: _activeOrgId!,
             buId: _activeBuId!,
             invoice: updated,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/enums/table_status_enum.dart';
 import '../../../domain/models/billiard_table_model.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../common/app_feedback.dart';
 import '../billiard_provider.dart';
 
 /// Modal dialog for transferring an active billiard game to another station.
@@ -21,6 +22,7 @@ class TransferTableModal extends StatefulWidget {
 
 class _TransferTableModalState extends State<TransferTableModal> {
   String? _selectedTargetId;
+  bool _isTransferring = false;
 
   @override
   Widget build(BuildContext context) {
@@ -85,20 +87,41 @@ class _TransferTableModalState extends State<TransferTableModal> {
   List<Widget> _buildActions(AppLocalizations l10n) {
     return [
       TextButton(
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: _isTransferring ? null : () => Navigator.of(context).pop(),
         child: Text(l10n.cancel),
       ),
-      FilledButton(
-        onPressed: _selectedTargetId == null
+      FilledButton.icon(
+        icon: _isTransferring
+            ? const SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            : const Icon(Icons.swap_horiz, size: 16),
+        onPressed: (_selectedTargetId == null || _isTransferring)
             ? null
-            : () {
-                widget.provider.transferTable(
-                  fromTableId: widget.sourceTable.id,
-                  toTableId: _selectedTargetId!,
-                );
-                Navigator.of(context).pop();
+            : () async {
+                setState(() => _isTransferring = true);
+                try {
+                  await widget.provider.transferTable(
+                    fromTableId: widget.sourceTable.id,
+                    toTableId: _selectedTargetId!,
+                  );
+                  if (mounted) {
+                    Navigator.of(context).pop();
+                    AppFeedback.showSuccess(
+                      context,
+                      'Mesa transferida exitosamente',
+                    );
+                  }
+                } finally {
+                  if (mounted) setState(() => _isTransferring = false);
+                }
               },
-        child: Text(l10n.confirmTransfer),
+        label: Text(l10n.confirmTransfer),
       ),
     ];
   }

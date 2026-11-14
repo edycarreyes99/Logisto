@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/enums/table_status_enum.dart';
 import '../../../domain/models/billiard_table_model.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../common/app_feedback.dart';
 import '../../common/enum_localization_extensions.dart';
 import '../billiard_provider.dart';
 
@@ -46,7 +47,7 @@ class BilliardTableCard extends StatelessWidget {
             const SizedBox(height: 8),
             _buildSessionInfo(l10n, theme, charge),
             const SizedBox(height: 16),
-            _buildActionButtons(l10n, theme),
+            _buildActionButtons(context, l10n, theme),
           ],
         ),
       ),
@@ -135,7 +136,11 @@ class BilliardTableCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(AppLocalizations l10n, ThemeData theme) {
+  Widget _buildActionButtons(
+    BuildContext context,
+    AppLocalizations l10n,
+    ThemeData theme,
+  ) {
     if (table.status == TableStatusEnum.available) {
       return FilledButton.icon(
         icon: const Icon(Icons.play_arrow, size: 18),
@@ -151,9 +156,15 @@ class BilliardTableCard extends StatelessWidget {
       children: [
         FilledButton.tonal(
           style: FilledButton.styleFrom(visualDensity: VisualDensity.compact),
-          onPressed: () => isPaused
-              ? provider.resumeSession(table.id)
-              : provider.pauseSession(table.id),
+          onPressed: () {
+            if (isPaused) {
+              provider.resumeSession(table.id);
+              AppFeedback.showSuccess(context, '${l10n.resumeTable}: ${table.name}');
+            } else {
+              provider.pauseSession(table.id);
+              AppFeedback.showInfo(context, '${l10n.pauseTable}: ${table.name}');
+            }
+          },
           child: Text(isPaused ? l10n.resumeTable : l10n.pauseTable),
         ),
         OutlinedButton(
@@ -167,7 +178,12 @@ class BilliardTableCard extends StatelessWidget {
             foregroundColor: theme.colorScheme.onError,
             visualDensity: VisualDensity.compact,
           ),
-          onPressed: () => provider.stopSession(table.id),
+          onPressed: () async {
+            await provider.stopSession(table.id);
+            if (context.mounted) {
+              AppFeedback.showWarning(context, '${l10n.stopSession}: ${table.name}');
+            }
+          },
           child: Text(l10n.stopSession),
         ),
       ],

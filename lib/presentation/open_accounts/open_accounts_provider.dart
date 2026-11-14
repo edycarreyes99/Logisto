@@ -166,12 +166,12 @@ class OpenAccountsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void createNewAccount({
+  Future<void> createNewAccount({
     required String name,
     required String originType,
     String? tableId,
     String? tableName,
-  }) {
+  }) async {
     final newAcc = OpenAccountModel(
       id: 'tab_${DateTime.now().millisecondsSinceEpoch}',
       code: 'TAB-${_accounts.length + 101}',
@@ -189,7 +189,7 @@ class OpenAccountsProvider extends ChangeNotifier {
     _selectedAccount = newAcc;
     if (_activeOrgId != null && _activeBuId != null) {
       try {
-        repository.saveAccount(
+        await repository.saveAccount(
           orgId: _activeOrgId!,
           buId: _activeBuId!,
           account: newAcc,
@@ -199,14 +199,14 @@ class OpenAccountsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void closeSelectedAccount() {
+  Future<void> closeSelectedAccount() async {
     if (_selectedAccount == null) return;
     final toClose = _selectedAccount!;
     _accounts.removeWhere((a) => a.id == toClose.id);
     _selectedAccount = _accounts.isNotEmpty ? _accounts.first : null;
     if (_activeOrgId != null && _activeBuId != null) {
       try {
-        repository.closeAccount(
+        await repository.closeAccount(
           orgId: _activeOrgId!,
           buId: _activeBuId!,
           accountId: toClose.id,

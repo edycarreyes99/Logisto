@@ -119,32 +119,54 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
 
   void _showVoidModal(String id) {
     final l10n = AppLocalizations.of(context)!;
+    bool isSaving = false;
+
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          l10n.voidInvoiceTitle,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Text(l10n.voidInvoiceDesc),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
+      barrierDismissible: !isSaving,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          title: Text(
+            l10n.voidInvoiceTitle,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
+          content: Text(l10n.voidInvoiceDesc),
+          actions: [
+            TextButton(
+              onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
             ),
-            onPressed: () {
-              _provider.voidInvoice(id);
-              Navigator.of(ctx).pop();
-              AppFeedback.showWarning(context, 'Factura anulada en el sistema');
-            },
-            child: Text(l10n.confirmVoid),
-          ),
-        ],
+            FilledButton.icon(
+              style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ),
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.cancel_outlined, size: 18),
+              label: Text(l10n.confirmVoid),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setModalState(() => isSaving = true);
+                      await _provider.voidInvoice(id);
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                      if (mounted) {
+                        AppFeedback.showWarning(
+                          context,
+                          'Factura anulada en el sistema',
+                        );
+                      }
+                    },
+            ),
+          ],
+        ),
       ),
     );
   }

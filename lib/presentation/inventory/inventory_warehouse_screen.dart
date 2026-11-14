@@ -50,52 +50,71 @@ class _InventoryWarehouseScreenState extends State<InventoryWarehouseScreen> {
   void _showTransferModal(Map<String, dynamic> item) {
     final l10n = AppLocalizations.of(context)!;
     final qtyCtrl = TextEditingController(text: '12');
+    bool isSaving = false;
+
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.internalTransferTitle(item['name'] as String)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(l10n.transferSourceBodega),
-            Text(l10n.transferDestBarra),
-            const SizedBox(height: 12),
-            TextField(
-              controller: qtyCtrl,
-              decoration: InputDecoration(
-                labelText: l10n.transferQuantityPlaceholder,
-                hintText: l10n.transferQuantityPlaceholder,
-                border: const OutlineInputBorder(),
+      barrierDismissible: !isSaving,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          title: Text(l10n.internalTransferTitle(item['name'] as String)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l10n.transferSourceBodega),
+              Text(l10n.transferDestBarra),
+              const SizedBox(height: 12),
+              TextField(
+                controller: qtyCtrl,
+                decoration: InputDecoration(
+                  labelText: l10n.transferQuantityPlaceholder,
+                  hintText: l10n.transferQuantityPlaceholder,
+                  border: const OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
               ),
-              keyboardType: TextInputType.number,
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton.icon(
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.check, size: 18),
+              label: Text(l10n.confirmTransferGuide),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setModalState(() => isSaving = true);
+                      final qty = double.tryParse(qtyCtrl.text) ?? 1.0;
+                      await _provider.transferStock(
+                        fromWhId: 'wh_main',
+                        toWhId: 'wh_bar',
+                        productId: item['productId'] as String,
+                        quantity: qty,
+                      );
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                      if (mounted) {
+                        AppFeedback.showSuccess(
+                          context,
+                          'Transferencia interna de $qty unidades confirmada',
+                        );
+                      }
+                    },
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              final qty = double.tryParse(qtyCtrl.text) ?? 1.0;
-              _provider.transferStock(
-                fromWhId: 'wh_main',
-                toWhId: 'wh_bar',
-                productId: item['productId'] as String,
-                quantity: qty,
-              );
-              Navigator.of(ctx).pop();
-              AppFeedback.showSuccess(
-                context,
-                'Transferencia interna de $qty unidades confirmada',
-              );
-            },
-            child: Text(l10n.confirmTransferGuide),
-          ),
-        ],
       ),
     );
   }
@@ -103,53 +122,72 @@ class _InventoryWarehouseScreenState extends State<InventoryWarehouseScreen> {
   void _showAdjustModal(Map<String, dynamic> item) {
     final l10n = AppLocalizations.of(context)!;
     final qtyCtrl = TextEditingController(text: '${item['currentQuantity']}');
+    bool isSaving = false;
+
     showDialog<void>(
       context: context,
-      barrierDismissible: true,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.stockAdjustmentTitle(item['name'] as String)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(l10n.auditedStockCountPrompt),
-            const SizedBox(height: 12),
-            TextField(
-              controller: qtyCtrl,
-              decoration: InputDecoration(
-                labelText: l10n.newTotalQuantity,
-                hintText: l10n.newTotalQuantity,
-                border: const OutlineInputBorder(),
+      barrierDismissible: !isSaving,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => AlertDialog(
+          title: Text(l10n.stockAdjustmentTitle(item['name'] as String)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l10n.auditedStockCountPrompt),
+              const SizedBox(height: 12),
+              TextField(
+                controller: qtyCtrl,
+                decoration: InputDecoration(
+                  labelText: l10n.newTotalQuantity,
+                  hintText: l10n.newTotalQuantity,
+                  border: const OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
               ),
-              keyboardType: TextInputType.number,
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton.icon(
+              style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ),
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.check, size: 18),
+              label: Text(l10n.saveAdjustment),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setModalState(() => isSaving = true);
+                      final qty = double.tryParse(qtyCtrl.text) ?? 0.0;
+                      await _provider.adjustStock(
+                        productId: item['productId'] as String,
+                        newQuantity: qty,
+                        reason: l10n.auditPhysicalCountReason,
+                      );
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                      if (mounted) {
+                        AppFeedback.showSuccess(
+                          context,
+                          'Ajuste de inventario aplicado a ${item['name']}',
+                        );
+                      }
+                    },
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-            onPressed: () {
-              final qty = double.tryParse(qtyCtrl.text) ?? 0.0;
-              _provider.adjustStock(
-                productId: item['productId'] as String,
-                newQuantity: qty,
-                reason: l10n.auditPhysicalCountReason,
-              );
-              Navigator.of(ctx).pop();
-              AppFeedback.showSuccess(
-                context,
-                'Ajuste de inventario aplicado a ${item['name']}',
-              );
-            },
-            child: Text(l10n.saveAdjustment),
-          ),
-        ],
       ),
     );
   }
