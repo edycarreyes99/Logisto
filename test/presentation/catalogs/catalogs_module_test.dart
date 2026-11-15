@@ -212,7 +212,9 @@ void main() {
       await tester.pumpWidget(
         const LogistoApp(
           locale: Locale('en'),
-          home: InventoryWarehouseScreen(initialView: WarehouseViewModeEnum.kardex),
+          home: InventoryWarehouseScreen(
+            initialView: WarehouseViewModeEnum.kardex,
+          ),
         ),
       );
       await tester.pumpAndSettle();

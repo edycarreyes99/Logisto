@@ -62,47 +62,65 @@ void main() {
       await provider.scanForPrinters();
 
       expect(provider.discoveredPrinters.length, equals(2));
-      expect(provider.discoveredPrinters.first.rawName, equals('Epson TM-T20III'));
-      expect(provider.discoveredPrinters.last.macAddress, equals('66:32:B1:88:99:AA'));
-    });
-
-    test('selects printer and persists in local preferences with MAC address', () async {
-      const printer = PrinterDeviceModel(
-        id: 'bt-02',
-        rawName: 'Thermal BT-80',
-        macAddress: 'AA:BB:CC:DD:EE:FF',
-        connectionType: PrinterConnectionType.bluetooth,
-        hardwareType: PrinterHardwareType.thermal80mm,
+      expect(
+        provider.discoveredPrinters.first.rawName,
+        equals('Epson TM-T20III'),
       );
-
-      await provider.selectPrinter(printer);
-
-      expect(provider.savedPrinter, isNotNull);
-      expect(provider.savedPrinter!.id, equals('bt-02'));
-      expect(provider.savedPrinter!.macAddress, equals('AA:BB:CC:DD:EE:FF'));
-      expect(provider.savedPrinter!.isDefault, isTrue);
-
-      final persisted = appPreferences.getSavedPrinter();
-      expect(persisted, isNotNull);
-      expect(persisted!.macAddress, equals('AA:BB:CC:DD:EE:FF'));
-    });
-
-    test('updates custom alias for saved printer and persists update', () async {
-      const printer = PrinterDeviceModel(
-        id: 'usb-02',
-        rawName: 'POS-80C',
-        connectionType: PrinterConnectionType.usb,
+      expect(
+        provider.discoveredPrinters.last.macAddress,
+        equals('66:32:B1:88:99:AA'),
       );
-      await provider.selectPrinter(printer);
-
-      await provider.updatePrinterAlias('Caja Principal - Mostrador');
-
-      expect(provider.savedPrinter!.customAlias, equals('Caja Principal - Mostrador'));
-      expect(provider.savedPrinter!.displayName, equals('Caja Principal - Mostrador'));
-
-      final persisted = appPreferences.getSavedPrinter();
-      expect(persisted!.customAlias, equals('Caja Principal - Mostrador'));
     });
+
+    test(
+      'selects printer and persists in local preferences with MAC address',
+      () async {
+        const printer = PrinterDeviceModel(
+          id: 'bt-02',
+          rawName: 'Thermal BT-80',
+          macAddress: 'AA:BB:CC:DD:EE:FF',
+          connectionType: PrinterConnectionType.bluetooth,
+          hardwareType: PrinterHardwareType.thermal80mm,
+        );
+
+        await provider.selectPrinter(printer);
+
+        expect(provider.savedPrinter, isNotNull);
+        expect(provider.savedPrinter!.id, equals('bt-02'));
+        expect(provider.savedPrinter!.macAddress, equals('AA:BB:CC:DD:EE:FF'));
+        expect(provider.savedPrinter!.isDefault, isTrue);
+
+        final persisted = appPreferences.getSavedPrinter();
+        expect(persisted, isNotNull);
+        expect(persisted!.macAddress, equals('AA:BB:CC:DD:EE:FF'));
+      },
+    );
+
+    test(
+      'updates custom alias for saved printer and persists update',
+      () async {
+        const printer = PrinterDeviceModel(
+          id: 'usb-02',
+          rawName: 'POS-80C',
+          connectionType: PrinterConnectionType.usb,
+        );
+        await provider.selectPrinter(printer);
+
+        await provider.updatePrinterAlias('Caja Principal - Mostrador');
+
+        expect(
+          provider.savedPrinter!.customAlias,
+          equals('Caja Principal - Mostrador'),
+        );
+        expect(
+          provider.savedPrinter!.displayName,
+          equals('Caja Principal - Mostrador'),
+        );
+
+        final persisted = appPreferences.getSavedPrinter();
+        expect(persisted!.customAlias, equals('Caja Principal - Mostrador'));
+      },
+    );
 
     test('updates hardware type (80mm, 58mm, dotMatrix)', () async {
       const printer = PrinterDeviceModel(
@@ -114,7 +132,10 @@ void main() {
 
       await provider.updateHardwareType(PrinterHardwareType.dotMatrix);
 
-      expect(provider.savedPrinter!.hardwareType, equals(PrinterHardwareType.dotMatrix));
+      expect(
+        provider.savedPrinter!.hardwareType,
+        equals(PrinterHardwareType.dotMatrix),
+      );
       final persisted = appPreferences.getSavedPrinter();
       expect(persisted!.hardwareType, equals(PrinterHardwareType.dotMatrix));
     });
@@ -142,8 +163,10 @@ void main() {
       );
       await provider.selectPrinter(printer);
 
-      when(() => mockPrinterService.printTestTicket(printer: any(named: 'printer')))
-          .thenAnswer((_) async => true);
+      when(
+        () =>
+            mockPrinterService.printTestTicket(printer: any(named: 'printer')),
+      ).thenAnswer((_) async => true);
 
       final result = await provider.printTestTicket();
 

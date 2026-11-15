@@ -328,11 +328,17 @@ void main() {
         ).thenAnswer((_) async {});
 
         await provider.loadOrders(orgId: 'org_test', buId: 'bu_test');
-        expect(provider.orders.first.status, equals(PurchaseOrderStatusEnum.ordered));
+        expect(
+          provider.orders.first.status,
+          equals(PurchaseOrderStatusEnum.ordered),
+        );
 
         await provider.receiveGoods('po_01');
 
-        expect(provider.orders.first.status, equals(PurchaseOrderStatusEnum.received));
+        expect(
+          provider.orders.first.status,
+          equals(PurchaseOrderStatusEnum.received),
+        );
         expect(
           provider.orders.first.items.first.quantityReceived,
           equals(100.0),
