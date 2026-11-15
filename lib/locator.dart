@@ -278,7 +278,15 @@ Future<void> setupLocator({
       appPreferences: locator<AppPreferences>(),
     ),
   );
-  locator.registerLazySingleton<ReportsProvider>(() => ReportsProvider());
+  locator.registerLazySingleton<ReportsProvider>(
+    () => ReportsProvider(
+      invoiceRepository: locator<InvoiceRepository>(),
+      productRepository: locator<ProductRepository>(),
+      cashShiftRepository: locator<CashShiftRepository>(),
+      accountReceivableRepository: locator<AccountReceivableRepository>(),
+      billiardTableRepository: locator<BilliardTableRepository>(),
+    ),
+  );
   locator.registerLazySingleton<AuditLogProvider>(
     () => AuditLogProvider(repository: locator<AuditLogRepository>()),
   );

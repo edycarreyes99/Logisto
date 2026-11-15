@@ -1,11 +1,13 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
+import '../../core/enums/report_category_enum.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
 import '../common/logisto_scaffold.dart';
+import '../context/business_context_provider.dart';
 import 'reports_provider.dart';
 import 'widgets/reports_list_mobile.dart';
 import 'widgets/reports_table_desktop.dart';
@@ -21,25 +23,34 @@ class ReportsScreen extends StatefulWidget {
 
 class _ReportsScreenState extends State<ReportsScreen> {
   late final ReportsProvider _provider;
+  late final BusinessContextProvider _contextProvider;
 
   @override
   void initState() {
     super.initState();
     _provider = locator<ReportsProvider>();
+    _contextProvider = locator<BusinessContextProvider>();
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
+    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _provider.loadReports(
+        orgId: orgId.isNotEmpty ? orgId : 'org_logisto_matriz',
+        buId: buId.isNotEmpty ? buId : 'bu_matriz_central',
+      );
+    });
   }
 
-  String _getCategoryTitle(AppLocalizations l10n, String category) {
+  String _getCategoryTitle(AppLocalizations l10n, ReportCategoryEnum category) {
     switch (category) {
-      case 'inventory':
+      case ReportCategoryEnum.inventory:
         return l10n.reportInventoryValuation;
-      case 'cash':
+      case ReportCategoryEnum.cash:
         return l10n.reportCashDrawerCuts;
-      case 'credit':
+      case ReportCategoryEnum.credit:
         return l10n.reportReceivablesAging;
-      case 'billiards':
+      case ReportCategoryEnum.billiards:
         return l10n.reportBilliardsUtilization;
-      case 'sales':
-      default:
+      case ReportCategoryEnum.sales:
         return l10n.reportSalesPareto;
     }
   }
@@ -81,7 +92,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   Future<void> _refresh() async {
-    await _provider.refresh();
+    final orgId = _contextProvider.activeOrganization?.id;
+    final buId = _contextProvider.activeBusinessUnit?.id;
+    await _provider.refresh(orgId: orgId, buId: buId);
     if (!mounted) return;
     final l10n = AppLocalizations.of(context)!;
     AppFeedback.showSuccess(
@@ -155,34 +168,34 @@ class _ReportsScreenState extends State<ReportsScreen> {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            _buildCatBtn('sales', l10n.salesReport8020, Icons.bar_chart),
+            _buildCatBtn(ReportCategoryEnum.sales, l10n.salesReport8020, Icons.bar_chart),
             const SizedBox(width: 8),
-            _buildCatBtn('inventory', l10n.inventory, Icons.inventory_2_outlined),
+            _buildCatBtn(ReportCategoryEnum.inventory, l10n.inventory, Icons.inventory_2_outlined),
             const SizedBox(width: 8),
-            _buildCatBtn('cash', l10n.cashShifts, Icons.point_of_sale_outlined),
+            _buildCatBtn(ReportCategoryEnum.cash, l10n.cashShifts, Icons.point_of_sale_outlined),
             const SizedBox(width: 8),
-            _buildCatBtn('credit', l10n.creditAging, Icons.account_balance_wallet_outlined),
+            _buildCatBtn(ReportCategoryEnum.credit, l10n.creditAging, Icons.account_balance_wallet_outlined),
             const SizedBox(width: 8),
-            _buildCatBtn('billiards', l10n.billiards, Icons.sports_esports_outlined),
+            _buildCatBtn(ReportCategoryEnum.billiards, l10n.billiards, Icons.sports_esports_outlined),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCatBtn(String key, String label, IconData icon) {
-    final isSel = _provider.selectedCategory == key;
+  Widget _buildCatBtn(ReportCategoryEnum category, String label, IconData icon) {
+    final isSel = _provider.selectedCategory == category;
     if (isSel) {
       return FilledButton.icon(
         icon: Icon(icon, size: 16),
         label: Text(label),
-        onPressed: () => _provider.setCategory(key),
+        onPressed: () => _provider.setCategory(category),
       );
     }
     return OutlinedButton.icon(
       icon: Icon(icon, size: 16),
       label: Text(label),
-      onPressed: () => _provider.setCategory(key),
+      onPressed: () => _provider.setCategory(category),
     );
   }
 }
