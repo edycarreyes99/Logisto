@@ -140,7 +140,8 @@ class _CustomerCatalogScreenState extends State<CustomerCatalogScreen> {
                   ? null
                   : () async {
                       setModalState(() => isSaving = true);
-                      final orgId = _contextProvider.activeOrganization?.id ?? '';
+                      final orgId =
+                          _contextProvider.activeOrganization?.id ?? '';
                       final limit = double.tryParse(limitCtrl.text) ?? 0.0;
                       final cust = CustomerModel(
                         id:
@@ -160,7 +161,10 @@ class _CustomerCatalogScreenState extends State<CustomerCatalogScreen> {
                         isCreditBlocked: existing?.isCreditBlocked ?? false,
                         createdAt: existing?.createdAt ?? DateTime.now(),
                       );
-                      await _provider.saveCustomer(orgId: orgId, customer: cust);
+                      await _provider.saveCustomer(
+                        orgId: orgId,
+                        customer: cust,
+                      );
                       if (ctx.mounted) Navigator.of(ctx).pop();
                       if (mounted) {
                         AppFeedback.showSuccess(
@@ -289,21 +293,21 @@ class _CustomerCatalogScreenState extends State<CustomerCatalogScreen> {
                     ),
                   )
                 : (isDesktop
-                    ? CustomerTableDesktop(
-                        customers: customers,
-                        onEdit: _showCustomerModal,
-                        onToggleBlock: (id) {
-                          _provider.toggleCreditBlock(id);
-                          AppFeedback.showWarning(
-                            context,
-                            'Estado de crédito actualizado',
-                          );
-                        },
-                      )
-                    : CustomerListMobile(
-                        customers: customers,
-                        onEdit: _showCustomerModal,
-                      )),
+                      ? CustomerTableDesktop(
+                          customers: customers,
+                          onEdit: _showCustomerModal,
+                          onToggleBlock: (id) {
+                            _provider.toggleCreditBlock(id);
+                            AppFeedback.showWarning(
+                              context,
+                              'Estado de crédito actualizado',
+                            );
+                          },
+                        )
+                      : CustomerListMobile(
+                          customers: customers,
+                          onEdit: _showCustomerModal,
+                        )),
           ),
         ),
       ],

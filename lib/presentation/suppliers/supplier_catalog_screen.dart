@@ -142,7 +142,8 @@ class _SupplierCatalogScreenState extends State<SupplierCatalogScreen> {
                   ? null
                   : () async {
                       setModalState(() => isSaving = true);
-                      final orgId = _contextProvider.activeOrganization?.id ?? '';
+                      final orgId =
+                          _contextProvider.activeOrganization?.id ?? '';
                       final days = int.tryParse(daysCtrl.text) ?? 30;
                       final sup = SupplierModel(
                         id:
@@ -290,14 +291,14 @@ class _SupplierCatalogScreenState extends State<SupplierCatalogScreen> {
                     ),
                   )
                 : (isDesktop
-                    ? SupplierTableDesktop(
-                        suppliers: suppliers,
-                        onEdit: _showSupplierModal,
-                      )
-                    : SupplierListMobile(
-                        suppliers: suppliers,
-                        onEdit: _showSupplierModal,
-                      )),
+                      ? SupplierTableDesktop(
+                          suppliers: suppliers,
+                          onEdit: _showSupplierModal,
+                        )
+                      : SupplierListMobile(
+                          suppliers: suppliers,
+                          onEdit: _showSupplierModal,
+                        )),
           ),
         ),
       ],

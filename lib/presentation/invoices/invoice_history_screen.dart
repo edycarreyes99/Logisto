@@ -115,7 +115,8 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
               final printerService = locator<IPrinterService>();
               printerService.printReceipt(
                 invoice: inv,
-                businessName: _contextProvider.activeOrganization?.commercialName,
+                businessName:
+                    _contextProvider.activeOrganization?.commercialName,
                 branchName: _contextProvider.activeBusinessUnit?.name,
               );
               AppFeedback.showSuccess(context, l10n.sendingVoucherToPrinter);
@@ -128,7 +129,8 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
               final printerService = locator<IPrinterService>();
               printerService.shareReceiptPdf(
                 invoice: inv,
-                businessName: _contextProvider.activeOrganization?.commercialName,
+                businessName:
+                    _contextProvider.activeOrganization?.commercialName,
                 branchName: _contextProvider.activeBusinessUnit?.name,
               );
             },
@@ -305,15 +307,15 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
                     ),
                   )
                 : (isDesktop
-                    ? InvoiceTableDesktop(
-                        invoices: invoices,
-                        onView: _showDetailModal,
-                        onVoid: _showVoidModal,
-                      )
-                    : InvoiceListMobile(
-                        invoices: invoices,
-                        onView: _showDetailModal,
-                      )),
+                      ? InvoiceTableDesktop(
+                          invoices: invoices,
+                          onView: _showDetailModal,
+                          onVoid: _showVoidModal,
+                        )
+                      : InvoiceListMobile(
+                          invoices: invoices,
+                          onView: _showDetailModal,
+                        )),
           ),
         ),
       ],

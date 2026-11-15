@@ -185,7 +185,8 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                   ? null
                   : () async {
                       setModalState(() => isSaving = true);
-                      final orgId = _contextProvider.activeOrganization?.id ?? '';
+                      final orgId =
+                          _contextProvider.activeOrganization?.id ?? '';
                       final cost = double.tryParse(costCtrl.text) ?? 1.0;
                       final sale = double.tryParse(saleCtrl.text) ?? 2.0;
                       final item = ProductModel(
@@ -315,24 +316,24 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                     ),
                   )
                 : (isDesktop
-                    ? ProductTableDesktop(
-                        products: products,
-                        onEdit: _showProductModal,
-                        onDelete: (id) {
-                          _provider.deleteProduct(
-                            orgId: orgId,
-                            productId: id,
-                          );
-                          AppFeedback.showSuccess(
-                            context,
-                            l10n.recordDeletedSuccess,
-                          );
-                        },
-                      )
-                    : ProductListMobile(
-                        products: products,
-                        onEdit: _showProductModal,
-                      )),
+                      ? ProductTableDesktop(
+                          products: products,
+                          onEdit: _showProductModal,
+                          onDelete: (id) {
+                            _provider.deleteProduct(
+                              orgId: orgId,
+                              productId: id,
+                            );
+                            AppFeedback.showSuccess(
+                              context,
+                              l10n.recordDeletedSuccess,
+                            );
+                          },
+                        )
+                      : ProductListMobile(
+                          products: products,
+                          onEdit: _showProductModal,
+                        )),
           ),
         ),
       ],

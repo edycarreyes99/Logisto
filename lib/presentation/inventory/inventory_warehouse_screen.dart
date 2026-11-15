@@ -208,13 +208,15 @@ class _InventoryWarehouseScreenState extends State<InventoryWarehouseScreen> {
               ChoiceChip(
                 label: Text(l10n.stockLevels),
                 selected: _provider.viewMode == WarehouseViewModeEnum.stock,
-                onSelected: (_) => _provider.setViewMode(WarehouseViewModeEnum.stock),
+                onSelected: (_) =>
+                    _provider.setViewMode(WarehouseViewModeEnum.stock),
               ),
               const SizedBox(width: 8),
               ChoiceChip(
                 label: Text(l10n.kardexLedger),
                 selected: _provider.viewMode == WarehouseViewModeEnum.kardex,
-                onSelected: (_) => _provider.setViewMode(WarehouseViewModeEnum.kardex),
+                onSelected: (_) =>
+                    _provider.setViewMode(WarehouseViewModeEnum.kardex),
               ),
               if (_provider.viewMode == WarehouseViewModeEnum.stock) ...[
                 const SizedBox(width: 16),
@@ -244,7 +246,8 @@ class _InventoryWarehouseScreenState extends State<InventoryWarehouseScreen> {
           padding: const EdgeInsets.all(16.0),
           child: ListenableBuilder(
             listenable: _provider,
-            builder: (context, _) => _provider.viewMode == WarehouseViewModeEnum.kardex
+            builder: (context, _) =>
+                _provider.viewMode == WarehouseViewModeEnum.kardex
                 ? _buildKardexView(l10n)
                 : _buildStockMatrix(l10n),
           ),
