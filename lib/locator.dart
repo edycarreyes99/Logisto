@@ -99,7 +99,9 @@ Future<void> setupLocator({
   );
 
   // Printing & Thermal Voucher Generation Engines
-  locator.registerLazySingleton<IReceiptPdfGenerator>(() => ThermalReceiptPdfGenerator());
+  locator.registerLazySingleton<IReceiptPdfGenerator>(
+    () => ThermalReceiptPdfGenerator(),
+  );
   locator.registerLazySingleton<IPrinterService>(
     () => PrintingServiceAdapter(
       receiptPdfGenerator: locator<IReceiptPdfGenerator>(),
@@ -170,7 +172,9 @@ Future<void> setupLocator({
   locator.registerLazySingleton<LoginProvider>(
     () => LoginProvider(
       preferences: locator<AppPreferences>(),
-      authService: locator.isRegistered<AuthService>() ? locator<AuthService>() : null,
+      authService: locator.isRegistered<AuthService>()
+          ? locator<AuthService>()
+          : null,
     ),
   );
   locator.registerLazySingleton<OnboardingProvider>(
