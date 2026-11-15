@@ -38,6 +38,7 @@ Approved Dependency Manifest:
 11. **Image Caching:** `cached_network_image` (`^3.4.1`).
 12. **Firebase UI Presentation Suite:** `firebase_ui_firestore` (`^1.6.0`) for headless paginated queries, `firebase_ui_auth` (`^1.16.0`) with `firebase_auth` (`^5.4.0`) for authentication workflows, and `firebase_ui_localizations` (`^1.14.0`) for multi-language UI strings.
 13. **Multiplatform Desktop Authentication:** `desktop_webview_auth` (`^0.0.16`) for Windows and desktop OAuth loopback flows aligned with `flutterfire_desktop`.
+14. **Hardware, Printing & PDF Document Generation:** `pdf` (`^3.11.1`) and `printing` (`^5.13.2`) for cross-platform thermal ticket rendering, dot-matrix vouchers, USB/Bluetooth printing, and receipt previewing.
 
 Prohibited Dependencies:
 - Alternative state managers (`bloc`, `flutter_bloc`, `riverpod`, `flutter_riverpod`, `get`, `mobx`).
@@ -83,13 +84,16 @@ dependencies:
   firebase_ui_localizations: ^1.14.0
   desktop_webview_auth: ^0.0.16
 
-  # Cross-Cutting & UI
-  flutter_dotenv: ^5.2.1
+  # Vector Graphics & Animations
   flutter_svg: ^2.0.17
   lottie: ^3.2.0
   fl_chart: ^0.69.0
   intl: ^0.20.2
   cached_network_image: ^3.4.1
+
+  # Hardware, Printing & PDF Document Generation
+  pdf: ^3.11.1
+  printing: ^5.13.2
 
 dev_dependencies:
   flutter_test:

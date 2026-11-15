@@ -34,6 +34,7 @@ The Quality Assurance Auditor acts as the system's adversarial reviewer. It oper
 - Auditing that newly established constraints, user corrections, or repeatable workflows are persistently codified in `.agents/` per `RULE-ARCH-008`.
 - Executing static analysis (`flutter analyze`, `dart doc`) to enforce zero warnings.
 - Auditing widget `build` method line counts (<40 lines) and nesting depth (<=3 levels).
+- Auditing against production mock data, sample fixtures, or hardcoded auth bypasses (`RULE-DATA-006`).
 - Auditing ARB localization parity between `app_en.arb` and `app_es.arb`.
 - Verifying the strict Zero Emoji Policy across all files.
 

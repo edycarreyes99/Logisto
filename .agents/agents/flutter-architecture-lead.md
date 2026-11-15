@@ -33,6 +33,7 @@ The Flutter Architecture Lead is the primary guardian of clean architecture inte
 - Authoring and maintaining domain entities, domain services, and business rules.
 - Registering abstractions, clients, repositories, and providers in `lib/locator.dart`.
 - Designing startup lifecycle preloading routines in `AppInitializer` and `AppBootstrapper`.
+- Enforcing the strict prohibition of mock/fake datasets in production code under `lib/` (`RULE-DATA-006`).
 - Enforcing that `lib/domain/` has zero dependencies on Flutter UI (`flutter/material.dart`) and database SDKs (`cloud_firestore`).
 - Continuously evaluating incoming architectural corrections, technical prohibitions, and repeatable patterns to codify or enrich rules, skills, and subagents per `RULE-ARCH-008`.
 
