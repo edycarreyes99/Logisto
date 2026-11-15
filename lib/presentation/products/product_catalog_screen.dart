@@ -193,10 +193,8 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                             existing?.id ??
                             'prod_${DateTime.now().millisecondsSinceEpoch}',
                         orgId: orgId,
-                        sku: skuCtrl.text.isEmpty ? 'SKU-001' : skuCtrl.text,
-                        barcode: barcodeCtrl.text.isEmpty
-                            ? '0000000000'
-                            : barcodeCtrl.text,
+                        sku: skuCtrl.text.trim(),
+                        barcode: barcodeCtrl.text.trim(),
                         name: nameCtrl.text.isEmpty
                             ? l10n.defaultProductName
                             : nameCtrl.text,
@@ -235,7 +233,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
             final orgId = _contextProvider.activeOrganization?.id ?? '';
             if (orgId.isNotEmpty) {
               _provider.loadProducts(orgId);
-              AppFeedback.showSuccess(context, 'Catálogo de productos sincronizado');
+              AppFeedback.showSuccess(context, l10n.productCatalogSynced);
             }
           },
         ),

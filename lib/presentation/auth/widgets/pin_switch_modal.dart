@@ -34,6 +34,7 @@ class _PinSwitchModalState extends State<PinSwitchModal> {
       _isSubmitting = true;
       _error = null;
     });
+    final l10n = AppLocalizations.of(context)!;
     try {
       final pin = _pinController.text.trim();
       final ok = await widget.provider.unlockWithPin(pin);
@@ -41,9 +42,8 @@ class _PinSwitchModalState extends State<PinSwitchModal> {
       if (ok) {
         Navigator.of(context).pop();
         widget.onSuccess();
-        AppFeedback.showSuccess(context, 'Usuario desbloqueado con éxito');
+        AppFeedback.showSuccess(context, l10n.terminalUnlockedSuccess);
       } else {
-        final l10n = AppLocalizations.of(context)!;
         setState(() => _error = l10n.invalidPin);
       }
     } finally {

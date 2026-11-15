@@ -147,16 +147,14 @@ class _CustomerCatalogScreenState extends State<CustomerCatalogScreen> {
                             existing?.id ??
                             'cust_${DateTime.now().millisecondsSinceEpoch}',
                         orgId: orgId,
-                        taxId: taxCtrl.text.isEmpty
-                            ? '001-000000-0000U'
-                            : taxCtrl.text,
+                        taxId: taxCtrl.text.trim(),
                         firstName: firstCtrl.text.isEmpty
                             ? l10n.defaultCustomerFirstName
                             : firstCtrl.text,
                         lastName: lastCtrl.text.isEmpty
                             ? l10n.defaultCustomerLastName
                             : lastCtrl.text,
-                        phone: phoneCtrl.text.isEmpty ? 'N/A' : phoneCtrl.text,
+                        phone: phoneCtrl.text.trim(),
                         creditLimit: limit,
                         currentDebtBalance: existing?.currentDebtBalance ?? 0.0,
                         isCreditBlocked: existing?.isCreditBlocked ?? false,
@@ -191,7 +189,7 @@ class _CustomerCatalogScreenState extends State<CustomerCatalogScreen> {
             final orgId = _contextProvider.activeOrganization?.id ?? '';
             if (orgId.isNotEmpty) {
               _provider.loadCustomers(orgId);
-              AppFeedback.showSuccess(context, 'Directorio de clientes sincronizado');
+              AppFeedback.showSuccess(context, l10n.customerDirectorySynced);
             }
           },
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/user_role_enum.dart';
+import '../../core/enums/user_status_enum.dart';
 import '../../data/repositories/user_repository.dart';
 import '../../domain/models/user_profile_model.dart';
 
@@ -67,8 +68,8 @@ class UserManagementProvider extends ChangeNotifier {
       displayName: displayName,
       isSuperAdmin: isSuperAdmin,
       businessUnitRoles: initialRoles ?? const {},
-      pinHash: terminalPin ?? '0000',
-      status: 'active',
+      pinHash: terminalPin ?? '',
+      status: UserStatusEnum.active,
     );
 
     try {

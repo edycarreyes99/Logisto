@@ -36,13 +36,14 @@ class _CloseShiftBlindDropModalState extends State<CloseShiftBlindDropModal> {
       actualCounted: counted,
     );
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       _result = res;
       _isSubmitting = false;
     });
     if (res != null) {
       if (res.discrepancyStatus == ShiftDiscrepancyEnum.balanced) {
-        AppFeedback.showSuccess(context, 'Cierre Z procesado con balance exacto');
+        AppFeedback.showSuccess(context, l10n.shiftZClosedExact);
       } else if (res.difference < 0) {
         AppFeedback.showWarning(
           context,

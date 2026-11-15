@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/enums/user_status_enum.dart';
 import '../../../domain/models/user_profile_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_colors.dart';
@@ -51,7 +52,7 @@ class UserTableDesktop extends StatelessWidget {
     ThemeData theme,
   ) {
     final branchCount = user.businessUnitRoles.length;
-    final isActive = user.status == 'active';
+    final isActive = user.status == UserStatusEnum.active;
 
     return DataRow(
       cells: [

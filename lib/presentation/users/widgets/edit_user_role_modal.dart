@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/enums/user_role_enum.dart';
+import '../../../core/enums/user_status_enum.dart';
 import '../../../domain/models/user_profile_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../common/app_feedback.dart';
@@ -27,7 +28,7 @@ class EditUserRoleModal extends StatefulWidget {
 class _EditUserRoleModalState extends State<EditUserRoleModal> {
   late UserRoleEnum _selectedRole;
   late bool _isSuperAdmin;
-  late String _status;
+  late UserStatusEnum _status;
   late final TextEditingController _pinController;
   late final TextEditingController _nameController;
   bool _isSaving = false;
@@ -42,7 +43,7 @@ class _EditUserRoleModalState extends State<EditUserRoleModal> {
     _isSuperAdmin = widget.user.isSuperAdmin;
     _status = widget.user.status;
     _pinController = TextEditingController(
-      text: widget.user.pinHash.isNotEmpty ? widget.user.pinHash : '1234',
+      text: widget.user.pinHash.isNotEmpty ? widget.user.pinHash : '',
     );
     _nameController = TextEditingController(text: widget.user.displayName);
   }
@@ -278,11 +279,13 @@ class _EditUserRoleModalState extends State<EditUserRoleModal> {
                 ),
                 onPressed: () {
                   setState(() {
-                    _status = _status == 'active' ? 'inactive' : 'active';
+                    _status = _status == UserStatusEnum.active
+                        ? UserStatusEnum.inactive
+                        : UserStatusEnum.active;
                   });
                 },
                 child: Text(
-                  _status == 'active'
+                  _status == UserStatusEnum.active
                       ? l10n.statusActiveTitle
                       : l10n.statusInactiveTitle,
                 ),

@@ -152,11 +152,11 @@ class _SupplierCatalogScreenState extends State<SupplierCatalogScreen> {
                         companyName: nameCtrl.text.isEmpty
                             ? l10n.defaultSupplierName
                             : nameCtrl.text,
-                        taxId: taxCtrl.text.isEmpty ? 'J00000000' : taxCtrl.text,
+                        taxId: taxCtrl.text.trim(),
                         contactPerson: contactCtrl.text.isEmpty
                             ? l10n.defaultContactName
                             : contactCtrl.text,
-                        phone: phoneCtrl.text.isEmpty ? '555-0000' : phoneCtrl.text,
+                        phone: phoneCtrl.text.trim(),
                         creditDays: days,
                         currentPayableBalance:
                             existing?.currentPayableBalance ?? 0.0,
@@ -190,7 +190,7 @@ class _SupplierCatalogScreenState extends State<SupplierCatalogScreen> {
             final orgId = _contextProvider.activeOrganization?.id ?? '';
             if (orgId.isNotEmpty) {
               _provider.loadSuppliers(orgId);
-              AppFeedback.showSuccess(context, 'Directorio de proveedores sincronizado');
+              AppFeedback.showSuccess(context, l10n.supplierDirectorySynced);
             }
           },
         ),

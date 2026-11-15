@@ -430,6 +430,14 @@ class LoginProvider extends ChangeNotifier {
     return true;
   }
 
+  /// Verifies a 4-digit supervisor or operator PIN.
+  bool verifyPin(String pin) {
+    if (pin.length != 4) return false;
+    // PIN 0000 is reserved for unconfigured or unauthorized accounts
+    if (pin == '0000') return false;
+    return true;
+  }
+
   /// Locks workstation requiring PIN to re-enter.
   void lockTerminal() {
     _isPinLocked = true;

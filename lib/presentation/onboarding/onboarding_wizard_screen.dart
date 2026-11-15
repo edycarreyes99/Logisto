@@ -43,7 +43,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
   }
 
   Future<void> _handleComplete() async {
-    _provider.setOrgDetails(_orgNameController.text, 'J0310000123');
+    _provider.setOrgDetails(_orgNameController.text.trim(), '');
     _provider.setBranchDetails(
       _branchNameController.text,
       _provider.businessType,
@@ -53,10 +53,11 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
 
     final ok = await _provider.completeOnboarding();
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
     if (ok) {
       AppFeedback.showSuccess(
         context,
-        'Organización y sucursal inicial configuradas con éxito',
+        l10n.onboardingConfiguredSuccess,
       );
       locator<NavigationProvider>().navigateTo(AppRoutes.dashboard);
     }

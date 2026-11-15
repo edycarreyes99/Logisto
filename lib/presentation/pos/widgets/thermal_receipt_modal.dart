@@ -195,12 +195,6 @@ class _ThermalReceiptModalState extends State<ThermalReceiptModal> {
             style: const TextStyle(fontSize: 12),
           ),
         ),
-        const Center(
-          child: Text(
-            'RUC: J0310000012345 • Tel: +505 2270-1234',
-            style: TextStyle(fontSize: 11),
-          ),
-        ),
         const SizedBox(height: 8),
         const Text(
           '------------------------------------------------',
