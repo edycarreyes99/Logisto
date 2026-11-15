@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:logisto/core/enums/account_origin_type_enum.dart';
 import 'package:logisto/core/enums/account_status_enum.dart';
 import 'package:logisto/core/enums/feature_status_enum.dart';
 import 'package:logisto/core/enums/product_type_enum.dart';
@@ -38,7 +39,7 @@ void main() {
   final dummyAccount = OpenAccountModel(
     id: 'tab_test',
     code: 'TAB-99',
-    originType: 'table',
+    originType: AccountOriginTypeEnum.table,
     tableId: 'tbl_1',
     tableName: 'Mesa 1',
     customerDisplayName: 'Roberto Gomez',
@@ -153,10 +154,10 @@ void main() {
       await resetLocator();
     });
 
-    testWidgets('renders open accounts screen with catalog and items panel', (
+    testWidgets('renders desktop 3-column layout with open accounts list, catalog, and items panel', (
       tester,
     ) async {
-      tester.view.physicalSize = const Size(1280, 720);
+      tester.view.physicalSize = const Size(1280, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
 
@@ -167,6 +168,7 @@ void main() {
 
       expect(tester.takeException(), isNull);
       expect(find.text('Open Accounts & Tabs'), findsOneWidget);
+      expect(find.text('Open Orders'), findsOneWidget);
       expect(find.text('Fast Bar / Kitchen Catalog'), findsOneWidget);
 
       // Verify checkout button navigates to POS
@@ -175,6 +177,24 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(locator<NavigationProvider>().currentRoute, equals(AppRoutes.pos));
+    });
+
+    testWidgets('renders mobile stacked view with tabs on compact viewport', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        const LogistoApp(locale: Locale('en'), home: OpenAccountsScreen()),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Open Accounts & Tabs'), findsOneWidget);
+      // Catalog and item details rendered in stacked mobile layout
+      expect(find.text('Fast Bar / Kitchen Catalog'), findsOneWidget);
     });
   });
 }
