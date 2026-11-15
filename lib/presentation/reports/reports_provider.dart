@@ -70,7 +70,10 @@ class ReportsProvider extends ChangeNotifier {
   }
 
   /// Loads genuine report records from Firestore repositories.
-  Future<void> loadReports({required String orgId, required String buId}) async {
+  Future<void> loadReports({
+    required String orgId,
+    required String buId,
+  }) async {
     _status = FeatureStatusEnum.loading;
     notifyListeners();
 
@@ -195,7 +198,9 @@ class ReportsProvider extends ChangeNotifier {
         metric2: 'Contado: \$${counted.toStringAsFixed(2)}',
         tag: diff == 0
             ? 'Balanceado \$0.00'
-            : (isShortage ? 'Faltante -\$${diff.abs().toStringAsFixed(2)}' : 'Sobrante +\$${diff.toStringAsFixed(2)}'),
+            : (isShortage
+                  ? 'Faltante -\$${diff.abs().toStringAsFixed(2)}'
+                  : 'Sobrante +\$${diff.toStringAsFixed(2)}'),
         isWarning: isShortage,
       );
     }).toList();

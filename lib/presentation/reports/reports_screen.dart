@@ -97,10 +97,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
     await _provider.refresh(orgId: orgId, buId: buId);
     if (!mounted) return;
     final l10n = AppLocalizations.of(context)!;
-    AppFeedback.showSuccess(
-      context,
-      '${l10n.reportsAndBi}: ${l10n.refresh}',
-    );
+    AppFeedback.showSuccess(context, '${l10n.reportsAndBi}: ${l10n.refresh}');
   }
 
   @override
@@ -168,22 +165,46 @@ class _ReportsScreenState extends State<ReportsScreen> {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            _buildCatBtn(ReportCategoryEnum.sales, l10n.salesReport8020, Icons.bar_chart),
+            _buildCatBtn(
+              ReportCategoryEnum.sales,
+              l10n.salesReport8020,
+              Icons.bar_chart,
+            ),
             const SizedBox(width: 8),
-            _buildCatBtn(ReportCategoryEnum.inventory, l10n.inventory, Icons.inventory_2_outlined),
+            _buildCatBtn(
+              ReportCategoryEnum.inventory,
+              l10n.inventory,
+              Icons.inventory_2_outlined,
+            ),
             const SizedBox(width: 8),
-            _buildCatBtn(ReportCategoryEnum.cash, l10n.cashShifts, Icons.point_of_sale_outlined),
+            _buildCatBtn(
+              ReportCategoryEnum.cash,
+              l10n.cashShifts,
+              Icons.point_of_sale_outlined,
+            ),
             const SizedBox(width: 8),
-            _buildCatBtn(ReportCategoryEnum.credit, l10n.creditAging, Icons.account_balance_wallet_outlined),
+            _buildCatBtn(
+              ReportCategoryEnum.credit,
+              l10n.creditAging,
+              Icons.account_balance_wallet_outlined,
+            ),
             const SizedBox(width: 8),
-            _buildCatBtn(ReportCategoryEnum.billiards, l10n.billiards, Icons.sports_esports_outlined),
+            _buildCatBtn(
+              ReportCategoryEnum.billiards,
+              l10n.billiards,
+              Icons.sports_esports_outlined,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCatBtn(ReportCategoryEnum category, String label, IconData icon) {
+  Widget _buildCatBtn(
+    ReportCategoryEnum category,
+    String label,
+    IconData icon,
+  ) {
     final isSel = _provider.selectedCategory == category;
     if (isSel) {
       return FilledButton.icon(
