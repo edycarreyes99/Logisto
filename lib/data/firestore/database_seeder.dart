@@ -1,3 +1,4 @@
+import '../../core/enums/account_origin_type_enum.dart';
 import '../../core/enums/account_status_enum.dart';
 import '../../core/enums/audit_action_enum.dart';
 import '../../core/enums/business_type_enum.dart';
@@ -561,7 +562,7 @@ class DatabaseSeeder {
     final initialTab = OpenAccountModel(
       id: 'tab_central_mesa1',
       code: 'TAB-001',
-      originType: 'table',
+      originType: AccountOriginTypeEnum.table,
       tableId: 'table_01',
       tableName: 'Mesa 1 - Pool Clásica',
       customerId: 'cust_carlos',

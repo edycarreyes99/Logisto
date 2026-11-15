@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import '../../core/enums/account_origin_type_enum.dart';
 import '../../core/enums/account_status_enum.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/table_status_enum.dart';
@@ -219,7 +220,7 @@ class BilliardProvider extends ChangeNotifier {
         final newTab = OpenAccountModel(
           id: 'tab_${DateTime.now().millisecondsSinceEpoch}',
           code: 'TAB-${table.tableNumber}',
-          originType: 'table',
+          originType: AccountOriginTypeEnum.table,
           tableId: table.id,
           tableName: table.name,
           customerDisplayName:

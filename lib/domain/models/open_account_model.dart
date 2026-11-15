@@ -1,3 +1,4 @@
+import '../../core/enums/account_origin_type_enum.dart';
 import '../../core/enums/account_status_enum.dart';
 
 /// Pure domain model for an item line inside an open account or tab.
@@ -69,7 +70,7 @@ class AccountItemModel {
 class OpenAccountModel {
   final String id;
   final String code;
-  final String originType; // 'table', 'customer', 'free_name'
+  final AccountOriginTypeEnum originType;
   final String? tableId;
   final String? tableName;
   final String? customerId;
@@ -98,7 +99,7 @@ class OpenAccountModel {
   OpenAccountModel copyWith({
     String? id,
     String? code,
-    String? originType,
+    AccountOriginTypeEnum? originType,
     String? tableId,
     String? tableName,
     String? customerId,
@@ -129,7 +130,7 @@ class OpenAccountModel {
     return {
       'id': id,
       'code': code,
-      'originType': originType,
+      'originType': originType.storageKey,
       'tableId': tableId,
       'tableName': tableName,
       'customerId': customerId,
@@ -147,7 +148,7 @@ class OpenAccountModel {
     return OpenAccountModel(
       id: docId ?? (map['id'] as String? ?? ''),
       code: map['code'] as String? ?? '',
-      originType: map['originType'] as String? ?? 'table',
+      originType: AccountOriginTypeEnum.fromStorageKey(map['originType'] as String?),
       tableId: map['tableId'] as String?,
       tableName: map['tableName'] as String?,
       customerId: map['customerId'] as String?,

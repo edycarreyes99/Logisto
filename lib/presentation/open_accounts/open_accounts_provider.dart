@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import '../../core/enums/account_origin_type_enum.dart';
 import '../../core/enums/account_status_enum.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../data/repositories/open_account_repository.dart';
@@ -168,7 +169,7 @@ class OpenAccountsProvider extends ChangeNotifier {
 
   Future<void> createNewAccount({
     required String name,
-    required String originType,
+    required AccountOriginTypeEnum originType,
     String? tableId,
     String? tableName,
   }) async {

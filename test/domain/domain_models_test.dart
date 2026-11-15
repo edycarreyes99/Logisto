@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:logisto/core/enums/account_origin_type_enum.dart';
 import 'package:logisto/core/enums/account_status_enum.dart';
 import 'package:logisto/core/enums/audit_action_enum.dart';
 import 'package:logisto/core/enums/business_type_enum.dart';
@@ -160,7 +161,7 @@ void main() {
       final account = OpenAccountModel(
         id: 'tab_1',
         code: 'TAB-001',
-        originType: 'table',
+        originType: AccountOriginTypeEnum.table,
         customerDisplayName: 'Roberto Gómez',
         status: AccountStatusEnum.open,
         items: [item1, item2],
