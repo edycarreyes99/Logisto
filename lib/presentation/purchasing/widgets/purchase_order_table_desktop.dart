@@ -26,10 +26,7 @@ class PurchaseOrderTableDesktop extends StatelessWidget {
           DataColumn(label: Text(l10n.tableHeaderOrderRef)),
           DataColumn(label: Text(l10n.tableHeaderSupplier)),
           DataColumn(label: Text(l10n.tableHeaderOrderDate)),
-          DataColumn(
-            label: Text(l10n.tableHeaderTotalValue),
-            numeric: true,
-          ),
+          DataColumn(label: Text(l10n.tableHeaderTotalValue), numeric: true),
           DataColumn(label: Text(l10n.tableHeaderStatus)),
           DataColumn(label: Text(l10n.tableHeaderActions)),
         ],
@@ -48,10 +45,7 @@ class PurchaseOrderTableDesktop extends StatelessWidget {
     return DataRow(
       cells: [
         DataCell(
-          Text(
-            po.id,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
+          Text(po.id, style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
         DataCell(
           Text(

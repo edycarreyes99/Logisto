@@ -78,7 +78,10 @@ class _EditUserRoleModalState extends State<EditUserRoleModal> {
       if (mounted) {
         Navigator.of(context).pop();
         final l10n = AppLocalizations.of(context)!;
-        AppFeedback.showSuccess(context, '${l10n.save}: ${widget.user.displayName}');
+        AppFeedback.showSuccess(
+          context,
+          '${l10n.save}: ${widget.user.displayName}',
+        );
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -95,7 +98,10 @@ class _EditUserRoleModalState extends State<EditUserRoleModal> {
       if (mounted) {
         Navigator.of(context).pop();
         final l10n = AppLocalizations.of(context)!;
-        AppFeedback.showWarning(context, '${l10n.delete}: ${widget.user.displayName}');
+        AppFeedback.showWarning(
+          context,
+          '${l10n.delete}: ${widget.user.displayName}',
+        );
       }
     } finally {
       if (mounted) setState(() => _isDeleting = false);
@@ -112,10 +118,7 @@ class _EditUserRoleModalState extends State<EditUserRoleModal> {
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       content: SingleChildScrollView(
-        child: SizedBox(
-          width: 480,
-          child: _buildFormContent(l10n),
-        ),
+        child: SizedBox(width: 480, child: _buildFormContent(l10n)),
       ),
       actions: [
         OutlinedButton.icon(
@@ -211,17 +214,13 @@ class _EditUserRoleModalState extends State<EditUserRoleModal> {
         final isSelected = _selectedRole == role;
         if (isSelected) {
           return FilledButton(
-            style: FilledButton.styleFrom(
-              visualDensity: VisualDensity.compact,
-            ),
+            style: FilledButton.styleFrom(visualDensity: VisualDensity.compact),
             onPressed: () => setState(() => _selectedRole = role),
             child: Text(role.localizedTitle(l10n)),
           );
         }
         return OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            visualDensity: VisualDensity.compact,
-          ),
+          style: OutlinedButton.styleFrom(visualDensity: VisualDensity.compact),
           onPressed: () => setState(() => _selectedRole = role),
           child: Text(role.localizedTitle(l10n)),
         );

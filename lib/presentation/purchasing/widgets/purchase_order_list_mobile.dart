@@ -47,10 +47,7 @@ class PurchaseOrderListMobile extends StatelessWidget {
           children: [
             Text(
               '\$${po.totalCost.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(width: 8),
             if (!isReceived)

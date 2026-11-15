@@ -33,9 +33,7 @@ class UserTableDesktop extends StatelessWidget {
               DataColumn(label: Text(l10n.tableHeaderUserName)),
               DataColumn(label: Text(l10n.tableHeaderUserEmail)),
               DataColumn(label: Text(l10n.tableHeaderSuperAdmin)),
-              DataColumn(
-                label: Text(l10n.tableHeaderAssignedBranches),
-              ),
+              DataColumn(label: Text(l10n.tableHeaderAssignedBranches)),
               DataColumn(label: Text(l10n.tableHeaderStatus)),
               DataColumn(label: Text(l10n.tableHeaderActions)),
             ],
@@ -71,15 +69,15 @@ class UserTableDesktop extends StatelessWidget {
                 fontSize: 11,
                 color: user.isSuperAdmin
                     ? (theme.brightness == Brightness.dark
-                        ? AppColors.onWarningContainerDark
-                        : AppColors.onWarningContainerLight)
+                          ? AppColors.onWarningContainerDark
+                          : AppColors.onWarningContainerLight)
                     : theme.colorScheme.onSurfaceVariant,
               ),
             ),
             backgroundColor: user.isSuperAdmin
                 ? (theme.brightness == Brightness.dark
-                    ? AppColors.warningContainerDark
-                    : AppColors.warningContainerLight)
+                      ? AppColors.warningContainerDark
+                      : AppColors.warningContainerLight)
                 : theme.colorScheme.surfaceContainerHighest,
             visualDensity: VisualDensity.compact,
             padding: EdgeInsets.zero,

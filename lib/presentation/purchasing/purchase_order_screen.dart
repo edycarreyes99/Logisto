@@ -102,7 +102,8 @@ class _PurchaseOrderScreenState extends State<PurchaseOrderScreen> {
                   ? null
                   : () async {
                       setModalState(() => isSaving = true);
-                      final buId = _contextProvider.activeBusinessUnit?.id ?? '';
+                      final buId =
+                          _contextProvider.activeBusinessUnit?.id ?? '';
                       final total = double.tryParse(amountCtrl.text) ?? 100.0;
                       final order = PurchaseOrderModel(
                         id: 'PO-${DateTime.now().millisecondsSinceEpoch % 10000}',
@@ -188,20 +189,26 @@ class _PurchaseOrderScreenState extends State<PurchaseOrderScreen> {
                 ),
               )
             : (isDesktop
-                ? PurchaseOrderTableDesktop(
-                    orders: orders,
-                    onReceive: (id) {
-                      _provider.receiveGoods(id);
-                      AppFeedback.showSuccess(context, l10n.goodsReceivedInWarehouse);
-                    },
-                  )
-                : PurchaseOrderListMobile(
-                    orders: orders,
-                    onReceive: (id) {
-                      _provider.receiveGoods(id);
-                      AppFeedback.showSuccess(context, l10n.goodsReceivedInWarehouse);
-                    },
-                  )),
+                  ? PurchaseOrderTableDesktop(
+                      orders: orders,
+                      onReceive: (id) {
+                        _provider.receiveGoods(id);
+                        AppFeedback.showSuccess(
+                          context,
+                          l10n.goodsReceivedInWarehouse,
+                        );
+                      },
+                    )
+                  : PurchaseOrderListMobile(
+                      orders: orders,
+                      onReceive: (id) {
+                        _provider.receiveGoods(id);
+                        AppFeedback.showSuccess(
+                          context,
+                          l10n.goodsReceivedInWarehouse,
+                        );
+                      },
+                    )),
       ),
     );
   }

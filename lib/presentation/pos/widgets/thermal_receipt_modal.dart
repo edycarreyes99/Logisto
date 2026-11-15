@@ -79,15 +79,21 @@ class _ThermalReceiptModalState extends State<ThermalReceiptModal> {
               if (activePrinter != null)
                 Container(
                   margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
+                    color: theme.colorScheme.primaryContainer.withValues(
+                      alpha: 0.5,
+                    ),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Row(
                     children: [
                       Icon(
-                        activePrinter.connectionType == PrinterConnectionType.usb
+                        activePrinter.connectionType ==
+                                PrinterConnectionType.usb
                             ? Icons.usb_rounded
                             : Icons.bluetooth_rounded,
                         size: 16,

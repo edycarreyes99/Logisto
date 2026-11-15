@@ -96,9 +96,7 @@ class _PinSwitchModalState extends State<PinSwitchModal> {
           obscureText: true,
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 20, letterSpacing: 8),
-          decoration: const InputDecoration(
-            hintText: '••••',
-          ),
+          decoration: const InputDecoration(hintText: '••••'),
         ),
         if (_error != null) ...[
           const SizedBox(height: 8),

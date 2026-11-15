@@ -55,10 +55,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
     if (!mounted) return;
     final l10n = AppLocalizations.of(context)!;
     if (ok) {
-      AppFeedback.showSuccess(
-        context,
-        l10n.onboardingConfiguredSuccess,
-      );
+      AppFeedback.showSuccess(context, l10n.onboardingConfiguredSuccess);
       locator<NavigationProvider>().navigateTo(AppRoutes.dashboard);
     }
   }
@@ -134,10 +131,9 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
         OutlinedButton.icon(
           icon: const Icon(Icons.arrow_back, size: 18),
           label: Text(l10n.previousStep),
-          onPressed:
-              (_provider.currentStep == 1 || isLoading)
-                  ? null
-                  : _provider.previousStep,
+          onPressed: (_provider.currentStep == 1 || isLoading)
+              ? null
+              : _provider.previousStep,
         ),
         FilledButton.icon(
           icon: isLoading
@@ -151,7 +147,9 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
                 )
               : Icon(isLast ? Icons.check : Icons.arrow_forward, size: 18),
           label: Text(isLast ? l10n.launchSystem : l10n.nextStep),
-          onPressed: isLoading ? null : (isLast ? _handleComplete : _provider.nextStep),
+          onPressed: isLoading
+              ? null
+              : (isLast ? _handleComplete : _provider.nextStep),
         ),
       ],
     );
