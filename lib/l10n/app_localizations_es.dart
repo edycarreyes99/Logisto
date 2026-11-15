@@ -2861,4 +2861,71 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get previewVoucher => 'Vista Previa';
+
+  @override
+  String get notificationsAndAlerts => 'Notificaciones y Alertas';
+
+  @override
+  String get liveFirestoreSyncTitle => 'Sincronización Firestore en Vivo';
+
+  @override
+  String get liveFirestoreSyncDesc =>
+      'Todos los registros sincronizados con Cloud Firestore.';
+
+  @override
+  String get justNow => 'Hace un momento';
+
+  @override
+  String get activeCashDrawerTitle => 'Caja Operativa Activa';
+
+  @override
+  String get activeCashDrawerDesc => 'Turno abierto en la sucursal activa.';
+
+  @override
+  String get activeStatus => 'Activo';
+
+  @override
+  String get secureMultiTenantSessionTitle => 'Sesión Segura Multi-Tenant';
+
+  @override
+  String get secureMultiTenantSessionDesc =>
+      'Permisos RBAC validados para el usuario actual.';
+
+  @override
+  String get onlineStatus => 'En línea';
+
+  @override
+  String get terminalUnlockedSuccess => 'Terminal desbloqueada con éxito';
+
+  @override
+  String get customerDirectorySynced => 'Directorio de clientes sincronizado';
+
+  @override
+  String get productCatalogSynced => 'Catálogo de productos sincronizado';
+
+  @override
+  String get supplierDirectorySynced =>
+      'Directorio de proveedores sincronizado';
+
+  @override
+  String get invoiceHistoryUpdated => 'Historial de facturas actualizado';
+
+  @override
+  String get goodsReceivedInWarehouse => 'Mercancía recibida en almacén';
+
+  @override
+  String get shiftZClosedExact => 'Cierre Z procesado con balance exacto';
+
+  @override
+  String get hardwareLabel => 'Hardware';
+
+  @override
+  String get activeChipLabel => 'Activa';
+
+  @override
+  String get sendingVoucherToPrinter => 'Enviando voucher a impresión...';
+
+  @override
+  String get onboardingConfiguredSuccess =>
+      'Organización y sucursal inicial configuradas con éxito';
 }

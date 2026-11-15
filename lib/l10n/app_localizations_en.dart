@@ -2836,4 +2836,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get previewVoucher => 'Preview';
+
+  @override
+  String get notificationsAndAlerts => 'Notifications & Alerts';
+
+  @override
+  String get liveFirestoreSyncTitle => 'Live Firestore Sync';
+
+  @override
+  String get liveFirestoreSyncDesc =>
+      'All records synchronized with Cloud Firestore.';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String get activeCashDrawerTitle => 'Active Cash Register';
+
+  @override
+  String get activeCashDrawerDesc => 'Shift open in active branch.';
+
+  @override
+  String get activeStatus => 'Active';
+
+  @override
+  String get secureMultiTenantSessionTitle => 'Secure Multi-Tenant Session';
+
+  @override
+  String get secureMultiTenantSessionDesc =>
+      'RBAC permissions validated for active user.';
+
+  @override
+  String get onlineStatus => 'Online';
+
+  @override
+  String get terminalUnlockedSuccess => 'Terminal unlocked successfully';
+
+  @override
+  String get customerDirectorySynced => 'Customer directory synchronized';
+
+  @override
+  String get productCatalogSynced => 'Product catalog synchronized';
+
+  @override
+  String get supplierDirectorySynced => 'Supplier directory synchronized';
+
+  @override
+  String get invoiceHistoryUpdated => 'Invoice history updated';
+
+  @override
+  String get goodsReceivedInWarehouse => 'Goods received in warehouse';
+
+  @override
+  String get shiftZClosedExact => 'Z-Cut processed with exact balance';
+
+  @override
+  String get hardwareLabel => 'Hardware';
+
+  @override
+  String get activeChipLabel => 'Active';
+
+  @override
+  String get sendingVoucherToPrinter => 'Sending voucher to printer...';
+
+  @override
+  String get onboardingConfiguredSuccess =>
+      'Initial organization and branch configured successfully';
 }

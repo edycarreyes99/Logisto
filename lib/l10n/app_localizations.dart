@@ -5335,6 +5335,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Preview'**
   String get previewVoucher;
+
+  /// No description provided for @notificationsAndAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications & Alerts'**
+  String get notificationsAndAlerts;
+
+  /// No description provided for @liveFirestoreSyncTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Firestore Sync'**
+  String get liveFirestoreSyncTitle;
+
+  /// No description provided for @liveFirestoreSyncDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'All records synchronized with Cloud Firestore.'**
+  String get liveFirestoreSyncDesc;
+
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
+
+  /// No description provided for @activeCashDrawerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Cash Register'**
+  String get activeCashDrawerTitle;
+
+  /// No description provided for @activeCashDrawerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Shift open in active branch.'**
+  String get activeCashDrawerDesc;
+
+  /// No description provided for @activeStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get activeStatus;
+
+  /// No description provided for @secureMultiTenantSessionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Multi-Tenant Session'**
+  String get secureMultiTenantSessionTitle;
+
+  /// No description provided for @secureMultiTenantSessionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'RBAC permissions validated for active user.'**
+  String get secureMultiTenantSessionDesc;
+
+  /// No description provided for @onlineStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get onlineStatus;
+
+  /// No description provided for @terminalUnlockedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal unlocked successfully'**
+  String get terminalUnlockedSuccess;
+
+  /// No description provided for @customerDirectorySynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer directory synchronized'**
+  String get customerDirectorySynced;
+
+  /// No description provided for @productCatalogSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Product catalog synchronized'**
+  String get productCatalogSynced;
+
+  /// No description provided for @supplierDirectorySynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier directory synchronized'**
+  String get supplierDirectorySynced;
+
+  /// No description provided for @invoiceHistoryUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice history updated'**
+  String get invoiceHistoryUpdated;
+
+  /// No description provided for @goodsReceivedInWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Goods received in warehouse'**
+  String get goodsReceivedInWarehouse;
+
+  /// No description provided for @shiftZClosedExact.
+  ///
+  /// In en, this message translates to:
+  /// **'Z-Cut processed with exact balance'**
+  String get shiftZClosedExact;
+
+  /// No description provided for @hardwareLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hardware'**
+  String get hardwareLabel;
+
+  /// No description provided for @activeChipLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get activeChipLabel;
+
+  /// No description provided for @sendingVoucherToPrinter.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending voucher to printer...'**
+  String get sendingVoucherToPrinter;
+
+  /// No description provided for @onboardingConfiguredSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial organization and branch configured successfully'**
+  String get onboardingConfiguredSuccess;
 }
 
 class _AppLocalizationsDelegate
