@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../locator.dart';
+import '../../auth/login_provider.dart';
 
 /// Elevation modal requiring a supervisor 4-digit authorization PIN
 /// before executing restricted operations.
@@ -29,8 +31,20 @@ class _SupervisorPinModalState extends State<SupervisorPinModal> {
 
   void _verifyPin(AppLocalizations l10n) {
     final pin = _pinCtrl.text.trim();
-    // In production or test fixture, '9999' or '1234' certifies supervisor authority
-    if (pin == '9999' || pin == '1234') {
+    if (pin.length != 4) {
+      setState(() => _error = l10n.invalidSupervisorPin);
+      return;
+    }
+
+    final loginProvider = locator.isRegistered<LoginProvider>()
+        ? locator<LoginProvider>()
+        : null;
+
+    final isAuthorized = loginProvider != null
+        ? loginProvider.verifyPin(pin)
+        : false;
+
+    if (isAuthorized) {
       Navigator.of(context).maybePop();
       widget.onApproved();
     } else {

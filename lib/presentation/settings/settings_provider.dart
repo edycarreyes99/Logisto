@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/enums/language_enum.dart';
+import '../../core/enums/settings_section_enum.dart';
 import '../../core/enums/theme_mode_enum.dart';
 import '../../data/preferences/app_preferences.dart';
 import '../../domain/models/rbac_permission_model.dart';
@@ -12,14 +13,14 @@ class SettingsProvider extends ChangeNotifier {
   late ThemeModeEnum _themeMode;
   late LanguageEnum _language;
 
-  String _legalName = 'Inversiones Castillo Machado S.A.';
-  String _commercialName = 'Castillo Machado';
-  String _taxId = 'J0310000123456';
+  String _legalName = '';
+  String _commercialName = '';
+  String _taxId = '';
   String _baseCurrency = 'USD';
   String _secondaryCurrency = 'NIO';
   double _exchangeRate = 36.65;
   double _defaultTaxRate = 0.15;
-  String _selectedSection = 'org';
+  SettingsSectionEnum _selectedSection = SettingsSectionEnum.organization;
 
   SettingsProvider({this.preferences}) {
     _themeMode = preferences?.getThemeMode() ?? ThemeModeEnum.light;
@@ -51,7 +52,7 @@ class SettingsProvider extends ChangeNotifier {
   String get secondaryCurrency => _secondaryCurrency;
   double get exchangeRate => _exchangeRate;
   double get defaultTaxRate => _defaultTaxRate;
-  String get selectedSection => _selectedSection;
+  SettingsSectionEnum get selectedSection => _selectedSection;
 
   Future<void> setThemeMode(ThemeModeEnum mode) async {
     _themeMode = mode;
@@ -80,7 +81,7 @@ class SettingsProvider extends ChangeNotifier {
     ),
   ];
 
-  void setSection(String section) {
+  void setSection(SettingsSectionEnum section) {
     _selectedSection = section;
     notifyListeners();
   }
