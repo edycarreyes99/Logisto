@@ -14,7 +14,8 @@ class PrinterManagementScreen extends StatefulWidget {
   const PrinterManagementScreen({super.key});
 
   @override
-  State<PrinterManagementScreen> createState() => _PrinterManagementScreenState();
+  State<PrinterManagementScreen> createState() =>
+      _PrinterManagementScreenState();
 }
 
 class _PrinterManagementScreenState extends State<PrinterManagementScreen> {
@@ -26,7 +27,10 @@ class _PrinterManagementScreenState extends State<PrinterManagementScreen> {
     });
   }
 
-  void _showAliasDialog(BuildContext context, PrinterManagementProvider provider) {
+  void _showAliasDialog(
+    BuildContext context,
+    PrinterManagementProvider provider,
+  ) {
     PrinterAliasEditDialog.show(context, provider);
   }
 
@@ -59,7 +63,10 @@ class _PrinterManagementScreenState extends State<PrinterManagementScreen> {
     );
   }
 
-  Widget _buildStatusBanners(BuildContext context, PrinterManagementProvider provider) {
+  Widget _buildStatusBanners(
+    BuildContext context,
+    PrinterManagementProvider provider,
+  ) {
     final theme = Theme.of(context);
     return Column(
       children: [
@@ -73,7 +80,10 @@ class _PrinterManagementScreenState extends State<PrinterManagementScreen> {
             ),
             child: Row(
               children: [
-                Icon(Icons.error_outline_rounded, color: theme.colorScheme.onErrorContainer),
+                Icon(
+                  Icons.error_outline_rounded,
+                  color: theme.colorScheme.onErrorContainer,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -99,7 +109,10 @@ class _PrinterManagementScreenState extends State<PrinterManagementScreen> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.check_circle_outline_rounded, color: Colors.green),
+                const Icon(
+                  Icons.check_circle_outline_rounded,
+                  color: Colors.green,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -118,7 +131,11 @@ class _PrinterManagementScreenState extends State<PrinterManagementScreen> {
     );
   }
 
-  Widget _buildDiscoveryHeader(BuildContext context, PrinterManagementProvider provider, AppLocalizations l10n) {
+  Widget _buildDiscoveryHeader(
+    BuildContext context,
+    PrinterManagementProvider provider,
+    AppLocalizations l10n,
+  ) {
     final theme = Theme.of(context);
 
     return Row(
@@ -129,12 +146,16 @@ class _PrinterManagementScreenState extends State<PrinterManagementScreen> {
             children: [
               Text(
                 l10n.discoveredPrinters,
-                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
                 l10n.printerManagementSubtitle,
-                style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.outline),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.outline,
+                ),
               ),
             ],
           ),
@@ -148,7 +169,11 @@ class _PrinterManagementScreenState extends State<PrinterManagementScreen> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.refresh_rounded, size: 18),
-          label: Text(provider.isScanning ? l10n.scanningPrinters : l10n.scanBluetoothPrinters),
+          label: Text(
+            provider.isScanning
+                ? l10n.scanningPrinters
+                : l10n.scanBluetoothPrinters,
+          ),
         ),
       ],
     );

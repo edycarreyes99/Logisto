@@ -10,10 +10,7 @@ import 'printer_preferences_card.dart';
 class PrinterSettingsCard extends StatelessWidget {
   final PrinterManagementProvider provider;
 
-  const PrinterSettingsCard({
-    super.key,
-    required this.provider,
-  });
+  const PrinterSettingsCard({super.key, required this.provider});
 
   void _showAliasDialog(BuildContext context) {
     PrinterAliasEditDialog.show(context, provider);
@@ -55,7 +52,10 @@ class PrinterSettingsCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.error_outline_rounded, color: theme.colorScheme.onErrorContainer),
+                Icon(
+                  Icons.error_outline_rounded,
+                  color: theme.colorScheme.onErrorContainer,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -81,7 +81,10 @@ class PrinterSettingsCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.check_circle_outline_rounded, color: Colors.green),
+                const Icon(
+                  Icons.check_circle_outline_rounded,
+                  color: Colors.green,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -110,12 +113,16 @@ class PrinterSettingsCard extends StatelessWidget {
             children: [
               Text(
                 l10n.discoveredPrinters,
-                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
                 l10n.printerManagementSubtitle,
-                style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.outline),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.outline,
+                ),
               ),
             ],
           ),
@@ -129,7 +136,11 @@ class PrinterSettingsCard extends StatelessWidget {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.refresh_rounded, size: 18),
-          label: Text(provider.isScanning ? l10n.scanningPrinters : l10n.scanBluetoothPrinters),
+          label: Text(
+            provider.isScanning
+                ? l10n.scanningPrinters
+                : l10n.scanBluetoothPrinters,
+          ),
         ),
       ],
     );

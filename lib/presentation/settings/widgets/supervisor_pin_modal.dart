@@ -59,10 +59,7 @@ class _SupervisorPinModalState extends State<SupervisorPinModal> {
 
     return AlertDialog(
       title: Text(l10n.authorizeActionNamed(widget.actionTitle)),
-      content: SizedBox(
-        width: 380,
-        child: _buildDialogContent(l10n, theme),
-      ),
+      content: SizedBox(width: 380, child: _buildDialogContent(l10n, theme)),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).maybePop(),

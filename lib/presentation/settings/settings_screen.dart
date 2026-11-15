@@ -126,7 +126,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         final printerProvider = locator<PrinterManagementProvider>();
         return ListenableBuilder(
           listenable: printerProvider,
-          builder: (context, _) => PrinterSettingsCard(provider: printerProvider),
+          builder: (context, _) =>
+              PrinterSettingsCard(provider: printerProvider),
         );
       case SettingsSectionEnum.appearance:
         return AppearanceSettingsCard(provider: _provider);
