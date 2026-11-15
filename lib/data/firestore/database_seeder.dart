@@ -6,10 +6,12 @@ import '../../core/enums/kds_status_enum.dart';
 import '../../core/enums/movement_type_enum.dart';
 import '../../core/enums/payment_method_enum.dart';
 import '../../core/enums/product_type_enum.dart';
+import '../../core/enums/purchase_order_status_enum.dart';
 import '../../core/enums/shift_status_enum.dart';
 import '../../core/enums/table_status_enum.dart';
 import '../../core/enums/table_type_enum.dart';
 import '../../core/enums/user_role_enum.dart';
+import '../../core/enums/user_status_enum.dart';
 import '../../domain/models/account_payable_model.dart';
 import '../../domain/models/account_receivable_model.dart';
 import '../../domain/models/audit_log_model.dart';
@@ -146,7 +148,7 @@ class DatabaseSeeder {
           defaultBuNorteId: UserRoleEnum.superAdminOrg,
         },
         pinHash: '9999',
-        status: 'active',
+        status: UserStatusEnum.active,
       ),
       UserProfileModel(
         uid: 'usr_admin',
@@ -159,7 +161,7 @@ class DatabaseSeeder {
           defaultBuNorteId: UserRoleEnum.supervisor,
         },
         pinHash: '1234',
-        status: 'active',
+        status: UserStatusEnum.active,
       ),
       UserProfileModel(
         uid: 'usr_manager',
@@ -172,7 +174,7 @@ class DatabaseSeeder {
           defaultBuNorteId: UserRoleEnum.supervisor,
         },
         pinHash: '2345',
-        status: 'active',
+        status: UserStatusEnum.active,
       ),
       UserProfileModel(
         uid: 'usr_cashier',
@@ -182,7 +184,7 @@ class DatabaseSeeder {
         isSuperAdmin: false,
         businessUnitRoles: const {defaultBuCentralId: UserRoleEnum.cashier},
         pinHash: '3456',
-        status: 'active',
+        status: UserStatusEnum.active,
       ),
       UserProfileModel(
         uid: 'usr_waiter',
@@ -192,7 +194,7 @@ class DatabaseSeeder {
         isSuperAdmin: false,
         businessUnitRoles: const {defaultBuCentralId: UserRoleEnum.waiter},
         pinHash: '4567',
-        status: 'active',
+        status: UserStatusEnum.active,
       ),
     ];
 
@@ -689,7 +691,7 @@ class DatabaseSeeder {
       supplierName: 'Compañía Cervecera Nacional',
       orderDate: DateTime.now().subtract(const Duration(days: 1)),
       totalAmount: 300.00,
-      status: 'ordered',
+      status: PurchaseOrderStatusEnum.ordered,
       items: const [
         PurchaseOrderItemModel(
           productId: 'prod_tona_botella',

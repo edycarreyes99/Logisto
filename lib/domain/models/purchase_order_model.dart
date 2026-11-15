@@ -1,3 +1,5 @@
+import '../../core/enums/purchase_order_status_enum.dart';
+
 /// Pure domain model for an item line in a purchase order.
 class PurchaseOrderItemModel {
   final String productId;
@@ -49,7 +51,7 @@ class PurchaseOrderModel {
   final DateTime? expectedDeliveryDate;
   final List<PurchaseOrderItemModel> items;
   final double totalAmount;
-  final String status; // 'draft', 'ordered', 'received', 'cancelled'
+  final PurchaseOrderStatusEnum status;
 
   const PurchaseOrderModel({
     required this.id,
@@ -60,7 +62,7 @@ class PurchaseOrderModel {
     this.expectedDeliveryDate,
     this.items = const [],
     required this.totalAmount,
-    this.status = 'draft',
+    this.status = PurchaseOrderStatusEnum.draft,
   });
 
   /// Alias for totalAmount.
@@ -76,7 +78,7 @@ class PurchaseOrderModel {
       'expectedDeliveryDate': expectedDeliveryDate?.toIso8601String(),
       'items': items.map((e) => e.toMap()).toList(),
       'totalAmount': totalAmount,
-      'status': status,
+      'status': status.storageKey,
     };
   }
 
@@ -104,7 +106,7 @@ class PurchaseOrderModel {
           )
           .toList(),
       totalAmount: (map['totalAmount'] as num?)?.toDouble() ?? 0.0,
-      status: map['status'] as String? ?? 'draft',
+      status: PurchaseOrderStatusEnum.fromStorageKey(map['status'] as String?),
     );
   }
 }

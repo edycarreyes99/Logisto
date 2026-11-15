@@ -1,4 +1,5 @@
 import '../../core/enums/user_role_enum.dart';
+import '../../core/enums/user_status_enum.dart';
 
 /// Pure domain model representing an enterprise employee or administrator user.
 class UserProfileModel {
@@ -9,7 +10,7 @@ class UserProfileModel {
   final String pinHash;
   final bool isSuperAdmin;
   final Map<String, UserRoleEnum> businessUnitRoles;
-  final String status;
+  final UserStatusEnum status;
 
   const UserProfileModel({
     required this.uid,
@@ -19,7 +20,7 @@ class UserProfileModel {
     this.pinHash = '',
     this.isSuperAdmin = false,
     this.businessUnitRoles = const {},
-    this.status = 'active',
+    this.status = UserStatusEnum.active,
   });
 
   /// Returns the assigned role in a given [buId], defaulting to [UserRoleEnum.cashier].
@@ -36,7 +37,7 @@ class UserProfileModel {
     String? pinHash,
     bool? isSuperAdmin,
     Map<String, UserRoleEnum>? businessUnitRoles,
-    String? status,
+    UserStatusEnum? status,
   }) {
     return UserProfileModel(
       uid: uid ?? this.uid,
@@ -61,7 +62,7 @@ class UserProfileModel {
       'businessUnitRoles': businessUnitRoles.map(
         (key, value) => MapEntry(key, value.storageKey),
       ),
-      'status': status,
+      'status': status.storageKey,
     };
   }
 
@@ -80,7 +81,7 @@ class UserProfileModel {
       pinHash: map['pinHash'] as String? ?? '',
       isSuperAdmin: map['isSuperAdmin'] as bool? ?? false,
       businessUnitRoles: roles,
-      status: map['status'] as String? ?? 'active',
+      status: UserStatusEnum.fromStorageKey(map['status'] as String?),
     );
   }
 }
