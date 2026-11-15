@@ -65,10 +65,7 @@ class DashboardProvider extends ChangeNotifier {
       if (invoiceRepository != null) {
         try {
           final invoices = await invoiceRepository!
-              .getInvoices(
-                orgId: orgId,
-                buId: buId,
-              )
+              .getInvoices(orgId: orgId, buId: buId)
               .timeout(const Duration(seconds: 4));
           if (invoices.isNotEmpty) {
             _computeLiveMetrics(invoices);

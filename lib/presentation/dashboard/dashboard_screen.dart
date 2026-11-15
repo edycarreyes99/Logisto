@@ -111,10 +111,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           initialValue: _provider.timeFilter,
           onSelected: _provider.setTimeFilter,
           itemBuilder: (context) => filters
-              .map((entry) => PopupMenuItem(
-                    value: entry.$1,
-                    child: Text(entry.$2),
-                  ))
+              .map(
+                (entry) =>
+                    PopupMenuItem(value: entry.$1, child: Text(entry.$2)),
+              )
               .toList(),
         )
       else
