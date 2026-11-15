@@ -1277,5 +1277,24 @@
   "hardwareLabel": "Hardware",
   "activeChipLabel": "Activa",
   "sendingVoucherToPrinter": "Enviando voucher a impresión...",
-  "onboardingConfiguredSuccess": "Organización y sucursal inicial configuradas con éxito"
+  "onboardingConfiguredSuccess": "Organización y sucursal inicial configuradas con éxito",
+  "openAccountsListTitle": "Comandas Abiertas",
+  "searchAccountsPlaceholder": "Buscar comanda o mesa...",
+  "noOpenAccountsFound": "No hay comandas ni cuentas abiertas.",
+  "openNewTabPrompt": "Toca '+' o el botón abajo para abrir una nueva comanda.",
+  "allCategories": "Todas las Categorías",
+  "itemsInOrder": "{count} productos",
+  "@itemsInOrder": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "originTypeTable": "Mesa",
+  "originTypeCounter": "Barra / Mostrador",
+  "originTypeCustomer": "Cliente",
+  "originTypeFreeName": "Cuenta Libre",
+  "emptyOrderPrompt": "Aún no hay productos. Selecciona productos del catálogo para agregarlos a esta comanda.",
+  "filterByTableOrCustomer": "Filtrar por mesa o cliente..."
 }

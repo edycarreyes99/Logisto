@@ -5461,6 +5461,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Initial organization and branch configured successfully'**
   String get onboardingConfiguredSuccess;
+
+  /// No description provided for @openAccountsListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Orders'**
+  String get openAccountsListTitle;
+
+  /// No description provided for @searchAccountsPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search order or table...'**
+  String get searchAccountsPlaceholder;
+
+  /// No description provided for @noOpenAccountsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No open accounts or orders.'**
+  String get noOpenAccountsFound;
+
+  /// No description provided for @openNewTabPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \'+\' or the button below to open a new tab.'**
+  String get openNewTabPrompt;
+
+  /// No description provided for @allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All Categories'**
+  String get allCategories;
+
+  /// No description provided for @itemsInOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items'**
+  String itemsInOrder(int count);
+
+  /// No description provided for @originTypeTable.
+  ///
+  /// In en, this message translates to:
+  /// **'Table'**
+  String get originTypeTable;
+
+  /// No description provided for @originTypeCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'Bar / Counter'**
+  String get originTypeCounter;
+
+  /// No description provided for @originTypeCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get originTypeCustomer;
+
+  /// No description provided for @originTypeFreeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Tab'**
+  String get originTypeFreeName;
+
+  /// No description provided for @emptyOrderPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'No items added yet. Select products from the catalog to add to this order.'**
+  String get emptyOrderPrompt;
+
+  /// No description provided for @filterByTableOrCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by table or customer...'**
+  String get filterByTableOrCustomer;
 }
 
 class _AppLocalizationsDelegate

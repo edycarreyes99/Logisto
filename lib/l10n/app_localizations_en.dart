@@ -2902,4 +2902,44 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboardingConfiguredSuccess =>
       'Initial organization and branch configured successfully';
+
+  @override
+  String get openAccountsListTitle => 'Open Orders';
+
+  @override
+  String get searchAccountsPlaceholder => 'Search order or table...';
+
+  @override
+  String get noOpenAccountsFound => 'No open accounts or orders.';
+
+  @override
+  String get openNewTabPrompt =>
+      'Tap \'+\' or the button below to open a new tab.';
+
+  @override
+  String get allCategories => 'All Categories';
+
+  @override
+  String itemsInOrder(int count) {
+    return '$count items';
+  }
+
+  @override
+  String get originTypeTable => 'Table';
+
+  @override
+  String get originTypeCounter => 'Bar / Counter';
+
+  @override
+  String get originTypeCustomer => 'Customer';
+
+  @override
+  String get originTypeFreeName => 'Custom Tab';
+
+  @override
+  String get emptyOrderPrompt =>
+      'No items added yet. Select products from the catalog to add to this order.';
+
+  @override
+  String get filterByTableOrCustomer => 'Filter by table or customer...';
 }

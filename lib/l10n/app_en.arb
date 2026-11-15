@@ -1470,5 +1470,24 @@
   "hardwareLabel": "Hardware",
   "activeChipLabel": "Active",
   "sendingVoucherToPrinter": "Sending voucher to printer...",
-  "onboardingConfiguredSuccess": "Initial organization and branch configured successfully"
+  "onboardingConfiguredSuccess": "Initial organization and branch configured successfully",
+  "openAccountsListTitle": "Open Orders",
+  "searchAccountsPlaceholder": "Search order or table...",
+  "noOpenAccountsFound": "No open accounts or orders.",
+  "openNewTabPrompt": "Tap '+' or the button below to open a new tab.",
+  "allCategories": "All Categories",
+  "itemsInOrder": "{count} items",
+  "@itemsInOrder": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "originTypeTable": "Table",
+  "originTypeCounter": "Bar / Counter",
+  "originTypeCustomer": "Customer",
+  "originTypeFreeName": "Custom Tab",
+  "emptyOrderPrompt": "No items added yet. Select products from the catalog to add to this order.",
+  "filterByTableOrCustomer": "Filter by table or customer..."
 }

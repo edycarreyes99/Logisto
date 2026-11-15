@@ -2928,4 +2928,44 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get onboardingConfiguredSuccess =>
       'Organización y sucursal inicial configuradas con éxito';
+
+  @override
+  String get openAccountsListTitle => 'Comandas Abiertas';
+
+  @override
+  String get searchAccountsPlaceholder => 'Buscar comanda o mesa...';
+
+  @override
+  String get noOpenAccountsFound => 'No hay comandas ni cuentas abiertas.';
+
+  @override
+  String get openNewTabPrompt =>
+      'Toca \'+\' o el botón abajo para abrir una nueva comanda.';
+
+  @override
+  String get allCategories => 'Todas las Categorías';
+
+  @override
+  String itemsInOrder(int count) {
+    return '$count productos';
+  }
+
+  @override
+  String get originTypeTable => 'Mesa';
+
+  @override
+  String get originTypeCounter => 'Barra / Mostrador';
+
+  @override
+  String get originTypeCustomer => 'Cliente';
+
+  @override
+  String get originTypeFreeName => 'Cuenta Libre';
+
+  @override
+  String get emptyOrderPrompt =>
+      'Aún no hay productos. Selecciona productos del catálogo para agregarlos a esta comanda.';
+
+  @override
+  String get filterByTableOrCustomer => 'Filtrar por mesa o cliente...';
 }
