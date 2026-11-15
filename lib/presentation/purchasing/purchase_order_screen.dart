@@ -1,6 +1,7 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
+import '../../core/enums/purchase_order_status_enum.dart';
 import '../../domain/models/purchase_order_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
@@ -110,7 +111,7 @@ class _PurchaseOrderScreenState extends State<PurchaseOrderScreen> {
                         supplierName: supplierCtrl.text,
                         orderDate: DateTime.now(),
                         totalAmount: total,
-                        status: 'pending',
+                        status: PurchaseOrderStatusEnum.ordered,
                       );
                       await _provider.createOrder(order);
                       if (ctx.mounted) Navigator.of(ctx).pop();
@@ -191,14 +192,14 @@ class _PurchaseOrderScreenState extends State<PurchaseOrderScreen> {
                     orders: orders,
                     onReceive: (id) {
                       _provider.receiveGoods(id);
-                      AppFeedback.showSuccess(context, 'Mercancía recibida en almacén');
+                      AppFeedback.showSuccess(context, l10n.goodsReceivedInWarehouse);
                     },
                   )
                 : PurchaseOrderListMobile(
                     orders: orders,
                     onReceive: (id) {
                       _provider.receiveGoods(id);
-                      AppFeedback.showSuccess(context, 'Mercancía recibida en almacén');
+                      AppFeedback.showSuccess(context, l10n.goodsReceivedInWarehouse);
                     },
                   )),
       ),

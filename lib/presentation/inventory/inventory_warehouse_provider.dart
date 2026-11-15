@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/movement_type_enum.dart';
+import '../../core/enums/warehouse_view_mode_enum.dart';
 import '../../data/firestore/firestore_client.dart';
 import '../../data/repositories/product_repository.dart';
 import '../../data/repositories/stock_movement_repository.dart';
@@ -23,7 +24,7 @@ class InventoryWarehouseProvider extends ChangeNotifier {
   String? _activeBuId;
   List<WarehouseModel> _warehouses = [];
   WarehouseModel? _selectedWarehouse;
-  String _viewMode = 'stock'; // 'stock' or 'kardex'
+  WarehouseViewModeEnum _viewMode = WarehouseViewModeEnum.stock;
 
   List<StockMovementModel> _movements = [];
   List<Map<String, dynamic>> _stockItems = [];
@@ -41,9 +42,9 @@ class InventoryWarehouseProvider extends ChangeNotifier {
   WarehouseModel? get selectedWarehouse => _selectedWarehouse;
   List<Map<String, dynamic>> get stockItems => List.unmodifiable(_stockItems);
   List<StockMovementModel> get movements => List.unmodifiable(_movements);
-  String get viewMode => _viewMode;
+  WarehouseViewModeEnum get viewMode => _viewMode;
 
-  void setViewMode(String mode) {
+  void setViewMode(WarehouseViewModeEnum mode) {
     _viewMode = mode;
     notifyListeners();
   }

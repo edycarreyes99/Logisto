@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import '../../core/enums/dashboard_time_filter_enum.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/payment_method_enum.dart';
 import '../../data/firestore/firestore_client.dart';
@@ -16,7 +17,7 @@ class DashboardProvider extends ChangeNotifier {
 
   FeatureStatusEnum _status = FeatureStatusEnum.idle;
   String? _errorMessage;
-  String _timeFilter = 'Today';
+  DashboardTimeFilterEnum _timeFilter = DashboardTimeFilterEnum.today;
   DashboardMetricsModel _metrics = const DashboardMetricsModel();
   List<Map<String, dynamic>> _topProducts = const [];
 
@@ -28,11 +29,11 @@ class DashboardProvider extends ChangeNotifier {
 
   FeatureStatusEnum get status => _status;
   String? get errorMessage => _errorMessage;
-  String get timeFilter => _timeFilter;
+  DashboardTimeFilterEnum get timeFilter => _timeFilter;
   DashboardMetricsModel get metrics => _metrics;
   List<Map<String, dynamic>> get topProducts => List.unmodifiable(_topProducts);
 
-  void setTimeFilter(String filter) {
+  void setTimeFilter(DashboardTimeFilterEnum filter) {
     _timeFilter = filter;
     notifyListeners();
   }

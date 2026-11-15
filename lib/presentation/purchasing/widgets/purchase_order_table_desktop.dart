@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/enums/purchase_order_status_enum.dart';
 import '../../../domain/models/purchase_order_model.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -43,7 +44,7 @@ class PurchaseOrderTableDesktop extends StatelessWidget {
     BuildContext context,
   ) {
     final theme = Theme.of(context);
-    final isReceived = po.status == 'received';
+    final isReceived = po.status == PurchaseOrderStatusEnum.received;
     return DataRow(
       cells: [
         DataCell(

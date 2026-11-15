@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/enums/purchase_order_status_enum.dart';
 import '../../../domain/models/purchase_order_model.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -28,7 +29,7 @@ class PurchaseOrderListMobile extends StatelessWidget {
     AppLocalizations l10n,
     ThemeData theme,
   ) {
-    final isReceived = po.status == 'received';
+    final isReceived = po.status == PurchaseOrderStatusEnum.received;
     return Card(
       margin: const EdgeInsets.only(bottom: 8.0),
       elevation: 1,

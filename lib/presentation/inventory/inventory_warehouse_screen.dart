@@ -1,6 +1,7 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
+import '../../core/enums/warehouse_view_mode_enum.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../common/app_feedback.dart';
@@ -16,7 +17,7 @@ import 'widgets/warehouse_stock_table_desktop.dart';
 /// Screen managing multi-warehouse physical stock, low-stock warnings,
 /// internal transfer dispatches, and permanent Kardex ledger auditing.
 class InventoryWarehouseScreen extends StatefulWidget {
-  final String? initialView;
+  final WarehouseViewModeEnum? initialView;
 
   const InventoryWarehouseScreen({super.key, this.initialView});
 
@@ -206,16 +207,16 @@ class _InventoryWarehouseScreenState extends State<InventoryWarehouseScreen> {
             children: [
               ChoiceChip(
                 label: Text(l10n.stockLevels),
-                selected: _provider.viewMode == 'stock',
-                onSelected: (_) => _provider.setViewMode('stock'),
+                selected: _provider.viewMode == WarehouseViewModeEnum.stock,
+                onSelected: (_) => _provider.setViewMode(WarehouseViewModeEnum.stock),
               ),
               const SizedBox(width: 8),
               ChoiceChip(
                 label: Text(l10n.kardexLedger),
-                selected: _provider.viewMode == 'kardex',
-                onSelected: (_) => _provider.setViewMode('kardex'),
+                selected: _provider.viewMode == WarehouseViewModeEnum.kardex,
+                onSelected: (_) => _provider.setViewMode(WarehouseViewModeEnum.kardex),
               ),
-              if (_provider.viewMode == 'stock') ...[
+              if (_provider.viewMode == WarehouseViewModeEnum.stock) ...[
                 const SizedBox(width: 16),
                 ..._provider.warehouses.map((wh) {
                   final isSel = _provider.selectedWarehouse?.id == wh.id;
@@ -243,7 +244,7 @@ class _InventoryWarehouseScreenState extends State<InventoryWarehouseScreen> {
           padding: const EdgeInsets.all(16.0),
           child: ListenableBuilder(
             listenable: _provider,
-            builder: (context, _) => _provider.viewMode == 'kardex'
+            builder: (context, _) => _provider.viewMode == WarehouseViewModeEnum.kardex
                 ? _buildKardexView(l10n)
                 : _buildStockMatrix(l10n),
           ),

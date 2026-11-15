@@ -1,5 +1,6 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../core/enums/dashboard_time_filter_enum.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
@@ -84,9 +85,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   List<Widget> _buildHeaderActions(AppLocalizations l10n, ThemeData theme) {
     final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
     final filters = [
-      ('Today', l10n.filterToday),
-      ('Week', l10n.filterWeek),
-      ('Month', l10n.filterMonth),
+      (DashboardTimeFilterEnum.today, l10n.filterToday),
+      (DashboardTimeFilterEnum.week, l10n.filterWeek),
+      (DashboardTimeFilterEnum.month, l10n.filterMonth),
     ];
     return [
       IconButton(
@@ -98,13 +99,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
           if (orgId.isNotEmpty) {
             await _provider.loadDashboard(orgId: orgId, buId: buId);
             if (mounted) {
-              AppFeedback.showSuccess(context, 'Dashboard sincronizado');
+              AppFeedback.showSuccess(context, l10n.dashboard);
             }
           }
         },
       ),
       if (!isDesktop)
-        PopupMenuButton<String>(
+        PopupMenuButton<DashboardTimeFilterEnum>(
           icon: const Icon(Icons.calendar_today_outlined, size: 20),
           tooltip: l10n.filterToday,
           initialValue: _provider.timeFilter,

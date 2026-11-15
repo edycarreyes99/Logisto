@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/movement_type_enum.dart';
+import '../../core/enums/purchase_order_status_enum.dart';
 import '../../data/repositories/account_payable_repository.dart';
 import '../../data/repositories/purchase_order_repository.dart';
 import '../../data/repositories/stock_movement_repository.dart';
@@ -45,102 +46,12 @@ class PurchaseOrderProvider extends ChangeNotifier {
         orgId: orgId,
         buId: buId,
       );
-      if (fetched.isEmpty) {
-        _orders = [
-          PurchaseOrderModel(
-            id: 'po_01',
-            buId: buId,
-            supplierId: 'sup_01',
-            supplierName: 'Compañía Cervecera Nacional',
-            orderDate: DateTime.now().subtract(const Duration(days: 3)),
-            expectedDeliveryDate: DateTime.now().add(const Duration(days: 2)),
-            items: const [
-              PurchaseOrderItemModel(
-                productId: 'prod_tona_01',
-                productName: 'Cerveza Toña 350ml Botella',
-                quantityOrdered: 240.0,
-                quantityReceived: 0.0,
-                unitCost: 1.00,
-                totalCost: 240.00,
-              ),
-            ],
-            totalAmount: 240.00,
-            status: 'pending',
-          ),
-          PurchaseOrderModel(
-            id: 'po_02',
-            buId: buId,
-            supplierId: 'sup_02',
-            supplierName: 'Distribuidora Avícola El Granjero',
-            orderDate: DateTime.now().subtract(const Duration(days: 7)),
-            expectedDeliveryDate: DateTime.now().subtract(
-              const Duration(days: 2),
-            ),
-            items: const [
-              PurchaseOrderItemModel(
-                productId: 'prod_wings_01',
-                productName: 'Alitas BBQ Congeladas',
-                quantityOrdered: 50.0,
-                quantityReceived: 50.0,
-                unitCost: 3.50,
-                totalCost: 175.00,
-              ),
-            ],
-            totalAmount: 175.00,
-            status: 'received',
-          ),
-        ];
-      } else {
-        _orders = fetched;
-      }
+      _orders = fetched;
       _status = FeatureStatusEnum.loaded;
     } catch (e) {
       _errorMessage = e.toString();
-      _orders = [
-        PurchaseOrderModel(
-          id: 'po_01',
-          buId: buId,
-          supplierId: 'sup_01',
-          supplierName: 'Compañía Cervecera Nacional',
-          orderDate: DateTime.now().subtract(const Duration(days: 3)),
-          expectedDeliveryDate: DateTime.now().add(const Duration(days: 2)),
-          items: const [
-            PurchaseOrderItemModel(
-              productId: 'prod_tona_01',
-              productName: 'Cerveza Toña 350ml Botella',
-              quantityOrdered: 240.0,
-              quantityReceived: 0.0,
-              unitCost: 1.00,
-              totalCost: 240.00,
-            ),
-          ],
-          totalAmount: 240.00,
-          status: 'pending',
-        ),
-        PurchaseOrderModel(
-          id: 'po_02',
-          buId: buId,
-          supplierId: 'sup_02',
-          supplierName: 'Distribuidora Avícola El Granjero',
-          orderDate: DateTime.now().subtract(const Duration(days: 7)),
-          expectedDeliveryDate: DateTime.now().subtract(
-            const Duration(days: 2),
-          ),
-          items: const [
-            PurchaseOrderItemModel(
-              productId: 'prod_wings_01',
-              productName: 'Alitas BBQ Congeladas',
-              quantityOrdered: 50.0,
-              quantityReceived: 50.0,
-              unitCost: 3.50,
-              totalCost: 175.00,
-            ),
-          ],
-          totalAmount: 175.00,
-          status: 'received',
-        ),
-      ];
-      _status = FeatureStatusEnum.loaded;
+      _orders = [];
+      _status = FeatureStatusEnum.error;
     } finally {
       notifyListeners();
     }
@@ -184,7 +95,7 @@ class PurchaseOrderProvider extends ChangeNotifier {
             )
             .toList(),
         totalAmount: current.totalAmount,
-        status: 'received',
+        status: PurchaseOrderStatusEnum.received,
       );
       _orders[idx] = updated;
 

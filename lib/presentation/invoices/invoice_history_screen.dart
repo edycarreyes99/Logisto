@@ -118,7 +118,7 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
                 businessName: _contextProvider.activeOrganization?.commercialName,
                 branchName: _contextProvider.activeBusinessUnit?.name,
               );
-              AppFeedback.showSuccess(context, 'Enviando voucher a impresión...');
+              AppFeedback.showSuccess(context, l10n.sendingVoucherToPrinter);
             },
           ),
           IconButton(
@@ -210,7 +210,7 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
             final buId = _contextProvider.activeBusinessUnit?.id ?? '';
             if (orgId.isNotEmpty) {
               _provider.loadInvoices(orgId: orgId, buId: buId);
-              AppFeedback.showSuccess(context, 'Historial de facturas actualizado');
+              AppFeedback.showSuccess(context, l10n.invoiceHistoryUpdated);
             }
           },
         ),

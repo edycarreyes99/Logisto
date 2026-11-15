@@ -2,6 +2,7 @@ import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../core/enums/language_enum.dart';
 import '../../core/enums/theme_mode_enum.dart';
+import '../../core/enums/warehouse_view_mode_enum.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
 import '../audit/audit_log_screen.dart';
@@ -69,12 +70,13 @@ class _NavigationShellState extends State<NavigationShell> {
   }
 
   void _showFastPinModal() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog<void>(
       context: context,
       builder: (ctx) => PinSwitchModal(
         provider: _loginProvider,
         onSuccess: () {
-          AppFeedback.showSuccess(context, 'Terminal desbloqueada con éxito');
+          AppFeedback.showSuccess(context, l10n.terminalUnlockedSuccess);
         },
       ),
     );
@@ -108,7 +110,7 @@ class _NavigationShellState extends State<NavigationShell> {
                     ),
                     const SizedBox(width: 10.0),
                     Text(
-                      'Notificaciones y Alertas del Sistema',
+                      l10n.notificationsAndAlerts,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -126,27 +128,27 @@ class _NavigationShellState extends State<NavigationShell> {
               theme,
               icon: Icons.check_circle_rounded,
               color: Colors.green,
-              title: 'Sincronización Firestore en Vivo',
-              subtitle: 'Todos los registros sincronizados con Cloud Firestore.',
-              time: 'Hace un momento',
+              title: l10n.liveFirestoreSyncTitle,
+              subtitle: l10n.liveFirestoreSyncDesc,
+              time: l10n.justNow,
             ),
             const SizedBox(height: 10.0),
             _buildNotificationItem(
               theme,
               icon: Icons.info_outline_rounded,
               color: Colors.blue,
-              title: 'Caja Operativa Activa',
-              subtitle: 'Turno abierto en Sucursal Matriz.',
-              time: 'Activo',
+              title: l10n.activeCashDrawerTitle,
+              subtitle: l10n.activeCashDrawerDesc,
+              time: l10n.activeStatus,
             ),
             const SizedBox(height: 10.0),
             _buildNotificationItem(
               theme,
               icon: Icons.verified_user_rounded,
               color: Colors.purple,
-              title: 'Sesión Segura Multi-Tenant',
-              subtitle: 'Permisos RBAC validados para el usuario actual.',
-              time: 'En línea',
+              title: l10n.secureMultiTenantSessionTitle,
+              subtitle: l10n.secureMultiTenantSessionDesc,
+              time: l10n.onlineStatus,
             ),
             const SizedBox(height: 16.0),
             FilledButton.tonal(
@@ -346,7 +348,7 @@ class _NavigationShellState extends State<NavigationShell> {
                 const SizedBox(width: 6),
                 IconButton(
                   icon: const Icon(Icons.notifications_outlined, size: 20.0),
-                  tooltip: 'Notificaciones',
+                  tooltip: l10n.notificationsAndAlerts,
                   onPressed: _showNotificationsPanel,
                 ),
                 if (settings != null) ...[
@@ -447,9 +449,9 @@ class _NavigationShellState extends State<NavigationShell> {
       case AppRoutes.products:
         return const ProductCatalogScreen();
       case AppRoutes.inventory:
-        return const InventoryWarehouseScreen(initialView: 'stock');
+        return const InventoryWarehouseScreen(initialView: WarehouseViewModeEnum.stock);
       case AppRoutes.kardex:
-        return const InventoryWarehouseScreen(initialView: 'kardex');
+        return const InventoryWarehouseScreen(initialView: WarehouseViewModeEnum.kardex);
       case AppRoutes.customers:
         return const CustomerCatalogScreen();
       case AppRoutes.invoices:
