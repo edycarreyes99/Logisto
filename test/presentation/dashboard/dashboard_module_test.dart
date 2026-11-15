@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:logisto/core/enums/dashboard_time_filter_enum.dart';
 import 'package:logisto/core/enums/feature_status_enum.dart';
 import 'package:logisto/locator.dart';
 import 'package:logisto/main.dart';
@@ -18,7 +19,7 @@ void main() {
     });
 
     test('initial state has default timeFilter Today and idle status', () {
-      expect(provider.timeFilter, equals('Today'));
+      expect(provider.timeFilter, equals(DashboardTimeFilterEnum.today));
       expect(provider.status, equals(FeatureStatusEnum.idle));
       expect(provider.metrics.todaySales, equals(0.0));
       expect(provider.topProducts, isEmpty);
@@ -28,8 +29,8 @@ void main() {
       bool notified = false;
       provider.addListener(() => notified = true);
 
-      provider.setTimeFilter('Week');
-      expect(provider.timeFilter, equals('Week'));
+      provider.setTimeFilter(DashboardTimeFilterEnum.week);
+      expect(provider.timeFilter, equals(DashboardTimeFilterEnum.week));
       expect(notified, isTrue);
     });
 

@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logisto/data/preferences/app_preferences.dart';
-import 'package:logisto/domain/models/invoice_model.dart';
 import 'package:logisto/domain/models/printer_device_model.dart';
 import 'package:logisto/domain/services/printer_service.dart';
 import 'package:logisto/presentation/settings/printer_management_provider.dart';

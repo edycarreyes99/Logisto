@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:logisto/core/enums/warehouse_view_mode_enum.dart';
 import 'package:logisto/locator.dart';
 import 'package:logisto/main.dart';
 import 'package:logisto/presentation/customers/customer_catalog_screen.dart';
@@ -211,7 +212,7 @@ void main() {
       await tester.pumpWidget(
         const LogistoApp(
           locale: Locale('en'),
-          home: InventoryWarehouseScreen(initialView: 'kardex'),
+          home: InventoryWarehouseScreen(initialView: WarehouseViewModeEnum.kardex),
         ),
       );
       await tester.pumpAndSettle();

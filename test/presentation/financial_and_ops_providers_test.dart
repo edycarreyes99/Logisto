@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:logisto/core/enums/audit_action_enum.dart';
 import 'package:logisto/core/enums/movement_type_enum.dart';
 import 'package:logisto/core/enums/payment_method_enum.dart';
+import 'package:logisto/core/enums/purchase_order_status_enum.dart';
 import 'package:logisto/data/repositories/account_payable_repository.dart';
 import 'package:logisto/data/repositories/account_receivable_repository.dart';
 import 'package:logisto/data/repositories/audit_log_repository.dart';
@@ -116,7 +117,7 @@ void main() {
         expectedDeliveryDate: DateTime.now(),
         items: const [],
         totalAmount: 100.0,
-        status: 'pending',
+        status: PurchaseOrderStatusEnum.ordered,
       ),
     );
     registerFallbackValue(
@@ -258,7 +259,7 @@ void main() {
         ),
       ],
       totalAmount: 120.0,
-      status: 'pending',
+      status: PurchaseOrderStatusEnum.ordered,
     );
 
     final dummySupplier = SupplierModel(
@@ -327,11 +328,11 @@ void main() {
         ).thenAnswer((_) async {});
 
         await provider.loadOrders(orgId: 'org_test', buId: 'bu_test');
-        expect(provider.orders.first.status, equals('pending'));
+        expect(provider.orders.first.status, equals(PurchaseOrderStatusEnum.ordered));
 
         await provider.receiveGoods('po_01');
 
-        expect(provider.orders.first.status, equals('received'));
+        expect(provider.orders.first.status, equals(PurchaseOrderStatusEnum.received));
         expect(
           provider.orders.first.items.first.quantityReceived,
           equals(100.0),
