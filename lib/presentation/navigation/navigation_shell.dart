@@ -332,82 +332,82 @@ class _NavigationShellState extends State<NavigationShell> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.key, size: 16),
-                  label: Text(l10n.fastPin),
-                  onPressed: _showFastPinModal,
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10.0,
-                      vertical: 6.0,
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.key, size: 16),
+                    label: Text(l10n.fastPin),
+                    onPressed: _showFastPinModal,
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10.0,
+                        vertical: 6.0,
+                      ),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                ),
-                const SizedBox(width: 6),
-                IconButton(
-                  icon: const Icon(Icons.notifications_outlined, size: 20.0),
-                  tooltip: l10n.notificationsAndAlerts,
-                  onPressed: _showNotificationsPanel,
-                ),
-                if (settings != null) ...[
-                  TextButton.icon(
-                    icon: const Icon(Icons.language_rounded, size: 16.0),
-                    label: Text(
-                      settings.language == LanguageEnum.es ? 'ES' : 'EN',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () {
-                      final next = settings.language == LanguageEnum.es
-                          ? LanguageEnum.en
-                          : LanguageEnum.es;
-                      settings.setLanguage(next);
-                    },
-                  ),
+                  const SizedBox(width: 6),
                   IconButton(
-                    icon: Icon(
-                      theme.brightness == Brightness.dark
-                          ? Icons.light_mode_rounded
-                          : Icons.dark_mode_rounded,
-                      size: 20.0,
+                    icon: const Icon(Icons.notifications_outlined, size: 20.0),
+                    tooltip: l10n.notificationsAndAlerts,
+                    onPressed: _showNotificationsPanel,
+                  ),
+                  if (settings != null) ...[
+                    TextButton.icon(
+                      icon: const Icon(Icons.language_rounded, size: 16.0),
+                      label: Text(
+                        settings.language == LanguageEnum.es ? 'ES' : 'EN',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () {
+                        final next = settings.language == LanguageEnum.es
+                            ? LanguageEnum.en
+                            : LanguageEnum.es;
+                        settings.setLanguage(next);
+                      },
                     ),
-                    tooltip: theme.brightness == Brightness.dark
-                        ? 'Modo Claro'
-                        : 'Modo Oscuro',
-                    onPressed: () {
-                      final next = theme.brightness == Brightness.dark
-                          ? ThemeModeEnum.light
-                          : ThemeModeEnum.dark;
-                      settings.setThemeMode(next);
-                    },
+                    IconButton(
+                      icon: Icon(
+                        theme.brightness == Brightness.dark
+                            ? Icons.light_mode_rounded
+                            : Icons.dark_mode_rounded,
+                        size: 20.0,
+                      ),
+                      tooltip: theme.brightness == Brightness.dark
+                          ? 'Modo Claro'
+                          : 'Modo Oscuro',
+                      onPressed: () {
+                        final next = theme.brightness == Brightness.dark
+                            ? ThemeModeEnum.light
+                            : ThemeModeEnum.dark;
+                        settings.setThemeMode(next);
+                      },
+                    ),
+                  ],
+                  const SizedBox(width: 6),
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.logout_rounded, size: 16),
+                    label: Text(l10n.logout),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: theme.colorScheme.error,
+                      side: BorderSide(
+                        color: theme.colorScheme.error.withValues(alpha: 0.5),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10.0,
+                        vertical: 6.0,
+                      ),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onPressed: () => showLogoutDialog(context),
                   ),
                 ],
-                const SizedBox(width: 6),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.logout_rounded, size: 16),
-                  label: Text(l10n.logout),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: theme.colorScheme.error,
-                    side: BorderSide(
-                      color: theme.colorScheme.error.withValues(alpha: 0.5),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10.0,
-                      vertical: 6.0,
-                    ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  onPressed: () => showLogoutDialog(context),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
   }
 
   Widget _buildDesktopSidebar() {
@@ -449,9 +449,13 @@ class _NavigationShellState extends State<NavigationShell> {
       case AppRoutes.products:
         return const ProductCatalogScreen();
       case AppRoutes.inventory:
-        return const InventoryWarehouseScreen(initialView: WarehouseViewModeEnum.stock);
+        return const InventoryWarehouseScreen(
+          initialView: WarehouseViewModeEnum.stock,
+        );
       case AppRoutes.kardex:
-        return const InventoryWarehouseScreen(initialView: WarehouseViewModeEnum.kardex);
+        return const InventoryWarehouseScreen(
+          initialView: WarehouseViewModeEnum.kardex,
+        );
       case AppRoutes.customers:
         return const CustomerCatalogScreen();
       case AppRoutes.invoices:
