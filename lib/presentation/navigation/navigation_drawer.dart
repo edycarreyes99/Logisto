@@ -37,6 +37,7 @@ class AppNavigationDrawer extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     final body = SingleChildScrollView(
+      key: const PageStorageKey<String>('app_navigation_drawer_scroll'),
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -76,9 +77,10 @@ class AppNavigationDrawer extends StatelessWidget {
         ? locator<LoginProvider>()
         : null;
     final userName = loginProvider?.currentUserName ?? 'Administrador';
+    final topPadding = MediaQuery.paddingOf(context).top;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 16.0),
+      padding: EdgeInsets.fromLTRB(16.0, topPadding + 16.0, 16.0, 16.0),
       decoration: BoxDecoration(
         color: isDark
             ? theme.colorScheme.surfaceContainerHigh
@@ -201,9 +203,10 @@ class AppNavigationDrawer extends StatelessWidget {
     final settings = locator.isRegistered<SettingsProvider>()
         ? locator<SettingsProvider>()
         : null;
+    final bottomPadding = MediaQuery.paddingOf(context).bottom;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      padding: EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0 + bottomPadding),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
         border: Border(
@@ -357,6 +360,32 @@ class _SidebarNavItem extends StatefulWidget {
 
 class _SidebarNavItemState extends State<_SidebarNavItem> {
   bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isActive) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToActive());
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _SidebarNavItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!oldWidget.isActive && widget.isActive) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToActive());
+    }
+  }
+
+  void _scrollToActive() {
+    if (!mounted) return;
+    Scrollable.ensureVisible(
+      context,
+      alignment: 0.35,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
