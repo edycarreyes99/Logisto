@@ -14,6 +14,11 @@ abstract class InvoiceRepository {
     required String buId,
   });
 
+  Stream<List<InvoiceModel>> watchInvoices({
+    required String orgId,
+    required String buId,
+  });
+
   Future<InvoiceModel?> getInvoiceById({
     required String orgId,
     required String buId,
@@ -26,6 +31,18 @@ class FirestoreInvoiceRepository implements InvoiceRepository {
   final FirestoreClient client;
 
   const FirestoreInvoiceRepository({required this.client});
+
+  @override
+  Stream<List<InvoiceModel>> watchInvoices({
+    required String orgId,
+    required String buId,
+  }) {
+    return client.invoices(orgId, buId).snapshots().map(
+          (snapshot) => snapshot.docs
+              .map((doc) => InvoiceModel.fromMap(doc.data(), docId: doc.id))
+              .toList(),
+        );
+  }
 
   @override
   Future<void> createInvoice({

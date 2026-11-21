@@ -9,6 +9,12 @@ abstract class AccountReceivableRepository {
     String? customerId,
   });
 
+  Stream<List<AccountReceivableModel>> watchAccountsReceivable({
+    required String orgId,
+    required String buId,
+    String? customerId,
+  });
+
   Future<void> saveAccountReceivable({
     required String orgId,
     required String buId,
@@ -29,6 +35,36 @@ class FirestoreAccountReceivableRepository
   final FirestoreClient client;
 
   const FirestoreAccountReceivableRepository({required this.client});
+
+  @override
+  Stream<List<AccountReceivableModel>> watchAccountsReceivable({
+    required String orgId,
+    required String buId,
+    String? customerId,
+  }) {
+    var query = client.accountsReceivable(orgId, buId);
+    if (customerId != null) {
+      return query
+          .where('customerId', isEqualTo: customerId)
+          .snapshots()
+          .map(
+            (snapshot) => snapshot.docs
+                .map(
+                  (doc) =>
+                      AccountReceivableModel.fromMap(doc.data(), docId: doc.id),
+                )
+                .toList(),
+          );
+    }
+    return query.snapshots().map(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) =>
+                    AccountReceivableModel.fromMap(doc.data(), docId: doc.id),
+              )
+              .toList(),
+        );
+  }
 
   @override
   Future<List<AccountReceivableModel>> getAccountsReceivable({

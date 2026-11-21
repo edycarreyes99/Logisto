@@ -8,6 +8,11 @@ abstract class BilliardTableRepository {
     required String buId,
   });
 
+  Stream<List<BilliardTableModel>> watchTables({
+    required String orgId,
+    required String buId,
+  });
+
   Future<void> saveTable({
     required String orgId,
     required String buId,
@@ -33,6 +38,20 @@ class FirestoreBilliardTableRepository implements BilliardTableRepository {
   final FirestoreClient client;
 
   const FirestoreBilliardTableRepository({required this.client});
+
+  @override
+  Stream<List<BilliardTableModel>> watchTables({
+    required String orgId,
+    required String buId,
+  }) {
+    return client.tables(orgId, buId).snapshots().map(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) => BilliardTableModel.fromMap(doc.data(), docId: doc.id),
+              )
+              .toList(),
+        );
+  }
 
   @override
   Future<List<BilliardTableModel>> getTables({

@@ -5,6 +5,7 @@ import '../firestore/firestore_client.dart';
 /// Contract for multi-tenant enterprise user and role persistence.
 abstract class UserRepository {
   Future<List<UserProfileModel>> getUsers(String orgId);
+  Stream<List<UserProfileModel>> watchUsers(String orgId);
   Future<UserProfileModel?> getUser(String orgId, String userId);
   Future<void> saveUser(UserProfileModel user);
   Future<void> updateUserRole({
@@ -22,6 +23,15 @@ class FirestoreUserRepository implements UserRepository {
   final FirestoreClient client;
 
   const FirestoreUserRepository({required this.client});
+
+  @override
+  Stream<List<UserProfileModel>> watchUsers(String orgId) {
+    return client.users(orgId).snapshots().map(
+          (snapshot) => snapshot.docs
+              .map((doc) => UserProfileModel.fromMap(doc.data(), docId: doc.id))
+              .toList(),
+        );
+  }
 
   @override
   Future<List<UserProfileModel>> getUsers(String orgId) async {

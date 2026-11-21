@@ -9,6 +9,11 @@ abstract class KitchenOrderRepository {
     required String buId,
   });
 
+  Stream<List<KitchenOrderModel>> watchActiveOrders({
+    required String orgId,
+    required String buId,
+  });
+
   Future<void> createOrder({
     required String orgId,
     required String buId,
@@ -28,6 +33,22 @@ class FirestoreKitchenOrderRepository implements KitchenOrderRepository {
   final FirestoreClient client;
 
   const FirestoreKitchenOrderRepository({required this.client});
+
+  @override
+  Stream<List<KitchenOrderModel>> watchActiveOrders({
+    required String orgId,
+    required String buId,
+  }) {
+    return client
+        .kitchenOrders(orgId, buId)
+        .where('status', whereIn: ['pending', 'in_preparation', 'ready'])
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => KitchenOrderModel.fromMap(doc.data(), docId: doc.id))
+              .toList(),
+        );
+  }
 
   @override
   Future<List<KitchenOrderModel>> getActiveOrders({

@@ -8,6 +8,10 @@ abstract class AuditLogRepository {
     required String orgId,
     int limit = 50,
   });
+  Stream<List<AuditLogModel>> watchLogs({
+    required String orgId,
+    int limit = 50,
+  });
 }
 
 /// Production implementation of [AuditLogRepository] backed by [FirestoreClient].
@@ -15,6 +19,23 @@ class FirestoreAuditLogRepository implements AuditLogRepository {
   final FirestoreClient client;
 
   const FirestoreAuditLogRepository({required this.client});
+
+  @override
+  Stream<List<AuditLogModel>> watchLogs({
+    required String orgId,
+    int limit = 50,
+  }) {
+    return client
+        .auditLogs(orgId)
+        .orderBy('timestamp', descending: true)
+        .limit(limit)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => AuditLogModel.fromMap(doc.data(), docId: doc.id))
+              .toList(),
+        );
+  }
 
   @override
   Future<void> logAction(AuditLogModel entry) async {

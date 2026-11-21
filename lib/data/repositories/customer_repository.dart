@@ -5,6 +5,8 @@ import '../firestore/firestore_client.dart';
 abstract class CustomerRepository {
   Future<List<CustomerModel>> getCustomers({required String orgId});
 
+  Stream<List<CustomerModel>> watchCustomers({required String orgId});
+
   Future<CustomerModel?> getCustomerByTaxId({
     required String orgId,
     required String taxId,
@@ -37,6 +39,15 @@ class FirestoreCustomerRepository implements CustomerRepository {
   final FirestoreClient client;
 
   const FirestoreCustomerRepository({required this.client});
+
+  @override
+  Stream<List<CustomerModel>> watchCustomers({required String orgId}) {
+    return client.customers(orgId).snapshots().map(
+          (snapshot) => snapshot.docs
+              .map((doc) => CustomerModel.fromMap(doc.data(), docId: doc.id))
+              .toList(),
+        );
+  }
 
   @override
   Future<List<CustomerModel>> getCustomers({required String orgId}) async {

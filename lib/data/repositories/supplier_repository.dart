@@ -5,6 +5,8 @@ import '../firestore/firestore_client.dart';
 abstract class SupplierRepository {
   Future<List<SupplierModel>> getSuppliers(String orgId);
 
+  Stream<List<SupplierModel>> watchSuppliers(String orgId);
+
   Future<SupplierModel?> getSupplierById({
     required String orgId,
     required String supplierId,
@@ -26,6 +28,15 @@ class FirestoreSupplierRepository implements SupplierRepository {
   final FirestoreClient client;
 
   const FirestoreSupplierRepository({required this.client});
+
+  @override
+  Stream<List<SupplierModel>> watchSuppliers(String orgId) {
+    return client.suppliers(orgId).snapshots().map(
+          (snapshot) => snapshot.docs
+              .map((doc) => SupplierModel.fromMap(doc.data(), docId: doc.id))
+              .toList(),
+        );
+  }
 
   @override
   Future<List<SupplierModel>> getSuppliers(String orgId) async {

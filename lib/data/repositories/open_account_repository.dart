@@ -10,6 +10,11 @@ abstract class OpenAccountRepository {
     required String buId,
   });
 
+  Stream<List<OpenAccountModel>> watchOpenAccounts({
+    required String orgId,
+    required String buId,
+  });
+
   Future<OpenAccountModel?> getAccountById({
     required String orgId,
     required String buId,
@@ -41,6 +46,22 @@ class FirestoreOpenAccountRepository implements OpenAccountRepository {
   final FirestoreClient client;
 
   const FirestoreOpenAccountRepository({required this.client});
+
+  @override
+  Stream<List<OpenAccountModel>> watchOpenAccounts({
+    required String orgId,
+    required String buId,
+  }) {
+    return client
+        .openAccounts(orgId, buId)
+        .where('status', isEqualTo: 'open')
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => OpenAccountModel.fromMap(doc.data(), docId: doc.id))
+              .toList(),
+        );
+  }
 
   @override
   Future<List<OpenAccountModel>> getOpenAccounts({

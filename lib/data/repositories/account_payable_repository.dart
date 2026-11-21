@@ -8,6 +8,11 @@ abstract class AccountPayableRepository {
     required String buId,
   });
 
+  Stream<List<AccountPayableModel>> watchAccountsPayable({
+    required String orgId,
+    required String buId,
+  });
+
   Future<void> saveAccountPayable({
     required String orgId,
     required String buId,
@@ -20,6 +25,20 @@ class FirestoreAccountPayableRepository implements AccountPayableRepository {
   final FirestoreClient client;
 
   const FirestoreAccountPayableRepository({required this.client});
+
+  @override
+  Stream<List<AccountPayableModel>> watchAccountsPayable({
+    required String orgId,
+    required String buId,
+  }) {
+    return client.accountsPayable(orgId, buId).snapshots().map(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) => AccountPayableModel.fromMap(doc.data(), docId: doc.id),
+              )
+              .toList(),
+        );
+  }
 
   @override
   Future<List<AccountPayableModel>> getAccountsPayable({

@@ -5,6 +5,8 @@ import '../firestore/firestore_client.dart';
 abstract class BusinessUnitRepository {
   Future<List<BusinessUnitModel>> getBusinessUnits(String orgId);
 
+  Stream<List<BusinessUnitModel>> watchBusinessUnits(String orgId);
+
   Future<BusinessUnitModel?> getBusinessUnit({
     required String orgId,
     required String buId,
@@ -21,6 +23,17 @@ class FirestoreBusinessUnitRepository implements BusinessUnitRepository {
   final FirestoreClient client;
 
   const FirestoreBusinessUnitRepository({required this.client});
+
+  @override
+  Stream<List<BusinessUnitModel>> watchBusinessUnits(String orgId) {
+    return client.businessUnits(orgId).snapshots().map(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) => BusinessUnitModel.fromMap(doc.data(), docId: doc.id),
+              )
+              .toList(),
+        );
+  }
 
   @override
   Future<List<BusinessUnitModel>> getBusinessUnits(String orgId) async {
