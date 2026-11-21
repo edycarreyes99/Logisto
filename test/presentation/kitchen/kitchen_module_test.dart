@@ -24,6 +24,10 @@ class MockKitchenOrderRepository extends Mock
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  setUpAll(() {
+    registerFallbackValue(KdsStatusEnum.pending);
+  });
+
   final dummyOrder = KitchenOrderModel(
     id: 'kds_test',
     buId: 'bu_test',
@@ -115,11 +119,83 @@ void main() {
 
   group('KitchenDisplayScreen Widget Tests', () {
     late MockFirestoreClient mockFirestoreClient;
+    late MockKitchenOrderRepository mockRepo;
 
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       mockFirestoreClient = MockFirestoreClient();
       await setupLocator(firestoreClient: mockFirestoreClient, reset: true);
+
+      final kdsOrders = [
+        KitchenOrderModel(
+          id: 'kds_01',
+          buId: 'bu_test',
+          orderCode: 'ORD-101',
+          tableOrTabName: 'Mesa 2 - Pool',
+          items: const [
+            KitchenOrderItemModel(
+              productId: 'prod_1',
+              productName: 'Nachos Mixtos',
+              quantity: 1,
+              status: KdsStatusEnum.pending,
+            ),
+          ],
+          status: KdsStatusEnum.pending,
+          createdAt: DateTime.now().subtract(const Duration(minutes: 10)),
+        ),
+        KitchenOrderModel(
+          id: 'kds_02',
+          buId: 'bu_test',
+          orderCode: 'ORD-102',
+          tableOrTabName: 'Barra Central',
+          items: const [
+            KitchenOrderItemModel(
+              productId: 'prod_2',
+              productName: 'Cerveza Toña',
+              quantity: 2,
+              status: KdsStatusEnum.preparing,
+            ),
+          ],
+          status: KdsStatusEnum.preparing,
+          createdAt: DateTime.now().subtract(const Duration(minutes: 6)),
+        ),
+        KitchenOrderModel(
+          id: 'kds_03',
+          buId: 'bu_test',
+          orderCode: 'ORD-103',
+          tableOrTabName: 'Mesa 4 VIP',
+          items: const [
+            KitchenOrderItemModel(
+              productId: 'prod_3',
+              productName: 'Alitas BBQ 12pcs',
+              quantity: 1,
+              status: KdsStatusEnum.ready,
+            ),
+          ],
+          status: KdsStatusEnum.ready,
+          createdAt: DateTime.now().subtract(const Duration(minutes: 2)),
+        ),
+      ];
+
+      mockRepo = MockKitchenOrderRepository();
+      when(() => mockRepo.watchActiveOrders(orgId: 'org_test', buId: 'bu_test'))
+          .thenAnswer((_) => Stream.value(kdsOrders));
+      when(() => mockRepo.getActiveOrders(orgId: 'org_test', buId: 'bu_test'))
+          .thenAnswer((_) async => kdsOrders);
+      when(() => mockRepo.updateOrderStatus(
+            orgId: any(named: 'orgId'),
+            buId: any(named: 'buId'),
+            orderId: any(named: 'orderId'),
+            status: any(named: 'status'),
+          )).thenAnswer((_) async {});
+
+      locator.unregister<KitchenOrderRepository>();
+      locator.registerSingleton<KitchenOrderRepository>(mockRepo);
+      locator.unregister<KitchenProvider>();
+      locator.registerSingleton<KitchenProvider>(
+        KitchenProvider(repository: mockRepo),
+      );
+
       final contextProvider = locator<BusinessContextProvider>();
       await contextProvider.initializeContext(
         organization: OrganizationModel(

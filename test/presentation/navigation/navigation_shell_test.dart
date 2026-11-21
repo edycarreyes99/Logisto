@@ -12,7 +12,7 @@ import 'package:logisto/presentation/navigation/app_routes.dart';
 import 'package:logisto/presentation/navigation/navigation_drawer.dart';
 import 'package:logisto/presentation/navigation/navigation_provider.dart';
 import 'package:logisto/presentation/navigation/navigation_shell.dart';
-import 'package:logisto/presentation/onboarding/onboarding_wizard_screen.dart';
+import 'package:logisto/presentation/business_units/business_unit_selector_screen.dart';
 import 'package:logisto/presentation/pos/pos_checkout_screen.dart';
 import 'package:logisto/presentation/products/product_catalog_screen.dart';
 import 'package:logisto/presentation/reports/reports_screen.dart';
@@ -182,7 +182,6 @@ void main() {
       await tester.tap(find.byIcon(Icons.menu_rounded));
       await tester.pumpAndSettle();
 
-      expect(find.text('Logisto ERP Modules'), findsOneWidget);
       expect(find.byType(AppNavigationDrawer), findsOneWidget);
 
       // Tap POS Checkout in mobile drawer
@@ -221,8 +220,8 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(tester.takeException(), isNull);
-        // Confirms it self-healed and transitioned to OnboardingWizardScreen rather than hanging on CircularProgressIndicator
-        expect(find.byType(OnboardingWizardScreen), findsOneWidget);
+        // Confirms it transitioned to BusinessUnitSelectorScreen rather than hanging on CircularProgressIndicator
+        expect(find.byType(BusinessUnitSelectorScreen), findsOneWidget);
       },
     );
   });

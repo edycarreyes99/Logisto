@@ -18,7 +18,6 @@ import 'package:logisto/presentation/navigation/app_routes.dart';
 import 'package:logisto/presentation/navigation/navigation_drawer.dart';
 import 'package:logisto/presentation/navigation/navigation_provider.dart';
 import 'package:logisto/presentation/navigation/navigation_shell.dart';
-import 'package:logisto/presentation/onboarding/onboarding_wizard_screen.dart';
 import 'package:logisto/presentation/settings/settings_screen.dart';
 import '../../test_helpers.dart';
 
@@ -107,7 +106,7 @@ void main() {
   });
 
   group('NavigationShell Desktop Logout Integration', () {
-    testWidgets('renders logout button in desktop navbar and triggers logout', (
+    testWidgets('renders logout button in desktop left sidebar footer and triggers logout', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(1280, 800);
@@ -122,7 +121,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final logoutBtnFinder = find.widgetWithText(OutlinedButton, 'Cerrar Sesión');
+      final drawerFinder = find.byType(AppNavigationDrawer);
+      expect(drawerFinder, findsOneWidget);
+
+      final logoutBtnFinder = find.descendant(
+        of: drawerFinder,
+        matching: find.byTooltip('Cerrar Sesión'),
+      );
       expect(logoutBtnFinder, findsOneWidget);
 
       await tester.tap(logoutBtnFinder);
@@ -141,7 +146,7 @@ void main() {
   });
 
   group('NavigationShell Mobile Logout Integration', () {
-    testWidgets('renders logout icon button in mobile navbar and triggers dialog', (
+    testWidgets('renders logout icon button in mobile drawer footer and triggers dialog', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(400, 800);
@@ -156,8 +161,16 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Find logout icon button with tooltip
-      final logoutIconFinder = find.byTooltip('Cerrar Sesión');
+      // Open mobile drawer
+      expect(find.byIcon(Icons.menu_rounded), findsOneWidget);
+      await tester.tap(find.byIcon(Icons.menu_rounded));
+      await tester.pumpAndSettle();
+
+      // Find logout icon button in drawer footer
+      final logoutIconFinder = find.descendant(
+        of: find.byType(AppNavigationDrawer),
+        matching: find.byTooltip('Cerrar Sesión'),
+      );
       expect(logoutIconFinder, findsOneWidget);
 
       await tester.tap(logoutIconFinder);
@@ -168,7 +181,9 @@ void main() {
   });
 
   group('Sidebar / Drawer Menu Item Logout Integration', () {
-    testWidgets('sidebar menu item triggers logout confirmation', (tester) async {
+    testWidgets('confirms logout button exists strictly in footer and not in menu items', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1280, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -181,19 +196,17 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Find "Cerrar Sesión" inside the navigation drawer menu list
       final drawerFinder = find.byType(AppNavigationDrawer);
       expect(drawerFinder, findsOneWidget);
 
-      final navItemFinder = find.descendant(
+      // The logout button is in the footer
+      final footerLogoutFinder = find.descendant(
         of: drawerFinder,
-        matching: find.text('Cerrar Sesión'),
+        matching: find.byTooltip('Cerrar Sesión'),
       );
-      expect(navItemFinder, findsOneWidget);
+      expect(footerLogoutFinder, findsOneWidget);
 
-      await tester.ensureVisible(navItemFinder);
-      await tester.pumpAndSettle();
-      await tester.tap(navItemFinder);
+      await tester.tap(footerLogoutFinder);
       await tester.pumpAndSettle();
 
       expect(find.byType(AlertDialog), findsOneWidget);
@@ -201,7 +214,9 @@ void main() {
   });
 
   group('Settings Screen Logout Integration', () {
-    testWidgets('header and appearance card contain logout options', (tester) async {
+    testWidgets('verifies settings screen does not contain redundant logout buttons', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1280, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -214,19 +229,15 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // In Settings header
-      expect(find.widgetWithText(OutlinedButton, 'Cerrar Sesión'), findsWidgets);
-
-      // Tap header logout
-      await tester.tap(find.widgetWithText(OutlinedButton, 'Cerrar Sesión').first);
-      await tester.pumpAndSettle();
-
-      expect(find.byType(AlertDialog), findsOneWidget);
+      // Logout buttons eliminated from Settings header and appearance card
+      expect(find.byIcon(Icons.logout_rounded), findsNothing);
     });
   });
 
   group('Business Unit Selector Screen Logout Integration', () {
-    testWidgets('header contains logout action button', (tester) async {
+    testWidgets('verifies branch selector does not contain redundant logout button in app bar', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1280, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -239,13 +250,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final logoutBtn = find.byTooltip('Cerrar Sesión');
-      expect(logoutBtn, findsOneWidget);
-
-      await tester.tap(logoutBtn);
-      await tester.pumpAndSettle();
-
-      expect(find.byType(AlertDialog), findsOneWidget);
+      // Logout button removed from BusinessUnitSelectorScreen
+      expect(find.byIcon(Icons.logout_rounded), findsNothing);
     });
   });
 
@@ -291,7 +297,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final logoutBtnFinder = find.widgetWithText(OutlinedButton, 'Log Out');
+      final drawerFinder = find.byType(AppNavigationDrawer);
+      expect(drawerFinder, findsOneWidget);
+
+      final logoutBtnFinder = find.descendant(
+        of: drawerFinder,
+        matching: find.byTooltip('Log Out'),
+      );
       expect(logoutBtnFinder, findsOneWidget);
 
       await tester.tap(logoutBtnFinder);
@@ -311,32 +323,6 @@ void main() {
 
       expect(find.byType(AlertDialog), findsNothing);
       expect(locator<LoginProvider>().isAuthenticated, isTrue);
-    });
-  });
-
-  group('Onboarding Wizard Screen Logout Integration', () {
-    testWidgets('header contains logout action button and triggers dialog', (
-      tester,
-    ) async {
-      tester.view.physicalSize = const Size(1280, 800);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-
-      await tester.pumpWidget(
-        const LogistoApp(
-          locale: Locale('es'),
-          home: OnboardingWizardScreen(),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      final logoutBtn = find.byTooltip('Cerrar Sesión');
-      expect(logoutBtn, findsOneWidget);
-
-      await tester.tap(logoutBtn);
-      await tester.pumpAndSettle();
-
-      expect(find.byType(AlertDialog), findsOneWidget);
     });
   });
 
@@ -371,8 +357,11 @@ void main() {
       // Initially on NavigationShell (since setUp authenticated admin)
       expect(find.byType(NavigationShell), findsOneWidget);
 
-      // Trigger logout from top navbar
-      final logoutBtnFinder = find.widgetWithText(OutlinedButton, 'Cerrar Sesión');
+      // Trigger logout from desktop left sidebar drawer footer
+      final logoutBtnFinder = find.descendant(
+        of: find.byType(AppNavigationDrawer),
+        matching: find.byTooltip('Cerrar Sesión'),
+      );
       expect(logoutBtnFinder, findsOneWidget);
       await tester.tap(logoutBtnFinder);
       await tester.pumpAndSettle();
@@ -445,11 +434,23 @@ void main() {
         final isDesktop = entry.value.width >= BsBreakpoints.lg;
         if (isDesktop) {
           expect(
-            find.widgetWithText(OutlinedButton, 'Cerrar Sesión'),
+            find.descendant(
+              of: find.byType(AppNavigationDrawer),
+              matching: find.byTooltip('Cerrar Sesión'),
+            ),
             findsOneWidget,
           );
         } else {
-          expect(find.byTooltip('Cerrar Sesión'), findsWidgets);
+          expect(find.byIcon(Icons.menu_rounded), findsOneWidget);
+          await tester.tap(find.byIcon(Icons.menu_rounded));
+          await tester.pumpAndSettle();
+          expect(
+            find.descendant(
+              of: find.byType(AppNavigationDrawer),
+              matching: find.byTooltip('Cerrar Sesión'),
+            ),
+            findsOneWidget,
+          );
         }
       });
     }
