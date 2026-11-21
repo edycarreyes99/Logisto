@@ -55,6 +55,43 @@ class TextFieldValidator extends BaseValidator<String> {
       ValidationErrorEnum.invalidNumber =>
         'Please enter a valid numeric value.',
       ValidationErrorEnum.outOfRange => 'Value is out of acceptable range.',
+      ValidationErrorEnum.weakPasswordPolicy =>
+        'Password must contain at least 6 characters, 1 number, 1 uppercase letter, and 1 special character.',
     };
+  }
+}
+
+/// Specialized reactive validator for email address format.
+class EmailValidator extends TextFieldValidator {
+  static final RegExp emailRegex = RegExp(
+    r'^[a-zA-Z0-9.!#$%&' "'" r'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$',
+  );
+
+  EmailValidator({super.required = true})
+      : super(pattern: emailRegex);
+}
+
+/// Specialized reactive validator for secure password policy:
+/// Minimum 6 characters, at least 1 number, at least 1 uppercase letter, at least 1 special character.
+class PasswordPolicyValidator extends BaseValidator<String> {
+  static final RegExp _hasNumber = RegExp(r'[0-9]');
+  static final RegExp _hasUppercase = RegExp(r'[A-Z]');
+  static final RegExp _hasSpecialChar = RegExp(r'[!@#\$%^&*(),.?":{}|<>_\-=+]');
+
+  @override
+  ValidationErrorEnum validate(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      return ValidationErrorEnum.empty;
+    }
+    if (trimmed.length < 6) {
+      return ValidationErrorEnum.tooShort;
+    }
+    if (!_hasNumber.hasMatch(trimmed) ||
+        !_hasUppercase.hasMatch(trimmed) ||
+        !_hasSpecialChar.hasMatch(trimmed)) {
+      return ValidationErrorEnum.weakPasswordPolicy;
+    }
+    return ValidationErrorEnum.none;
   }
 }

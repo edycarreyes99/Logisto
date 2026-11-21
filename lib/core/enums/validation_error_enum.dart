@@ -19,7 +19,10 @@ enum ValidationErrorEnum {
   invalidNumber(storageKey: 'invalid_number'),
 
   /// Numeric input falls outside acceptable range boundary.
-  outOfRange(storageKey: 'out_of_range');
+  outOfRange(storageKey: 'out_of_range'),
+
+  /// Password does not satisfy security policy (uppercase, number, special char).
+  weakPasswordPolicy(storageKey: 'weak_password_policy');
 
   /// Storage key for database persistence.
   final String storageKey;

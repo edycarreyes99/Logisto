@@ -62,4 +62,35 @@ void main() {
       validator.dispose();
     });
   });
+
+  group('EmailValidator & PasswordPolicyValidator Tests', () {
+    test('EmailValidator validates RFC-compliant emails correctly', () {
+      final validator = EmailValidator();
+
+      expect(validator.validate(''), equals(ValidationErrorEnum.empty));
+      expect(validator.validate('notanemail'), equals(ValidationErrorEnum.invalidPattern));
+      expect(validator.validate('test@'), equals(ValidationErrorEnum.invalidPattern));
+      expect(validator.validate('@domain.com'), equals(ValidationErrorEnum.invalidPattern));
+      expect(validator.validate('admin@logisto.io'), equals(ValidationErrorEnum.none));
+      expect(validator.validate('user.name+tag@example.com'), equals(ValidationErrorEnum.none));
+    });
+
+    test('PasswordPolicyValidator enforces 6 chars, uppercase, number, and special char', () {
+      final validator = PasswordPolicyValidator();
+
+      expect(validator.validate(''), equals(ValidationErrorEnum.empty));
+      expect(validator.validate('12345'), equals(ValidationErrorEnum.tooShort));
+      // Missing uppercase and special char
+      expect(validator.validate('abcdef123'), equals(ValidationErrorEnum.weakPasswordPolicy));
+      // Missing number and special char
+      expect(validator.validate('Abcdefgh'), equals(ValidationErrorEnum.weakPasswordPolicy));
+      // Missing special char
+      expect(validator.validate('Abcdef123'), equals(ValidationErrorEnum.weakPasswordPolicy));
+      // Missing number
+      expect(validator.validate('Abcdef!@#'), equals(ValidationErrorEnum.weakPasswordPolicy));
+      // Compliant: >=6 chars, uppercase, number, special char
+      expect(validator.validate('Secret123!'), equals(ValidationErrorEnum.none));
+      expect(validator.validate('P@ssw0rd'), equals(ValidationErrorEnum.none));
+    });
+  });
 }
