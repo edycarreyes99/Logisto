@@ -1,6 +1,5 @@
 import 'package:bootstrap_ui_flutter/bootstrap_ui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../core/enums/business_type_enum.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../domain/models/business_unit_model.dart';
 import '../../l10n/app_localizations.dart';
@@ -13,6 +12,7 @@ import '../context/business_context_provider.dart';
 import '../navigation/app_routes.dart';
 import '../navigation/navigation_provider.dart';
 import 'business_unit_selector_provider.dart';
+import 'widgets/add_business_unit_dialog.dart';
 import 'widgets/business_unit_card.dart';
 
 /// Workspace branch selector allowing operators to switch operational context
@@ -61,81 +61,20 @@ class _BusinessUnitSelectorScreenState
   }
 
   void _showAddUnitModal(AppLocalizations l10n) {
-    final nameCtrl = TextEditingController();
-    final addressCtrl = TextEditingController();
-    bool isSaving = false;
-
+    final orgId = _contextProvider.activeOrganization?.id ?? '';
     showDialog<void>(
       context: context,
-      barrierDismissible: !isSaving,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setModalState) => AlertDialog(
-          title: Text(
-            l10n.registerNewBranch,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameCtrl,
-                decoration: InputDecoration(
-                  labelText: l10n.branchName,
-                  hintText: l10n.branchName,
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: addressCtrl,
-                decoration: InputDecoration(
-                  labelText: l10n.physicalAddress,
-                  hintText: l10n.physicalAddress,
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
-              child: Text(l10n.cancel),
-            ),
-            FilledButton.icon(
-              icon: isSaving
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Icon(Icons.check, size: 18),
-              label: Text(l10n.createBranch),
-              onPressed: isSaving
-                  ? null
-                  : () async {
-                      setModalState(() => isSaving = true);
-                      final orgId = _contextProvider.activeOrganization?.id ?? '';
-                      final bName = nameCtrl.text;
-                      await _provider.addUnit(
-                        orgId: orgId,
-                        name: bName,
-                        type: BusinessTypeEnum.retail,
-                        address: addressCtrl.text,
-                      );
-                      if (ctx.mounted) Navigator.of(ctx).pop();
-                      if (mounted) {
-                        AppFeedback.showSuccess(
-                          context,
-                          '${l10n.createBranch}: $bName',
-                        );
-                      }
-                    },
-            ),
-          ],
-        ),
+      builder: (ctx) => AddBusinessUnitDialog(
+        provider: _provider,
+        orgId: orgId,
+        onSuccess: () {
+          if (mounted) {
+            AppFeedback.showSuccess(
+              context,
+              l10n.createBranch,
+            );
+          }
+        },
       ),
     );
   }

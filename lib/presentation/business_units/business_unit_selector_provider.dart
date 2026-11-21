@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import '../../core/enums/business_category_enum.dart';
 import '../../core/enums/business_type_enum.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../data/repositories/business_unit_repository.dart';
@@ -70,19 +71,27 @@ class BusinessUnitSelectorProvider extends ChangeNotifier {
 
   Future<void> addUnit({
     required String orgId,
+    required BusinessCategoryEnum category,
     required String name,
-    required BusinessTypeEnum type,
     required String address,
+    required String city,
+    required String phone,
+    required String dni,
+    BusinessTypeEnum? type,
   }) async {
+    final effectiveType = type ?? category.defaultBusinessType;
     final newUnit = BusinessUnitModel(
       id: 'bu_${DateTime.now().millisecondsSinceEpoch}',
       orgId: orgId,
       name: name,
-      taxId: 'J0310000123-${_units.length + 1}',
-      phone: '555-0199',
+      taxId: dni,
+      phone: phone,
       address: address,
-      businessType: type,
-      isBilliardHall: type == BusinessTypeEnum.billiard,
+      city: city,
+      category: category,
+      businessType: effectiveType,
+      isBilliardHall: effectiveType == BusinessTypeEnum.billiard ||
+          category == BusinessCategoryEnum.billar,
       createdAt: DateTime.now(),
     );
 

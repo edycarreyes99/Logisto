@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:logisto/core/enums/business_category_enum.dart';
 import 'package:logisto/core/enums/business_type_enum.dart';
 import 'package:logisto/core/enums/feature_status_enum.dart';
 import 'package:logisto/data/firestore/firestore_client.dart';
@@ -129,9 +130,12 @@ void main() {
 
       await provider.addUnit(
         orgId: 'org_test',
+        category: BusinessCategoryEnum.farmaciaYDrogueria,
         name: 'West Express',
-        type: BusinessTypeEnum.pharmacy,
         address: 'West Way 10',
+        city: 'San Salvador',
+        phone: '555-1234',
+        dni: '0614-010190-101-1',
       );
 
       expect(provider.units.length, equals(1));
@@ -140,6 +144,13 @@ void main() {
         provider.units.first.businessType,
         equals(BusinessTypeEnum.pharmacy),
       );
+      expect(
+        provider.units.first.category,
+        equals(BusinessCategoryEnum.farmaciaYDrogueria),
+      );
+      expect(provider.units.first.city, equals('San Salvador'));
+      expect(provider.units.first.phone, equals('555-1234'));
+      expect(provider.units.first.taxId, equals('0614-010190-101-1'));
     });
   });
 
@@ -201,6 +212,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Register New Branch'), findsOneWidget);
+      expect(find.text('Business Category'), findsOneWidget);
+      expect(find.text('Branch Name'), findsOneWidget);
+      expect(find.text('DNI'), findsOneWidget);
+      expect(find.text('Physical Address'), findsOneWidget);
+      expect(find.text('City location'), findsOneWidget);
+      expect(find.text('Cell Phone Number'), findsOneWidget);
       expect(find.text('Create Branch'), findsOneWidget);
       expect(find.text('Cancel'), findsOneWidget);
 
