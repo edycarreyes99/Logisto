@@ -1489,5 +1489,15 @@
   "originTypeCustomer": "Customer",
   "originTypeFreeName": "Custom Tab",
   "emptyOrderPrompt": "No items added yet. Select products from the catalog to add to this order.",
-  "filterByTableOrCustomer": "Filter by table or customer..."
+  "filterByTableOrCustomer": "Filter by table or customer...",
+  "loginPrimarySlogan": "Total control, hassle-free.",
+  "loginSecondarySlogan": "Agile management for businesses on the move. Invoice, control, grow.",
+  "passwordRequirementsPrompt": "Password must have at least 6 characters, 1 number, 1 uppercase letter, and 1 special character.",
+  "emailInvalidFormat": "Please enter a valid email address.",
+  "emailAlreadyInUse": "This email is already registered. Please sign in or use another email.",
+  "incorrectPassword": "Incorrect password. Please try again.",
+  "userNotFound": "No account found with this email. Please register.",
+  "noBusinessUnitsTitle": "No branches available",
+  "noBusinessUnitsDesc": "You don't have any branches assigned yet. Create your first branch to get started.",
+  "createFirstBusinessUnit": "Create First Branch"
 }

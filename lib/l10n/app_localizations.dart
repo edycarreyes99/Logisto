@@ -5533,6 +5533,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Filter by table or customer...'**
   String get filterByTableOrCustomer;
+
+  /// No description provided for @loginPrimarySlogan.
+  ///
+  /// In en, this message translates to:
+  /// **'Total control, hassle-free.'**
+  String get loginPrimarySlogan;
+
+  /// No description provided for @loginSecondarySlogan.
+  ///
+  /// In en, this message translates to:
+  /// **'Agile management for businesses on the move. Invoice, control, grow.'**
+  String get loginSecondarySlogan;
+
+  /// No description provided for @passwordRequirementsPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must have at least 6 characters, 1 number, 1 uppercase letter, and 1 special character.'**
+  String get passwordRequirementsPrompt;
+
+  /// No description provided for @emailInvalidFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address.'**
+  String get emailInvalidFormat;
+
+  /// No description provided for @emailAlreadyInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'This email is already registered. Please sign in or use another email.'**
+  String get emailAlreadyInUse;
+
+  /// No description provided for @incorrectPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect password. Please try again.'**
+  String get incorrectPassword;
+
+  /// No description provided for @userNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No account found with this email. Please register.'**
+  String get userNotFound;
+
+  /// No description provided for @noBusinessUnitsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No branches available'**
+  String get noBusinessUnitsTitle;
+
+  /// No description provided for @noBusinessUnitsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any branches assigned yet. Create your first branch to get started.'**
+  String get noBusinessUnitsDesc;
+
+  /// No description provided for @createFirstBusinessUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Create First Branch'**
+  String get createFirstBusinessUnit;
 }
 
 class _AppLocalizationsDelegate

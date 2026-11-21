@@ -1296,5 +1296,15 @@
   "originTypeCustomer": "Cliente",
   "originTypeFreeName": "Cuenta Libre",
   "emptyOrderPrompt": "Aún no hay productos. Selecciona productos del catálogo para agregarlos a esta comanda.",
-  "filterByTableOrCustomer": "Filtrar por mesa o cliente..."
+  "filterByTableOrCustomer": "Filtrar por mesa o cliente...",
+  "loginPrimarySlogan": "Control total, sin complicaciones.",
+  "loginSecondarySlogan": "Gestión ágil para negocios en movimiento. Factura, controla, crece.",
+  "passwordRequirementsPrompt": "La contraseña debe tener al menos 6 caracteres, 1 número, 1 mayúscula y 1 carácter especial.",
+  "emailInvalidFormat": "Por favor ingrese un correo electrónico válido.",
+  "emailAlreadyInUse": "Este correo electrónico ya se encuentra registrado. Por favor inicie sesión.",
+  "incorrectPassword": "Contraseña incorrecta. Por favor intente de nuevo.",
+  "userNotFound": "No existe una cuenta con este correo. Por favor regístrese.",
+  "noBusinessUnitsTitle": "No hay sucursales disponibles",
+  "noBusinessUnitsDesc": "Aún no tienes sucursales asignadas. Crea tu primera sucursal para comenzar.",
+  "createFirstBusinessUnit": "Crear Primera Sucursal"
 }

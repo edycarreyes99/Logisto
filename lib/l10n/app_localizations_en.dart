@@ -2942,4 +2942,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filterByTableOrCustomer => 'Filter by table or customer...';
+
+  @override
+  String get loginPrimarySlogan => 'Total control, hassle-free.';
+
+  @override
+  String get loginSecondarySlogan =>
+      'Agile management for businesses on the move. Invoice, control, grow.';
+
+  @override
+  String get passwordRequirementsPrompt =>
+      'Password must have at least 6 characters, 1 number, 1 uppercase letter, and 1 special character.';
+
+  @override
+  String get emailInvalidFormat => 'Please enter a valid email address.';
+
+  @override
+  String get emailAlreadyInUse =>
+      'This email is already registered. Please sign in or use another email.';
+
+  @override
+  String get incorrectPassword => 'Incorrect password. Please try again.';
+
+  @override
+  String get userNotFound =>
+      'No account found with this email. Please register.';
+
+  @override
+  String get noBusinessUnitsTitle => 'No branches available';
+
+  @override
+  String get noBusinessUnitsDesc =>
+      'You don\'t have any branches assigned yet. Create your first branch to get started.';
+
+  @override
+  String get createFirstBusinessUnit => 'Create First Branch';
 }

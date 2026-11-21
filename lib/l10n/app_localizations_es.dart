@@ -2968,4 +2968,41 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get filterByTableOrCustomer => 'Filtrar por mesa o cliente...';
+
+  @override
+  String get loginPrimarySlogan => 'Control total, sin complicaciones.';
+
+  @override
+  String get loginSecondarySlogan =>
+      'Gestión ágil para negocios en movimiento. Factura, controla, crece.';
+
+  @override
+  String get passwordRequirementsPrompt =>
+      'La contraseña debe tener al menos 6 caracteres, 1 número, 1 mayúscula y 1 carácter especial.';
+
+  @override
+  String get emailInvalidFormat =>
+      'Por favor ingrese un correo electrónico válido.';
+
+  @override
+  String get emailAlreadyInUse =>
+      'Este correo electrónico ya se encuentra registrado. Por favor inicie sesión.';
+
+  @override
+  String get incorrectPassword =>
+      'Contraseña incorrecta. Por favor intente de nuevo.';
+
+  @override
+  String get userNotFound =>
+      'No existe una cuenta con este correo. Por favor regístrese.';
+
+  @override
+  String get noBusinessUnitsTitle => 'No hay sucursales disponibles';
+
+  @override
+  String get noBusinessUnitsDesc =>
+      'Aún no tienes sucursales asignadas. Crea tu primera sucursal para comenzar.';
+
+  @override
+  String get createFirstBusinessUnit => 'Crear Primera Sucursal';
 }
