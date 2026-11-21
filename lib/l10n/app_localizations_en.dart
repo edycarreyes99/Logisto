@@ -2977,4 +2977,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createFirstBusinessUnit => 'Create First Branch';
+
+  @override
+  String get businessCategoryLabel => 'Business Category';
+
+  @override
+  String get businessCategoryHint => 'Select a category';
+
+  @override
+  String get businessCityLabel => 'City location';
+
+  @override
+  String get businessCityHint => 'E.g. San Salvador, Tegucigalpa, etc.';
+
+  @override
+  String get cellPhoneLabel => 'Cell Phone Number';
+
+  @override
+  String get cellPhoneHint => 'E.g. +1 555-0199';
+
+  @override
+  String get dniLabel => 'DNI';
+
+  @override
+  String get dniHint => 'National identity document / Tax ID';
+
+  @override
+  String get fieldRequired => 'This field is required';
+
+  @override
+  String get categoryRequired => 'You must select a business category';
 }

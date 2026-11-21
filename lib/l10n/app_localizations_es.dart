@@ -3005,4 +3005,35 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get createFirstBusinessUnit => 'Crear Primera Sucursal';
+
+  @override
+  String get businessCategoryLabel => 'Categoría del negocio';
+
+  @override
+  String get businessCategoryHint => 'Seleccione una categoría';
+
+  @override
+  String get businessCityLabel => 'Ciudad donde se ubica el negocio';
+
+  @override
+  String get businessCityHint => 'Ej. San Salvador, Tegucigalpa, etc.';
+
+  @override
+  String get cellPhoneLabel => 'Número de celular';
+
+  @override
+  String get cellPhoneHint => 'Ej. +504 9999-0000';
+
+  @override
+  String get dniLabel => 'DNI';
+
+  @override
+  String get dniHint => 'Documento nacional de identidad';
+
+  @override
+  String get fieldRequired => 'Este campo es requerido';
+
+  @override
+  String get categoryRequired =>
+      'Debe seleccionar una categoría para el negocio';
 }

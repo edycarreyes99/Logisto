@@ -1499,5 +1499,15 @@
   "userNotFound": "No account found with this email. Please register.",
   "noBusinessUnitsTitle": "No branches available",
   "noBusinessUnitsDesc": "You don't have any branches assigned yet. Create your first branch to get started.",
-  "createFirstBusinessUnit": "Create First Branch"
+  "createFirstBusinessUnit": "Create First Branch",
+  "businessCategoryLabel": "Business Category",
+  "businessCategoryHint": "Select a category",
+  "businessCityLabel": "City location",
+  "businessCityHint": "E.g. San Salvador, Tegucigalpa, etc.",
+  "cellPhoneLabel": "Cell Phone Number",
+  "cellPhoneHint": "E.g. +1 555-0199",
+  "dniLabel": "DNI",
+  "dniHint": "National identity document / Tax ID",
+  "fieldRequired": "This field is required",
+  "categoryRequired": "You must select a business category"
 }

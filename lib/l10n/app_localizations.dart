@@ -5593,6 +5593,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create First Branch'**
   String get createFirstBusinessUnit;
+
+  /// No description provided for @businessCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Category'**
+  String get businessCategoryLabel;
+
+  /// No description provided for @businessCategoryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a category'**
+  String get businessCategoryHint;
+
+  /// No description provided for @businessCityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'City location'**
+  String get businessCityLabel;
+
+  /// No description provided for @businessCityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. San Salvador, Tegucigalpa, etc.'**
+  String get businessCityHint;
+
+  /// No description provided for @cellPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cell Phone Number'**
+  String get cellPhoneLabel;
+
+  /// No description provided for @cellPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. +1 555-0199'**
+  String get cellPhoneHint;
+
+  /// No description provided for @dniLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'DNI'**
+  String get dniLabel;
+
+  /// No description provided for @dniHint.
+  ///
+  /// In en, this message translates to:
+  /// **'National identity document / Tax ID'**
+  String get dniHint;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get fieldRequired;
+
+  /// No description provided for @categoryRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'You must select a business category'**
+  String get categoryRequired;
 }
 
 class _AppLocalizationsDelegate

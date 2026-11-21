@@ -1306,5 +1306,15 @@
   "userNotFound": "No existe una cuenta con este correo. Por favor regístrese.",
   "noBusinessUnitsTitle": "No hay sucursales disponibles",
   "noBusinessUnitsDesc": "Aún no tienes sucursales asignadas. Crea tu primera sucursal para comenzar.",
-  "createFirstBusinessUnit": "Crear Primera Sucursal"
+  "createFirstBusinessUnit": "Crear Primera Sucursal",
+  "businessCategoryLabel": "Categoría del negocio",
+  "businessCategoryHint": "Seleccione una categoría",
+  "businessCityLabel": "Ciudad donde se ubica el negocio",
+  "businessCityHint": "Ej. San Salvador, Tegucigalpa, etc.",
+  "cellPhoneLabel": "Número de celular",
+  "cellPhoneHint": "Ej. +504 9999-0000",
+  "dniLabel": "DNI",
+  "dniHint": "Documento nacional de identidad",
+  "fieldRequired": "Este campo es requerido",
+  "categoryRequired": "Debe seleccionar una categoría para el negocio"
 }
