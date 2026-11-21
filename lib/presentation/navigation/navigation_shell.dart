@@ -8,7 +8,6 @@ import '../../locator.dart';
 import '../audit/audit_log_screen.dart';
 import '../auth/login_provider.dart';
 import '../auth/login_screen.dart';
-import '../auth/logout_dialog.dart';
 import '../auth/widgets/pin_switch_modal.dart';
 import '../billiards/billiard_floor_plan_screen.dart';
 import '../business_units/business_unit_selector_screen.dart';
@@ -20,7 +19,6 @@ import '../dashboard/dashboard_screen.dart';
 import '../inventory/inventory_warehouse_screen.dart';
 import '../invoices/invoice_history_screen.dart';
 import '../kitchen/kitchen_display_screen.dart';
-import '../onboarding/onboarding_wizard_screen.dart';
 import '../open_accounts/open_accounts_screen.dart';
 import '../payables/accounts_payable_screen.dart';
 import '../pos/pos_checkout_screen.dart';
@@ -383,24 +381,6 @@ class _NavigationShellState extends State<NavigationShell> {
                       },
                     ),
                   ],
-                  const SizedBox(width: 6),
-                  OutlinedButton.icon(
-                    icon: const Icon(Icons.logout_rounded, size: 16),
-                    label: Text(l10n.logout),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: theme.colorScheme.error,
-                      side: BorderSide(
-                        color: theme.colorScheme.error.withValues(alpha: 0.5),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0,
-                        vertical: 6.0,
-                      ),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    onPressed: () => showLogoutDialog(context),
-                  ),
                 ],
               ),
             ),
@@ -427,7 +407,7 @@ class _NavigationShellState extends State<NavigationShell> {
         navProvider: _navProvider,
         contextProvider: _contextProvider,
         showHeader: false,
-        showFooter: false,
+        showFooter: true,
       ),
     );
   }
@@ -478,8 +458,6 @@ class _NavigationShellState extends State<NavigationShell> {
         return const AuditLogScreen();
       case AppRoutes.settings:
         return const SettingsScreen();
-      case AppRoutes.onboarding:
-        return const OnboardingWizardScreen();
       case AppRoutes.login:
         return const LoginScreen();
       default:

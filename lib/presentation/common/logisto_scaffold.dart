@@ -48,6 +48,10 @@ class LogistoScaffold extends StatelessWidget {
   /// Optional custom drawer overriding default [AppNavigationDrawer].
   final Widget? customDrawer;
 
+  /// Explicit flag denoting whether drawer navigation is permitted.
+  /// When `false`, suppresses the drawer and hides the hamburger menu icon.
+  final bool showDrawer;
+
   const LogistoScaffold({
     super.key,
     this.title,
@@ -63,6 +67,7 @@ class LogistoScaffold extends StatelessWidget {
     this.bottomSheet,
     this.backgroundColor,
     this.customDrawer,
+    this.showDrawer = true,
   });
 
   @override
@@ -77,7 +82,9 @@ class LogistoScaffold extends StatelessWidget {
         : null;
 
     final Widget? effectiveDrawer;
-    if (customDrawer != null) {
+    if (!showDrawer) {
+      effectiveDrawer = null;
+    } else if (customDrawer != null) {
       effectiveDrawer = customDrawer;
     } else if (isDesktop || navProvider == null || contextProvider == null) {
       effectiveDrawer = null;
@@ -104,6 +111,7 @@ class LogistoScaffold extends StatelessWidget {
             actions: actions,
             bottom: bottom,
             backgroundColor: backgroundColor ?? theme.scaffoldBackgroundColor,
+            showDrawer: showDrawer,
           ),
       body: body,
       floatingActionButton: floatingActionButton,

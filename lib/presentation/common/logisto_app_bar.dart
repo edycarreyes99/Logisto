@@ -44,6 +44,10 @@ class LogistoAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// Center title alignment. Defaults to `false` conforming to Material 3.
   final bool centerTitle;
 
+  /// Explicit flag denoting whether drawer navigation is enabled.
+  /// When `false` and view is not child, hides the hamburger menu.
+  final bool showDrawer;
+
   const LogistoAppBar({
     super.key,
     this.title,
@@ -55,6 +59,7 @@ class LogistoAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.backgroundColor,
     this.elevation = 0.0,
     this.centerTitle = false,
+    this.showDrawer = true,
   });
 
   @override
@@ -107,7 +112,7 @@ class LogistoAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
 
     // Root/Parent view
-    if (isDesktop) {
+    if (isDesktop || !showDrawer) {
       return null;
     }
 

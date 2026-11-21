@@ -8,7 +8,6 @@ import '../auth/login_provider.dart';
 import '../auth/login_screen.dart';
 import '../business_units/business_unit_selector_screen.dart';
 import '../context/business_context_provider.dart';
-import '../onboarding/onboarding_wizard_screen.dart';
 import 'app_routes.dart';
 import 'navigation_provider.dart';
 import 'navigation_shell.dart';
@@ -29,6 +28,7 @@ class _AppFlowCoordinatorState extends State<AppFlowCoordinator> {
   late final AppPreferences _preferences;
   bool _isInitialized = false;
   bool _isBootstrapping = false;
+  bool _wasAuthenticated = false;
 
   @override
   void initState() {
@@ -37,8 +37,25 @@ class _AppFlowCoordinatorState extends State<AppFlowCoordinator> {
     _contextProvider = locator<BusinessContextProvider>();
     _navProvider = locator<NavigationProvider>();
     _preferences = locator<AppPreferences>();
+    _wasAuthenticated = _loginProvider.isAuthenticated;
+    _loginProvider.addListener(_onLoginStateChanged);
 
     _bootstrapFlow();
+  }
+
+  @override
+  void dispose() {
+    _loginProvider.removeListener(_onLoginStateChanged);
+    super.dispose();
+  }
+
+  void _onLoginStateChanged() {
+    if (!_wasAuthenticated && _loginProvider.isAuthenticated) {
+      _wasAuthenticated = true;
+      _bootstrapFlow();
+    } else if (!_loginProvider.isAuthenticated) {
+      _wasAuthenticated = false;
+    }
   }
 
   Future<void> _bootstrapFlow() async {
@@ -126,30 +143,14 @@ class _AppFlowCoordinatorState extends State<AppFlowCoordinator> {
           return const LoginScreen();
         }
 
-        // Check if organization context needs resolution upon authentication
-        if (_contextProvider.activeOrganization == null &&
-            _preferences.isOnboardingCompleted()) {
-          if (!_isBootstrapping) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _bootstrapFlow();
-            });
-          }
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        // Step 2: First-time Onboarding Check
-        if (!_preferences.isOnboardingCompleted()) {
-          return const OnboardingWizardScreen();
-        }
-
-        // Step 3: Business Unit (Branch) Context Selection
-        if (_contextProvider.activeBusinessUnit == null) {
+        // Step 2: Business Unit (Branch) Context Selection
+        // If user has no active organization or active business unit, guide them to select or create one.
+        if (_contextProvider.activeOrganization == null ||
+            _contextProvider.activeBusinessUnit == null) {
           return const BusinessUnitSelectorScreen();
         }
 
-        // Step 4: Active Application Shell with Dashboard & All Enterprise Modules
+        // Step 3: Active Application Shell with Dashboard & All Enterprise Modules
         if (_navProvider.currentRoute == AppRoutes.login) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _navProvider.navigateTo(AppRoutes.dashboard);

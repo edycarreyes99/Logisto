@@ -4,7 +4,6 @@ import '../../core/enums/feature_status_enum.dart';
 import '../../domain/models/business_unit_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
-import '../auth/logout_dialog.dart';
 import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
 import '../common/logisto_scaffold.dart';
@@ -38,17 +37,8 @@ class _BusinessUnitSelectorScreenState
     final orgId = _contextProvider.activeOrganization?.id ?? '';
     if (orgId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _provider.loadBusinessUnits(orgId);
+        _provider.startListening(orgId);
       });
-    }
-  }
-
-  void _refresh() {
-    final orgId = _contextProvider.activeOrganization?.id ?? '';
-    if (orgId.isNotEmpty) {
-      _provider.loadBusinessUnits(orgId);
-      final l10n = AppLocalizations.of(context)!;
-      AppFeedback.showInfo(context, l10n.refresh);
     }
   }
 
@@ -83,30 +73,31 @@ class _BusinessUnitSelectorScreenState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final hasActiveUnit = _contextProvider.activeBusinessUnit != null;
+    final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
 
     return LogistoScaffold(
       title: l10n.selectOperatingBusinessUnit,
+      showDrawer: false,
       isChild: hasActiveUnit,
-      onBack: () => locator<NavigationProvider>().navigateTo(AppRoutes.dashboard),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh),
-          tooltip: l10n.refresh,
-          onPressed: _refresh,
-        ),
-        FilledButton.icon(
-          onPressed: () => _showAddUnitModal(l10n),
-          icon: const Icon(Icons.add, size: 18),
-          label: Text(l10n.addBranch),
-        ),
-        const SizedBox(width: 8),
-        IconButton(
-          icon: const Icon(Icons.logout_rounded),
-          color: Theme.of(context).colorScheme.error,
-          tooltip: l10n.logout,
-          onPressed: () => showLogoutDialog(context),
-        ),
-      ],
+      onBack: hasActiveUnit
+          ? () => locator<NavigationProvider>().goBack()
+          : null,
+      actions: isDesktop
+          ? [
+              FilledButton.icon(
+                onPressed: () => _showAddUnitModal(l10n),
+                icon: const Icon(Icons.add, size: 18),
+                label: Text(l10n.addBranch),
+              ),
+            ]
+          : null,
+      floatingActionButton: !isDesktop
+          ? FloatingActionButton.extended(
+              onPressed: () => _showAddUnitModal(l10n),
+              icon: const Icon(Icons.add),
+              label: Text(l10n.addBranch),
+            )
+          : null,
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
