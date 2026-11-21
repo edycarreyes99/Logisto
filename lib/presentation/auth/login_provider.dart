@@ -90,18 +90,22 @@ class LoginProvider extends ChangeNotifier {
     _errorCode = e.code;
     switch (e.code) {
       case 'user-not-found':
+        _errorMessage = 'No existe una cuenta con este correo. Por favor regístrese.';
+        break;
       case 'wrong-password':
+        _errorMessage = 'Contraseña incorrecta. Por favor intente de nuevo.';
+        break;
       case 'invalid-credential':
-        _errorMessage = 'Credenciales inválidas. Por favor verifique su correo y contraseña.';
+        _errorMessage = 'Credenciales inválidas. Verifique su correo o contraseña.';
         break;
       case 'email-already-in-use':
-        _errorMessage = 'El correo electrónico ya se encuentra registrado.';
+        _errorMessage = 'Este correo electrónico ya se encuentra registrado. Por favor inicie sesión.';
         break;
       case 'invalid-email':
         _errorMessage = 'El formato del correo electrónico es inválido.';
         break;
       case 'weak-password':
-        _errorMessage = 'La contraseña debe tener al menos 6 caracteres.';
+        _errorMessage = 'La contraseña debe tener al menos 6 caracteres, 1 número, 1 mayúscula y 1 carácter especial.';
         break;
       case 'user-disabled':
         _errorMessage = 'Esta cuenta ha sido deshabilitada por el administrador.';
@@ -130,6 +134,15 @@ class LoginProvider extends ChangeNotifier {
     if (trimmedEmail.isEmpty || trimmedPassword.isEmpty) {
       _errorCode = 'email_password_required';
       _errorMessage = 'Email and password are required.';
+      _status = FeatureStatusEnum.error;
+      notifyListeners();
+      return false;
+    }
+
+    final emailRegex = RegExp(r'^[a-zA-Z0-9.!#$%&' "'" r'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$');
+    if (!emailRegex.hasMatch(trimmedEmail)) {
+      _errorCode = 'invalid-email';
+      _errorMessage = 'El formato del correo electrónico es inválido.';
       _status = FeatureStatusEnum.error;
       notifyListeners();
       return false;
@@ -248,6 +261,29 @@ class LoginProvider extends ChangeNotifier {
     if (trimmedEmail.isEmpty || trimmedPassword.isEmpty) {
       _errorCode = 'email_password_required';
       _errorMessage = 'Email and password are required.';
+      _status = FeatureStatusEnum.error;
+      notifyListeners();
+      return false;
+    }
+
+    final emailRegex = RegExp(r'^[a-zA-Z0-9.!#$%&' "'" r'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$');
+    if (!emailRegex.hasMatch(trimmedEmail)) {
+      _errorCode = 'invalid-email';
+      _errorMessage = 'El formato del correo electrónico es inválido.';
+      _status = FeatureStatusEnum.error;
+      notifyListeners();
+      return false;
+    }
+
+    final hasNumber = RegExp(r'[0-9]');
+    final hasUppercase = RegExp(r'[A-Z]');
+    final hasSpecialChar = RegExp(r'[!@#\$%^&*(),.?":{}|<>_\-=+]');
+    if (trimmedPassword.length < 6 ||
+        !hasNumber.hasMatch(trimmedPassword) ||
+        !hasUppercase.hasMatch(trimmedPassword) ||
+        !hasSpecialChar.hasMatch(trimmedPassword)) {
+      _errorCode = 'weak-password';
+      _errorMessage = 'La contraseña debe tener al menos 6 caracteres, 1 número, 1 mayúscula y 1 carácter especial.';
       _status = FeatureStatusEnum.error;
       notifyListeners();
       return false;

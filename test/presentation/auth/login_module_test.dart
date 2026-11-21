@@ -7,8 +7,6 @@ import 'package:logisto/locator.dart';
 import 'package:logisto/main.dart';
 import 'package:logisto/presentation/auth/login_provider.dart';
 import 'package:logisto/presentation/auth/login_screen.dart';
-import 'package:logisto/presentation/navigation/app_routes.dart';
-import 'package:logisto/presentation/navigation/navigation_provider.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../test_helpers.dart';
@@ -111,7 +109,7 @@ void main() {
       await resetLocator();
     });
 
-    testWidgets('renders corporate login card, inputs, and action buttons', (
+    testWidgets('renders clean Treinta-style login card with slogans and inputs', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(1280, 720);
@@ -119,59 +117,71 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
 
       await tester.pumpWidget(
-        const LogistoApp(locale: Locale('en'), home: LoginScreen()),
+        const LogistoApp(locale: Locale('es'), home: LoginScreen()),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Logisto Enterprise'), findsOneWidget);
-      expect(find.text('Corporate Portal Login'), findsOneWidget);
-      expect(find.text('Sign In'), findsOneWidget);
-      expect(find.text('Fast PIN'), findsOneWidget);
-      expect(find.text('New Org Setup'), findsOneWidget);
-    });
-
-    testWidgets('opens PIN switch modal on Fast PIN button tap', (
-      tester,
-    ) async {
-      tester.view.physicalSize = const Size(1280, 720);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-
-      await tester.pumpWidget(
-        const LogistoApp(locale: Locale('en'), home: LoginScreen()),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Fast PIN'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Fast PIN Switch'), findsOneWidget);
-      expect(find.text('Unlock'), findsOneWidget);
-      expect(find.text('Cancel'), findsOneWidget);
-
-      await tester.tap(find.text('Cancel'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Fast PIN Switch'), findsNothing);
-    });
-
-    testWidgets('navigates to onboarding on New Org Setup tap', (tester) async {
-      tester.view.physicalSize = const Size(1280, 720);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-
-      await tester.pumpWidget(
-        const LogistoApp(locale: Locale('en'), home: LoginScreen()),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('New Org Setup'));
-      await tester.pumpAndSettle();
-
+      expect(find.text('Logisto'), findsOneWidget);
+      expect(find.text('Control total, sin complicaciones.'), findsOneWidget);
       expect(
-        locator<NavigationProvider>().currentRoute,
-        equals(AppRoutes.onboarding),
+        find.text('Gestión ágil para negocios en movimiento. Factura, controla, crece.'),
+        findsOneWidget,
       );
+      expect(find.text('Iniciar Sesión'), findsOneWidget);
+      expect(find.text('Recordar sesión'), findsOneWidget);
+      expect(find.text('¿Olvidó su contraseña?'), findsOneWidget);
+      expect(find.text('¿No tiene una cuenta? Registrarse'), findsOneWidget);
+
+      // Verify Fast PIN and New Org Setup buttons are eliminated
+      expect(find.text('PIN Rápido'), findsNothing);
+      expect(find.text('Nueva Empresa'), findsNothing);
+    });
+
+    testWidgets('toggles between sign in and sign up mode', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1280, 720);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        const LogistoApp(locale: Locale('es'), home: LoginScreen()),
+      );
+      await tester.pumpAndSettle();
+
+      // Tap to switch to registration mode
+      await tester.tap(find.text('¿No tiene una cuenta? Registrarse'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Nombre Completo'), findsOneWidget);
+      expect(find.text('Crear Cuenta'), findsOneWidget);
+      expect(find.text('¿Ya tiene una cuenta? Iniciar Sesión'), findsOneWidget);
+
+      // Tap back to login mode
+      await tester.tap(find.text('¿Ya tiene una cuenta? Iniciar Sesión'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Nombre Completo'), findsNothing);
+      expect(find.text('Iniciar Sesión'), findsOneWidget);
+    });
+
+    testWidgets('validates email format before submitting login', (tester) async {
+      tester.view.physicalSize = const Size(1280, 720);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        const LogistoApp(locale: Locale('es'), home: LoginScreen()),
+      );
+      await tester.pumpAndSettle();
+
+      // Enter invalid email
+      await tester.enterText(find.byType(TextField).at(0), 'invalidemail');
+      await tester.enterText(find.byType(TextField).at(1), 'Secret123!');
+      await tester.tap(find.widgetWithText(FilledButton, 'Iniciar Sesión'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Por favor ingrese un correo electrónico válido.'), findsOneWidget);
     });
   });
 }

@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import '../../../core/enums/feature_status_enum.dart';
+import '../../../core/enums/validation_error_enum.dart';
+import '../../../core/validators/text_field_validator.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../common/app_feedback.dart';
 import '../login_provider.dart';
 
-/// Highly attractive, modern credentials submission card with password visibility toggle,
-/// Firebase Auth sign-in, account creation (sign up), password reset dialog, and email verification.
+/// Clean, minimal authentication form card conforming to Treinta design guidelines.
+/// Includes branding logo, dual corporate slogans, validated inputs, session memory,
+/// and Firebase Auth submission.
 class LoginFormCard extends StatefulWidget {
   final LoginProvider provider;
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final VoidCallback onLogin;
-  final VoidCallback onFastPin;
-  final VoidCallback onRegisterOrg;
 
   const LoginFormCard({
     super.key,
@@ -20,8 +21,6 @@ class LoginFormCard extends StatefulWidget {
     required this.emailController,
     required this.passwordController,
     required this.onLogin,
-    required this.onFastPin,
-    required this.onRegisterOrg,
   });
 
   @override
@@ -33,10 +32,15 @@ class _LoginFormCardState extends State<LoginFormCard> {
   bool _obscurePassword = true;
   bool _rememberMe = true;
   final TextEditingController _nameController = TextEditingController();
+  final EmailValidator _emailValidator = EmailValidator();
+  final PasswordPolicyValidator _passwordValidator = PasswordPolicyValidator();
+  String? _clientValidationError;
 
   @override
   void dispose() {
     _nameController.dispose();
+    _emailValidator.dispose();
+    _passwordValidator.dispose();
     super.dispose();
   }
 
@@ -63,9 +67,11 @@ class _LoginFormCardState extends State<LoginFormCard> {
               ),
             ),
             const SizedBox(width: 12.0),
-            Text(
-              l10n.forgotPasswordPrompt,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+            Expanded(
+              child: Text(
+                l10n.forgotPasswordPrompt,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+              ),
             ),
           ],
         ),
@@ -123,13 +129,53 @@ class _LoginFormCardState extends State<LoginFormCard> {
     );
   }
 
+  void _submitLogin() {
+    final l10n = AppLocalizations.of(context)!;
+    final email = widget.emailController.text.trim();
+    final password = widget.passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      setState(() => _clientValidationError = l10n.authErrorEmailPasswordRequired);
+      return;
+    }
+
+    if (_emailValidator.validate(email) != ValidationErrorEnum.none) {
+      setState(() => _clientValidationError = l10n.emailInvalidFormat);
+      return;
+    }
+
+    setState(() => _clientValidationError = null);
+    widget.onLogin();
+  }
+
   Future<void> _handleSignUp() async {
     final l10n = AppLocalizations.of(context)!;
+    final name = _nameController.text.trim();
+    final email = widget.emailController.text.trim();
+    final password = widget.passwordController.text.trim();
+
+    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+      setState(() => _clientValidationError = l10n.authErrorEmailPasswordRequired);
+      return;
+    }
+
+    if (_emailValidator.validate(email) != ValidationErrorEnum.none) {
+      setState(() => _clientValidationError = l10n.emailInvalidFormat);
+      return;
+    }
+
+    if (_passwordValidator.validate(password) != ValidationErrorEnum.none) {
+      setState(() => _clientValidationError = l10n.passwordRequirementsPrompt);
+      return;
+    }
+
+    setState(() => _clientValidationError = null);
     final success = await widget.provider.registerWithEmailPassword(
-      email: widget.emailController.text,
-      password: widget.passwordController.text,
-      displayName: _nameController.text.trim(),
+      email: email,
+      password: password,
+      displayName: name,
     );
+
     if (!mounted) return;
     if (success) {
       AppFeedback.showSuccess(
@@ -150,84 +196,96 @@ class _LoginFormCardState extends State<LoginFormCard> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+    return Card(
+      elevation: isDark ? 2 : 1,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
-        border: Border.all(
-          color: theme.colorScheme.primary.withValues(alpha: isDark ? 0.25 : 0.15),
-          width: 1.5,
+        side: BorderSide(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: isDark ? 0.3 : 0.6),
+          width: 1.0,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withValues(alpha: 0.4)
-                : theme.colorScheme.primary.withValues(alpha: 0.08),
-            blurRadius: 24.0,
-            offset: const Offset(0, 8),
-          ),
-        ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(28.0),
+        padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 32.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10.0),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        theme.colorScheme.primary,
-                        theme.colorScheme.tertiary,
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: Icon(
-                    _isSignUpMode ? Icons.person_add_rounded : Icons.security_rounded,
-                    color: Colors.white,
-                    size: 22.0,
-                  ),
-                ),
-                const SizedBox(width: 14.0),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _isSignUpMode ? l10n.signUp : l10n.corporatePortalLogin,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.2,
-                        ),
-                      ),
-                      Text(
-                        _isSignUpMode ? l10n.signUpSubtitle : l10n.authSubtitleHint,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20.0),
-            if (widget.provider.errorMessage != null) ...[
+            _buildBrandingHeader(theme, l10n),
+            const SizedBox(height: 24.0),
+            if (_clientValidationError != null || widget.provider.errorMessage != null) ...[
               _buildErrorAlert(theme, l10n),
               const SizedBox(height: 16.0),
             ],
             ..._buildInputFields(theme, l10n),
             const SizedBox(height: 12.0),
-            _buildOptionsRow(theme, l10n),
-            const SizedBox(height: 16.0),
+            if (!_isSignUpMode) ...[
+              _buildOptionsRow(theme, l10n),
+              const SizedBox(height: 20.0),
+            ] else
+              const SizedBox(height: 12.0),
             _buildActionButtons(theme, l10n),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildBrandingHeader(ThemeData theme, AppLocalizations l10n) {
+    return Column(
+      children: [
+        Container(
+          width: 52.0,
+          height: 52.0,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                theme.colorScheme.primary,
+                theme.colorScheme.tertiary,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(14.0),
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                blurRadius: 12.0,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.inventory_2_rounded,
+            color: Colors.white,
+            size: 28.0,
+          ),
+        ),
+        const SizedBox(height: 14.0),
+        Text(
+          'Logisto',
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.5,
+          ),
+        ),
+        const SizedBox(height: 8.0),
+        Text(
+          l10n.loginPrimarySlogan,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        const SizedBox(height: 4.0),
+        Text(
+          l10n.loginSecondarySlogan,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            height: 1.3,
+          ),
+        ),
+      ],
     );
   }
 
@@ -282,20 +340,16 @@ class _LoginFormCardState extends State<LoginFormCard> {
           ),
         ),
         textInputAction: TextInputAction.done,
-        onSubmitted: (_) => _isSignUpMode ? _handleSignUp() : widget.onLogin(),
+        onSubmitted: (_) => _isSignUpMode ? _handleSignUp() : _submitLogin(),
       ),
     ];
   }
 
   Widget _buildOptionsRow(ThemeData theme, AppLocalizations l10n) {
-    return Wrap(
-      alignment: WrapAlignment.spaceBetween,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 8.0,
-      runSpacing: 4.0,
+    return Row(
       children: [
-        if (!_isSignUpMode)
-          Row(
+        Expanded(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(
@@ -307,40 +361,49 @@ class _LoginFormCardState extends State<LoginFormCard> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
                 ),
               ),
-              const SizedBox(width: 8.0),
-              GestureDetector(
-                onTap: () => setState(() => _rememberMe = !_rememberMe),
-                child: Text(
-                  l10n.rememberMe,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface,
+              const SizedBox(width: 6.0),
+              Flexible(
+                child: GestureDetector(
+                  onTap: () => setState(() => _rememberMe = !_rememberMe),
+                  child: Text(
+                    l10n.rememberMe,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ),
             ],
           ),
-        if (!_isSignUpMode)
-          TextButton(
-            onPressed: _showForgotPasswordDialog,
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 6.0),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Text(
-              l10n.forgotPassword,
-              style: TextStyle(
-                fontSize: 12.0,
-                fontWeight: FontWeight.w600,
-                color: theme.colorScheme.primary,
-              ),
+        ),
+        const SizedBox(width: 8.0),
+        TextButton(
+          onPressed: _showForgotPasswordDialog,
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          child: Text(
+            l10n.forgotPassword,
+            style: TextStyle(
+              fontSize: 12.0,
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.primary,
             ),
           ),
+        ),
       ],
     );
   }
 
   Widget _buildErrorAlert(ThemeData theme, AppLocalizations l10n) {
+    final message = _clientValidationError ??
+        (widget.provider.errorCode == 'email_password_required'
+            ? l10n.authErrorEmailPasswordRequired
+            : (widget.provider.errorMessage ?? l10n.invalidCredentials));
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
       decoration: BoxDecoration(
@@ -356,9 +419,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
           const SizedBox(width: 10.0),
           Expanded(
             child: Text(
-              widget.provider.errorCode == 'email_password_required'
-                  ? l10n.authErrorEmailPasswordRequired
-                  : widget.provider.errorMessage!,
+              message,
               style: TextStyle(
                 color: theme.colorScheme.onErrorContainer,
                 fontSize: 13.0,
@@ -379,13 +440,13 @@ class _LoginFormCardState extends State<LoginFormCard> {
       children: [
         SizedBox(
           height: 48.0,
-          child: FilledButton.icon(
-            onPressed: isLoading ? null : (_isSignUpMode ? _handleSignUp : widget.onLogin),
+          child: FilledButton(
+            onPressed: isLoading ? null : (_isSignUpMode ? _handleSignUp : _submitLogin),
             style: FilledButton.styleFrom(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-              elevation: 2.0,
+              elevation: 0.0,
             ),
-            icon: isLoading
+            child: isLoading
                 ? const SizedBox(
                     width: 20.0,
                     height: 20.0,
@@ -394,19 +455,19 @@ class _LoginFormCardState extends State<LoginFormCard> {
                       color: Colors.white,
                     ),
                   )
-                : Icon(_isSignUpMode ? Icons.person_add_rounded : Icons.login_rounded, size: 20.0),
-            label: Text(
-              _isSignUpMode ? l10n.signUp : l10n.login,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),
-            ),
+                : Text(
+                    _isSignUpMode ? l10n.signUp : l10n.login,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),
+                  ),
           ),
         ),
-        const SizedBox(height: 8.0),
+        const SizedBox(height: 12.0),
         Center(
           child: TextButton(
             onPressed: () {
               setState(() {
                 _isSignUpMode = !_isSignUpMode;
+                _clientValidationError = null;
               });
             },
             child: Text(
@@ -418,34 +479,6 @@ class _LoginFormCardState extends State<LoginFormCard> {
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 8.0),
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: widget.onFastPin,
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-                ),
-                icon: const Icon(Icons.pin_rounded, size: 18.0),
-                label: Text(l10n.fastPin, style: const TextStyle(fontSize: 13.0)),
-              ),
-            ),
-            const SizedBox(width: 10.0),
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: widget.onRegisterOrg,
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-                ),
-                icon: const Icon(Icons.domain_add_rounded, size: 18.0),
-                label: Text(l10n.newOrgSetup, style: const TextStyle(fontSize: 13.0)),
-              ),
-            ),
-          ],
         ),
       ],
     );
