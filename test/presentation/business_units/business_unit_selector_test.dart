@@ -209,5 +209,32 @@ void main() {
 
       expect(find.text('Register New Branch'), findsNothing);
     });
+
+    testWidgets('renders clean empty state with button to create first branch when units empty', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1280, 720);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      // Set active organization to empty org so provider loads zero units
+      final contextProvider = locator<BusinessContextProvider>();
+      await contextProvider.initializeContext(
+        organization: testOrg,
+        units: [],
+      );
+
+      await tester.pumpWidget(
+        const LogistoApp(
+          locale: Locale('es'),
+          home: BusinessUnitSelectorScreen(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('No hay sucursales disponibles'), findsOneWidget);
+      expect(find.text('Aún no tienes sucursales asignadas. Crea tu primera sucursal para comenzar.'), findsOneWidget);
+      expect(find.text('Crear Primera Sucursal'), findsOneWidget);
+    });
   });
 }

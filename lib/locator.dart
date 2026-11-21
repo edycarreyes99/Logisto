@@ -188,6 +188,12 @@ Future<void> setupLocator({
     () => BusinessUnitSelectorProvider(
       repository: locator<BusinessUnitRepository>(),
       contextProvider: locator<BusinessContextProvider>(),
+      userRepository: locator.isRegistered<UserRepository>()
+          ? locator<UserRepository>()
+          : null,
+      loginProvider: locator.isRegistered<LoginProvider>()
+          ? locator<LoginProvider>()
+          : null,
     ),
   );
   locator.registerLazySingleton<DashboardProvider>(

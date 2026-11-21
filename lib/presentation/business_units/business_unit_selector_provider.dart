@@ -2,14 +2,18 @@ import 'package:flutter/foundation.dart';
 import '../../core/enums/business_type_enum.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../data/repositories/business_unit_repository.dart';
+import '../../data/repositories/user_repository.dart';
 import '../../domain/models/business_unit_model.dart';
+import '../auth/login_provider.dart';
 import '../context/business_context_provider.dart';
 
-/// Provider for managing business unit listings, branch switching,
-/// and adding new operational units.
+/// Provider for managing business unit listings, role-based branch filtering,
+/// branch switching, and adding new operational units.
 class BusinessUnitSelectorProvider extends ChangeNotifier {
   final BusinessUnitRepository repository;
   final BusinessContextProvider contextProvider;
+  final UserRepository? userRepository;
+  final LoginProvider? loginProvider;
 
   FeatureStatusEnum _status = FeatureStatusEnum.idle;
   String? _errorMessage;
@@ -18,6 +22,8 @@ class BusinessUnitSelectorProvider extends ChangeNotifier {
   BusinessUnitSelectorProvider({
     required this.repository,
     required this.contextProvider,
+    this.userRepository,
+    this.loginProvider,
   });
 
   FeatureStatusEnum get status => _status;
@@ -31,6 +37,22 @@ class BusinessUnitSelectorProvider extends ChangeNotifier {
 
     try {
       final fetched = await repository.getBusinessUnits(orgId);
+
+      // Check if user has specific role-based restrictions
+      final currentUserId = loginProvider?.preferences.getUserId();
+      if (userRepository != null && currentUserId != null && currentUserId.isNotEmpty) {
+        try {
+          final userProfile = await userRepository!.getUser(orgId, currentUserId);
+          if (userProfile != null && !userProfile.isSuperAdmin) {
+            // Filter to only business units where user has an assigned role
+            _units = fetched.where((bu) => userProfile.businessUnitRoles.containsKey(bu.id)).toList();
+            _status = FeatureStatusEnum.loaded;
+            notifyListeners();
+            return;
+          }
+        } catch (_) {}
+      }
+
       _units = fetched;
       _status = FeatureStatusEnum.loaded;
     } catch (e) {
