@@ -80,81 +80,13 @@ class AppNavigationDrawer extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 16.0),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [
-                  const Color(0xFF1E293B),
-                  const Color(0xFF0F172A),
-                ]
-              : [
-                  theme.colorScheme.primary,
-                  theme.colorScheme.tertiary,
-                ],
-        ),
+        color: isDark
+            ? theme.colorScheme.surfaceContainerHigh
+            : theme.colorScheme.surfaceContainerHighest,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.18),
-                    borderRadius: BorderRadius.circular(6.0),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.apps_rounded, size: 13.0, color: Colors.white),
-                      const SizedBox(width: 5.0),
-                      Flexible(
-                        child: Text(
-                          l10n.navOffcanvasTitle,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 11.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    visualDensity: VisualDensity.compact,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    icon: const Icon(Icons.logout_rounded, size: 18.0, color: Colors.white70),
-                    tooltip: l10n.logout,
-                    onPressed: () => showLogoutDialog(
-                      context,
-                      onBeforeLogout: () => Navigator.of(context).maybePop(),
-                    ),
-                  ),
-                  const SizedBox(width: 8.0),
-                  IconButton(
-                    visualDensity: VisualDensity.compact,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    icon: const Icon(Icons.close_rounded, size: 20.0, color: Colors.white70),
-                    tooltip: l10n.close,
-                    onPressed: () => Navigator.of(context).maybePop(),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 12.0),
           InkWell(
             onTap: () {
               navProvider.navigateTo(AppRoutes.users);
@@ -165,10 +97,10 @@ class AppNavigationDrawer extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 20.0,
-                  backgroundColor: Colors.white.withValues(alpha: 0.25),
-                  child: const Icon(
+                  backgroundColor: theme.colorScheme.primaryContainer,
+                  child: Icon(
                     Icons.person_rounded,
-                    color: Colors.white,
+                    color: theme.colorScheme.onPrimaryContainer,
                     size: 24.0,
                   ),
                 ),
@@ -179,24 +111,25 @@ class AppNavigationDrawer extends StatelessWidget {
                     children: [
                       Text(
                         userName,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          fontSize: 15.0,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 2.0),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6.0,
+                          vertical: 2.0,
+                        ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
+                          color: theme.colorScheme.secondaryContainer,
                           borderRadius: BorderRadius.circular(4.0),
                         ),
                         child: Text(
                           userRole,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: theme.colorScheme.onSecondaryContainer,
                             fontSize: 10.0,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,
@@ -217,27 +150,39 @@ class AppNavigationDrawer extends StatelessWidget {
             },
             borderRadius: BorderRadius.circular(8.0),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+                vertical: 8.0,
+              ),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.2),
+                color: theme.colorScheme.surfaceContainer,
                 borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(
+                  color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                ),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.storefront_rounded, size: 14.0, color: Colors.white70),
-                  const SizedBox(width: 6.0),
+                  Icon(
+                    Icons.storefront_rounded,
+                    size: 16.0,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8.0),
                   Expanded(
                     child: Text(
                       buName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12.0,
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const Icon(Icons.swap_horiz_rounded, size: 14.0, color: Colors.white70),
+                  Icon(
+                    Icons.swap_horiz_rounded,
+                    size: 16.0,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ],
               ),
             ),
@@ -346,13 +291,6 @@ class AppNavigationDrawer extends StatelessWidget {
         _Item(l10n.users, Icons.manage_accounts, AppRoutes.users),
         _Item(l10n.audit, Icons.security, AppRoutes.audit),
         _Item(l10n.settings, Icons.settings, AppRoutes.settings),
-        _Item(l10n.onboarding, Icons.auto_awesome, AppRoutes.onboarding),
-        _Item(
-          l10n.logout,
-          Icons.logout_rounded,
-          AppRoutes.login,
-          isDestructive: true,
-        ),
       ]),
     ];
   }
@@ -394,16 +332,9 @@ class AppNavigationDrawer extends StatelessWidget {
     return _SidebarNavItem(
       item: item,
       isActive: isActive,
-      onTap: () async {
-        if (item.isDestructive) {
-          await showLogoutDialog(
-            context,
-            onBeforeLogout: () => onNavigate?.call(),
-          );
-        } else {
-          navProvider.navigateTo(item.route);
-          onNavigate?.call();
-        }
+      onTap: () {
+        navProvider.navigateTo(item.route);
+        onNavigate?.call();
       },
     );
   }
@@ -450,15 +381,6 @@ class _SidebarNavItemState extends State<_SidebarNavItem> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final primary = theme.colorScheme.primary;
-    final errorColor = theme.colorScheme.error;
-
-    if (widget.item.isDestructive) {
-      if (_isHovered) {
-        final bg = errorColor.withValues(alpha: 0.15);
-        return (bg, errorColor, errorColor);
-      }
-      return (Colors.transparent, errorColor, errorColor);
-    }
 
     if (widget.isActive) {
       return (primary, AppColors.backgroundLight, AppColors.backgroundLight);
@@ -510,11 +432,9 @@ class _Item {
   final String title;
   final IconData icon;
   final String route;
-  final bool isDestructive;
   const _Item(
     this.title,
     this.icon,
-    this.route, {
-    this.isDestructive = false,
-  });
+    this.route,
+  );
 }

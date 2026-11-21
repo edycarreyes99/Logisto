@@ -238,12 +238,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
           width: 52.0,
           height: 52.0,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                theme.colorScheme.primary,
-                theme.colorScheme.tertiary,
-              ],
-            ),
+            color: theme.colorScheme.primary,
             borderRadius: BorderRadius.circular(14.0),
             boxShadow: [
               BoxShadow(
