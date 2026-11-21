@@ -4,7 +4,6 @@ import '../../core/enums/audit_action_enum.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
-import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
 import '../common/enum_localization_extensions.dart';
 import '../common/logisto_scaffold.dart';
@@ -35,19 +34,8 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
     final orgId = _contextProvider.activeOrganization?.id ?? '';
     if (orgId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _provider.loadAuditLogs(orgId);
+        _provider.startListening(orgId);
       });
-    }
-  }
-
-  Future<void> _refresh() async {
-    final orgId = _contextProvider.activeOrganization?.id ?? '';
-    if (orgId.isNotEmpty) {
-      await _provider.loadAuditLogs(orgId);
-      if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
-        AppFeedback.showSuccess(context, '${l10n.auditTrail}: ${l10n.refresh}');
-      }
     }
   }
 
@@ -66,11 +54,6 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
     return LogistoScaffold(
       title: l10n.auditTrail,
       actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh),
-          tooltip: l10n.refresh,
-          onPressed: _refresh,
-        ),
         if (isDesktop)
           SizedBox(
             width: 260,

@@ -4,7 +4,6 @@ import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/report_category_enum.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
-import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
 import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
@@ -91,15 +90,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
-  Future<void> _refresh() async {
-    final orgId = _contextProvider.activeOrganization?.id;
-    final buId = _contextProvider.activeBusinessUnit?.id;
-    await _provider.refresh(orgId: orgId, buId: buId);
-    if (!mounted) return;
-    final l10n = AppLocalizations.of(context)!;
-    AppFeedback.showSuccess(context, '${l10n.reportsAndBi}: ${l10n.refresh}');
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -108,18 +98,22 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
     return LogistoScaffold(
       title: l10n.reportsAndBi,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh),
-          tooltip: l10n.refresh,
-          onPressed: _refresh,
-        ),
-        FilledButton.icon(
-          icon: const Icon(Icons.file_download_outlined, size: 18),
-          label: Text(l10n.exportCsv),
-          onPressed: _showExportSuccessModal,
-        ),
-      ],
+      actions: isDesktop
+          ? [
+              FilledButton.icon(
+                icon: const Icon(Icons.file_download_outlined, size: 18),
+                label: Text(l10n.exportCsv),
+                onPressed: _showExportSuccessModal,
+              ),
+            ]
+          : null,
+      floatingActionButton: !isDesktop
+          ? FloatingActionButton.extended(
+              icon: const Icon(Icons.file_download_outlined),
+              label: Text(l10n.exportCsv),
+              onPressed: _showExportSuccessModal,
+            )
+          : null,
       body: BsContainer.fluid(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

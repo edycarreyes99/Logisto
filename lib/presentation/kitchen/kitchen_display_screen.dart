@@ -33,18 +33,8 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
     final buId = _contextProvider.activeBusinessUnit?.id ?? '';
     if (orgId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _provider.loadOrders(orgId: orgId, buId: buId);
+        _provider.startListening(orgId: orgId, buId: buId);
       });
-    }
-  }
-
-  void _refresh() {
-    final orgId = _contextProvider.activeOrganization?.id ?? '';
-    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
-    if (orgId.isNotEmpty) {
-      _provider.loadOrders(orgId: orgId, buId: buId);
-      final l10n = AppLocalizations.of(context)!;
-      AppFeedback.showInfo(context, l10n.refresh);
     }
   }
 
@@ -54,11 +44,6 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
     return LogistoScaffold(
       title: l10n.kitchenKdsTitle,
       actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh),
-          tooltip: l10n.refresh,
-          onPressed: _refresh,
-        ),
         Padding(
           padding: const EdgeInsets.only(right: 12.0),
           child: Wrap(

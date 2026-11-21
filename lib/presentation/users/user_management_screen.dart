@@ -4,7 +4,6 @@ import '../../core/enums/feature_status_enum.dart';
 import '../../domain/models/user_profile_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
-import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
 import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
@@ -36,17 +35,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     final orgId = _contextProvider.activeOrganization?.id ?? '';
     if (orgId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _provider.loadUsers(orgId);
+        _provider.startListening(orgId);
       });
-    }
-  }
-
-  void _refresh() {
-    final orgId = _contextProvider.activeOrganization?.id ?? '';
-    if (orgId.isNotEmpty) {
-      _provider.loadUsers(orgId);
-      final l10n = AppLocalizations.of(context)!;
-      AppFeedback.showInfo(context, l10n.refresh);
     }
   }
 
@@ -83,35 +73,38 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
     return LogistoScaffold(
       title: l10n.usersAndStaff,
-      actions: [
-        if (isDesktop)
-          SizedBox(
-            width: 240,
-            height: 40,
-            child: TextField(
-              controller: _searchCtrl,
-              decoration: InputDecoration(
-                hintText: l10n.searchPlaceholder,
-                prefixIcon: const Icon(Icons.search, size: 20),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+      actions: isDesktop
+          ? [
+              SizedBox(
+                width: 240,
+                height: 40,
+                child: TextField(
+                  controller: _searchCtrl,
+                  decoration: InputDecoration(
+                    hintText: l10n.searchPlaceholder,
+                    prefixIcon: const Icon(Icons.search, size: 20),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onChanged: _provider.setSearchQuery,
                 ),
               ),
-              onChanged: _provider.setSearchQuery,
-            ),
-          ),
-        IconButton(
-          icon: const Icon(Icons.refresh),
-          tooltip: l10n.refresh,
-          onPressed: _refresh,
-        ),
-        FilledButton.icon(
-          icon: const Icon(Icons.person_add_outlined, size: 18),
-          label: Text(l10n.inviteEmployee),
-          onPressed: _showInviteModal,
-        ),
-      ],
+              FilledButton.icon(
+                icon: const Icon(Icons.person_add_outlined, size: 18),
+                label: Text(l10n.inviteEmployee),
+                onPressed: _showInviteModal,
+              ),
+            ]
+          : null,
+      floatingActionButton: !isDesktop
+          ? FloatingActionButton.extended(
+              icon: const Icon(Icons.person_add_outlined),
+              label: Text(l10n.inviteEmployee),
+              onPressed: _showInviteModal,
+            )
+          : null,
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

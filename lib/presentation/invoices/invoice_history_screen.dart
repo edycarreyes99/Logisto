@@ -35,7 +35,7 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
     final buId = _contextProvider.activeBusinessUnit?.id ?? '';
     if (orgId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _provider.loadInvoices(orgId: orgId, buId: buId);
+        _provider.startListening(orgId: orgId, buId: buId);
       });
     }
   }
@@ -203,20 +203,6 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
     final l10n = AppLocalizations.of(context)!;
     return LogistoScaffold(
       title: l10n.invoices,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh_rounded),
-          tooltip: l10n.refresh,
-          onPressed: () {
-            final orgId = _contextProvider.activeOrganization?.id ?? '';
-            final buId = _contextProvider.activeBusinessUnit?.id ?? '';
-            if (orgId.isNotEmpty) {
-              _provider.loadInvoices(orgId: orgId, buId: buId);
-              AppFeedback.showSuccess(context, l10n.invoiceHistoryUpdated);
-            }
-          },
-        ),
-      ],
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

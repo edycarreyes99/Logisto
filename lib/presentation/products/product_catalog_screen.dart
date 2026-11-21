@@ -35,7 +35,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
     final orgId = _contextProvider.activeOrganization?.id ?? '';
     if (orgId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _provider.loadProducts(orgId);
+        _provider.startListening(orgId);
       });
     }
   }
@@ -223,27 +223,26 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
 
     return LogistoScaffold(
       title: l10n.products,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh_rounded),
-          tooltip: l10n.refresh,
-          onPressed: () {
-            final orgId = _contextProvider.activeOrganization?.id ?? '';
-            if (orgId.isNotEmpty) {
-              _provider.loadProducts(orgId);
-              AppFeedback.showSuccess(context, l10n.productCatalogSynced);
-            }
-          },
-        ),
-        FilledButton.icon(
-          icon: const Icon(Icons.add, size: 18),
-          label: Text(l10n.newProduct),
-          onPressed: () => _showProductModal(),
-        ),
-      ],
+      actions: isDesktop
+          ? [
+              FilledButton.icon(
+                icon: const Icon(Icons.add, size: 18),
+                label: Text(l10n.newProduct),
+                onPressed: () => _showProductModal(),
+              ),
+            ]
+          : null,
+      floatingActionButton: !isDesktop
+          ? FloatingActionButton.extended(
+              icon: const Icon(Icons.add),
+              label: Text(l10n.newProduct),
+              onPressed: () => _showProductModal(),
+            )
+          : null,
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

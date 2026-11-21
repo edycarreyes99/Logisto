@@ -135,7 +135,7 @@ class PrinterSettingsCard extends StatelessWidget {
                   height: 16,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Icon(Icons.refresh_rounded, size: 18),
+              : const Icon(Icons.bluetooth_searching, size: 18),
           label: Text(
             provider.isScanning
                 ? l10n.scanningPrinters

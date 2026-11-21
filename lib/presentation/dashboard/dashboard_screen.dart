@@ -4,8 +4,6 @@ import '../../core/enums/dashboard_time_filter_enum.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
-import '../auth/logout_dialog.dart';
-import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
 import '../common/enum_localization_extensions.dart';
 import '../common/logisto_scaffold.dart';
@@ -90,20 +88,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       (DashboardTimeFilterEnum.month, l10n.filterMonth),
     ];
     return [
-      IconButton(
-        icon: const Icon(Icons.refresh_rounded),
-        tooltip: l10n.refresh,
-        onPressed: () async {
-          final orgId = _contextProvider.activeOrganization?.id ?? '';
-          final buId = _contextProvider.activeBusinessUnit?.id ?? '';
-          if (orgId.isNotEmpty) {
-            await _provider.loadDashboard(orgId: orgId, buId: buId);
-            if (mounted) {
-              AppFeedback.showSuccess(context, l10n.dashboard);
-            }
-          }
-        },
-      ),
       if (!isDesktop)
         PopupMenuButton<DashboardTimeFilterEnum>(
           icon: const Icon(Icons.calendar_today_outlined, size: 20),
@@ -144,13 +128,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     );
             }).toList(),
           ),
-        ),
-      if (!isDesktop)
-        IconButton(
-          icon: const Icon(Icons.logout_rounded),
-          tooltip: l10n.logout,
-          color: theme.colorScheme.error,
-          onPressed: () => showLogoutDialog(context),
         ),
     ];
   }

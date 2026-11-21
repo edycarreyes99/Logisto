@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
-import '../common/app_feedback.dart';
 import '../common/app_skeleton.dart';
 import '../common/logisto_scaffold.dart';
 import '../context/business_context_provider.dart';
@@ -44,16 +43,6 @@ class _OpenAccountsScreenState extends State<OpenAccountsScreen> {
     }
   }
 
-  void _refresh() {
-    final orgId = _contextProvider.activeOrganization?.id ?? '';
-    final buId = _contextProvider.activeBusinessUnit?.id ?? '';
-    if (orgId.isNotEmpty) {
-      _provider.loadAccounts(orgId: orgId, buId: buId);
-      final l10n = AppLocalizations.of(context)!;
-      AppFeedback.showInfo(context, l10n.refresh);
-    }
-  }
-
   void _showNewTabModal() {
     OpenNewTabDialog.show(context, _provider);
   }
@@ -82,29 +71,20 @@ class _OpenAccountsScreenState extends State<OpenAccountsScreen> {
       title: l10n.openAccountsAndTabs,
       actions: isDesktop
           ? [
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                tooltip: l10n.refresh,
-                onPressed: _refresh,
-              ),
               FilledButton.icon(
                 icon: const Icon(Icons.add, size: 18),
                 label: Text(l10n.newTab),
                 onPressed: _showNewTabModal,
               ),
             ]
-          : [
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                tooltip: l10n.refresh,
-                onPressed: _refresh,
-              ),
-              IconButton(
-                icon: const Icon(Icons.add),
-                tooltip: l10n.newTab,
-                onPressed: _showNewTabModal,
-              ),
-            ],
+          : null,
+      floatingActionButton: !isDesktop
+          ? FloatingActionButton.extended(
+              icon: const Icon(Icons.add),
+              label: Text(l10n.newTab),
+              onPressed: _showNewTabModal,
+            )
+          : null,
       bottom: isDesktop ? null : _buildMobileTabs(),
       body: BsContainer.fluid(
         child: SingleChildScrollView(
