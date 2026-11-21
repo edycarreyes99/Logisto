@@ -28,9 +28,10 @@ Under no circumstances shall:
 1. Hardcoded, dummy, fake, or mock records (e.g., sample invoices, dummy products, fake shifts, mocked customer lists) exist within providers, controllers, domain models, or presentation widgets under `lib/`.
 2. Fallback bypasses with hardcoded credentials or PINs (e.g., `pin == '9999' || pin == '1234'`) exist in production authentication or supervisor approval flows.
 3. Dummy mock identifiers (e.g., `RUC: J00000000`, `barcode: '00000000'`) be embedded into UI screens or PDF generation templates as simulated data.
-4. Mock repositories or fake data generators be instantiated or imported in `lib/`.
+4. Mock repositories, synthetic seed injectors, or database seeders be automatically triggered or executed in production startup flows under `lib/`.
+5. Mock repositories or fake data generators be instantiated or imported in `lib/`.
 
-All mocks, fakes, fixtures, and synthetic test datasets belong strictly and exclusively under `test/` or `integration_test/`.
+All mocks, fakes, fixtures, seeders, and synthetic test datasets belong strictly and exclusively under `test/` or `integration_test/`.
 
 ---
 
