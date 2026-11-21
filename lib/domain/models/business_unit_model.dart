@@ -1,3 +1,4 @@
+import '../../core/enums/business_category_enum.dart';
 import '../../core/enums/business_type_enum.dart';
 
 /// Pure domain model representing an operational business unit (branch/sucursal).
@@ -8,6 +9,8 @@ class BusinessUnitModel {
   final String taxId;
   final String phone;
   final String address;
+  final String city;
+  final BusinessCategoryEnum category;
   final BusinessTypeEnum businessType;
   final bool isBilliardHall;
   final List<String> enabledModules;
@@ -21,6 +24,8 @@ class BusinessUnitModel {
     required this.taxId,
     required this.phone,
     required this.address,
+    this.city = '',
+    this.category = BusinessCategoryEnum.minimercado,
     required this.businessType,
     required this.isBilliardHall,
     this.enabledModules = const [],
@@ -35,6 +40,8 @@ class BusinessUnitModel {
     String? taxId,
     String? phone,
     String? address,
+    String? city,
+    BusinessCategoryEnum? category,
     BusinessTypeEnum? businessType,
     bool? isBilliardHall,
     List<String>? enabledModules,
@@ -48,6 +55,8 @@ class BusinessUnitModel {
       taxId: taxId ?? this.taxId,
       phone: phone ?? this.phone,
       address: address ?? this.address,
+      city: city ?? this.city,
+      category: category ?? this.category,
       businessType: businessType ?? this.businessType,
       isBilliardHall: isBilliardHall ?? this.isBilliardHall,
       enabledModules: enabledModules ?? this.enabledModules,
@@ -64,6 +73,8 @@ class BusinessUnitModel {
       'taxId': taxId,
       'phone': phone,
       'address': address,
+      'city': city,
+      'category': category.storageKey,
       'businessType': businessType.storageKey,
       'isBilliardHall': isBilliardHall,
       'enabledModules': enabledModules,
@@ -73,6 +84,13 @@ class BusinessUnitModel {
   }
 
   factory BusinessUnitModel.fromMap(Map<String, dynamic> map, {String? docId}) {
+    final category = BusinessCategoryEnum.fromStorageKey(
+      map['category'] as String?,
+    );
+    final businessType = map['businessType'] != null
+        ? BusinessTypeEnum.fromStorageKey(map['businessType'] as String?)
+        : category.defaultBusinessType;
+
     return BusinessUnitModel(
       id: docId ?? (map['id'] as String? ?? ''),
       orgId: map['orgId'] as String? ?? '',
@@ -80,10 +98,12 @@ class BusinessUnitModel {
       taxId: map['taxId'] as String? ?? '',
       phone: map['phone'] as String? ?? '',
       address: map['address'] as String? ?? '',
-      businessType: BusinessTypeEnum.fromStorageKey(
-        map['businessType'] as String?,
-      ),
-      isBilliardHall: map['isBilliardHall'] as bool? ?? false,
+      city: map['city'] as String? ?? '',
+      category: category,
+      businessType: businessType,
+      isBilliardHall: map['isBilliardHall'] as bool? ??
+          (businessType == BusinessTypeEnum.billiard ||
+              category == BusinessCategoryEnum.billar),
       enabledModules:
           (map['enabledModules'] as List<dynamic>?)
               ?.map((e) => e.toString())

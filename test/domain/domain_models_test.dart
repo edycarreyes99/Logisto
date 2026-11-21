@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:logisto/core/enums/account_origin_type_enum.dart';
 import 'package:logisto/core/enums/account_status_enum.dart';
 import 'package:logisto/core/enums/audit_action_enum.dart';
+import 'package:logisto/core/enums/business_category_enum.dart';
 import 'package:logisto/core/enums/business_type_enum.dart';
 import 'package:logisto/core/enums/invoice_status_enum.dart';
 import 'package:logisto/core/enums/kds_status_enum.dart';
@@ -66,6 +67,8 @@ void main() {
         taxId: 'J0310000123456-1',
         phone: '+505 8888 9999',
         address: 'Semáforos Dancing',
+        city: 'Managua',
+        category: BusinessCategoryEnum.billar,
         businessType: BusinessTypeEnum.billiard,
         isBilliardHall: true,
         createdAt: now,
@@ -76,9 +79,12 @@ void main() {
 
       expect(restored.businessType, BusinessTypeEnum.billiard);
       expect(restored.isBilliardHall, isTrue);
+      expect(restored.category, BusinessCategoryEnum.billar);
+      expect(restored.city, 'Managua');
 
-      final updated = restored.copyWith(name: 'Billares VIP');
+      final updated = restored.copyWith(name: 'Billares VIP', city: 'Leon');
       expect(updated.name, 'Billares VIP');
+      expect(updated.city, 'Leon');
       expect(updated.id, 'bu_billar');
     });
 

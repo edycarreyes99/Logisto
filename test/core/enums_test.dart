@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logisto/core/enums/account_status_enum.dart';
 import 'package:logisto/core/enums/audit_action_enum.dart';
+import 'package:logisto/core/enums/business_category_enum.dart';
 import 'package:logisto/core/enums/business_type_enum.dart';
 import 'package:logisto/core/enums/feature_status_enum.dart';
 import 'package:logisto/core/enums/form_submission_status_enum.dart';
@@ -272,6 +273,36 @@ void main() {
         expect(
           FormSubmissionStatusEnum.fromStorageKey(null),
           FormSubmissionStatusEnum.idle,
+        );
+
+        expect(BusinessCategoryEnum.values.length, equals(62));
+        expect(
+          BusinessCategoryEnum.fromStorageKey('billar'),
+          BusinessCategoryEnum.billar,
+        );
+        expect(
+          BusinessCategoryEnum.fromStorageKey('reciclaje_y_chatarra'),
+          BusinessCategoryEnum.reciclajeYChatarra,
+        );
+        expect(
+          BusinessCategoryEnum.fromDisplayName('Restaurante o comida rápida'),
+          BusinessCategoryEnum.restauranteOComidaRapida,
+        );
+        expect(
+          BusinessCategoryEnum.fromStorageKey(null),
+          BusinessCategoryEnum.minimercado,
+        );
+        expect(
+          BusinessCategoryEnum.billar.defaultBusinessType,
+          BusinessTypeEnum.billiard,
+        );
+        expect(
+          BusinessCategoryEnum.restauranteOComidaRapida.defaultBusinessType,
+          BusinessTypeEnum.restaurant,
+        );
+        expect(
+          BusinessCategoryEnum.farmaciaYDrogueria.defaultBusinessType,
+          BusinessTypeEnum.pharmacy,
         );
       },
     );
