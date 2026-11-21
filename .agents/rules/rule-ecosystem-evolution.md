@@ -1,6 +1,7 @@
 ---
 id: RULE-ARCH-008
 title: Continuous Autonomous Ecosystem Evolution and Asset Codification
+trigger: "Triggered when creating, updating, decomposing, or auditing agent skills, rules, subagents, and architectural assets in .agents/."
 category: architecture
 severity: blocking
 scope:

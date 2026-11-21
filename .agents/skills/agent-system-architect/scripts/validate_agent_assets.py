@@ -392,9 +392,12 @@ def validate_rule(rule_file: pathlib.Path, workspace_root: pathlib.Path) -> List
         errors.append(f"Failed to parse YAML frontmatter: {e}")
         return errors
 
-    for req in ["id", "title", "category", "severity", "scope"]:
+    for req in ["id", "title", "trigger", "category", "severity", "scope"]:
         if req not in fm:
             errors.append(f"Rule frontmatter missing required field: '{req}'.")
+
+    if "trigger" in fm and (not isinstance(fm["trigger"], str) or len(fm["trigger"].strip()) < 10):
+        errors.append("Rule frontmatter 'trigger' must be a descriptive string of at least 10 characters.")
 
     if "id" in fm and not RULE_ID_PATTERN.match(str(fm["id"])):
         errors.append(f"Rule ID '{fm['id']}' does not match pattern RULE-[A-Z0-9]+-[0-9]{{3}}.")

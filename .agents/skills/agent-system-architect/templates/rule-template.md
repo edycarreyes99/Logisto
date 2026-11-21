@@ -1,6 +1,7 @@
 ---
 id: [RULE-CATEGORY-NUMBER, e.g., RULE-ARCH-001]
 title: [Short Imperative Rule Title]
+trigger: [Trigger condition describing when and why agents must activate and enforce this rule]
 category: [architecture | presentation | data | domain | theme | l10n | lint | quality | testing]
 severity: [blocking | critical | warning]
 scope:

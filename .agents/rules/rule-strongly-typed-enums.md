@@ -1,6 +1,7 @@
 ---
 id: RULE-TYPE-001
 title: Universal Strongly-Typed Enums Architecture
+trigger: "Triggered when declaring state variables, types, categories, statuses, or domain variants in models, repositories, or UI."
 category: domain
 severity: blocking
 scope:

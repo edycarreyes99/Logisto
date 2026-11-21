@@ -1,6 +1,7 @@
 ---
 id: RULE-PERF-001
 title: Subscription Cancellation and Controller Lifecycle Disposal
+trigger: "Triggered when initializing or disposing StreamSubscriptions, TextEditingControllers, AnimationControllers, or listeners."
 category: quality
 severity: critical
 scope:

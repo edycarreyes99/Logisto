@@ -1,6 +1,7 @@
 ---
 id: RULE-UI-004
 title: Adaptive Dual Theme System and Color Token Governance
+trigger: "Triggered when creating or modifying UI widgets, styling components, defining theme palettes, or applying colors and borders across presentation layers."
 category: theme
 severity: blocking
 scope:

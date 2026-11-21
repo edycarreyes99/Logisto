@@ -1,6 +1,7 @@
 ---
 id: RULE-ARCH-001
 title: Unidirectional Layered Architecture Flow
+trigger: "Triggered when establishing cross-layer dependencies, importing modules between domain, data, core, and presentation layers."
 category: architecture
 severity: blocking
 scope:

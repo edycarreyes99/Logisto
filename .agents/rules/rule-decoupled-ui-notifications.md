@@ -1,6 +1,7 @@
 ---
 id: RULE-UI-005
 title: Decoupled UI Notification Service Architecture
+trigger: "Triggered when emitting user feedback, toast banners, snackbars, or system error messages from presentation or domain layers."
 category: presentation
 severity: blocking
 scope:

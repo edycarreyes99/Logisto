@@ -1,6 +1,7 @@
 ---
 id: RULE-L10N-001
 title: Strict Bilingual Localization Parity
+trigger: "Triggered when introducing, updating, or reviewing user-facing strings, ARB localization bundles, or locale-sensitive UI components."
 category: l10n
 severity: blocking
 scope:

@@ -1,6 +1,7 @@
 ---
 id: RULE-UI-001
 title: Short Decomposed Widgets and Bounded Nesting Depth
+trigger: "Triggered when authoring or refactoring Flutter widgets to keep build methods under 40 lines and decompose monolithic structures."
 category: presentation
 severity: critical
 scope:

@@ -1,6 +1,7 @@
 ---
 id: RULE-UI-006
 title: Exclusive Flutter Material Design 3 Component Enforcement with Bootstrap Responsive Grid
+trigger: "Triggered when authoring or reviewing UI components to enforce Flutter Material 3 widgets while using bootstrap_ui_flutter exclusively for responsive grid layouts."
 category: presentation
 severity: blocking
 scope:

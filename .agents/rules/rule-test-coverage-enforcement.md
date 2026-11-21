@@ -1,6 +1,7 @@
 ---
 id: RULE-QUAL-001
 title: Strict 100% Test Coverage & Defensive Error Testing Enforcement
+trigger: "Triggered when authoring unit, widget, or integration tests, validating test coverage thresholds and edge-case assertions."
 category: quality
 severity: blocking
 scope:

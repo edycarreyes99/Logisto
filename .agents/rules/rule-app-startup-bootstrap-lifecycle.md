@@ -1,6 +1,7 @@
 ---
 id: RULE-ARCH-004
 title: Deterministic App Startup & Bootstrap Lifecycle Order
+trigger: "Triggered when modifying application initialization, dependency registration in lib/locator.dart, offline database warm-up, or auth bootstrapping."
 category: architecture
 severity: blocking
 scope:

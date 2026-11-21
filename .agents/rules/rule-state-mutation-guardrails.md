@@ -1,6 +1,7 @@
 ---
 id: RULE-ARCH-003
 title: State Mutation and Provider Lifecycle Guardrails
+trigger: "Triggered when modifying ChangeNotifier state, defining mutation methods, or updating reactive providers."
 category: architecture
 severity: critical
 scope:

@@ -1,6 +1,7 @@
 ---
 id: RULE-DATA-002
 title: Cloud Firestore Security Rules and Composite Indexing Manifest
+trigger: "Triggered when querying Firestore collections, defining composite queries, or authoring security rules."
 category: data
 severity: blocking
 scope:

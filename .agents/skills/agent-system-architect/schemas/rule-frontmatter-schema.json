@@ -6,6 +6,7 @@
   "required": [
     "id",
     "title",
+    "trigger",
     "category",
     "severity",
     "scope"
@@ -20,6 +21,11 @@
       "type": "string",
       "minLength": 5,
       "description": "Short imperative rule summary."
+    },
+    "trigger": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Trigger condition describing when and why agents must activate and enforce this rule."
     },
     "category": {
       "type": "string",

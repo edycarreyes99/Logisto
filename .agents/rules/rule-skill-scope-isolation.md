@@ -1,6 +1,7 @@
 ---
 id: RULE-ARCH-009
 title: Local Workspace Agent Skill Scope Enforcement
+trigger: "Triggered when defining skill execution boundaries, tool permissions, or workspace dependencies."
 category: architecture
 severity: blocking
 scope:

@@ -1,6 +1,7 @@
 ---
 id: RULE-UI-003
 title: Project-Prefixed Reusable Component Controls
+trigger: "Triggered when defining reusable design system widgets, buttons, dialogs, inputs, or shared cards."
 category: presentation
 severity: blocking
 scope:

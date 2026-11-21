@@ -1,6 +1,7 @@
 ---
 id: RULE-DATA-003
 title: Offline Cache Management and Storage Allocation
+trigger: "Triggered when caching remote assets, managing local cache invalidation, or offline storage limits."
 category: data
 severity: critical
 scope:

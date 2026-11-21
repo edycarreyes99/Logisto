@@ -1,6 +1,7 @@
 ---
 id: RULE-SEC-001
 title: Environment Secrets and Sensitive Credential Protection
+trigger: "Triggered when configuring credentials, environment variables, Firebase keys, or third-party service tokens."
 category: quality
 severity: blocking
 scope:

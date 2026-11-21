@@ -1,6 +1,7 @@
 ---
 id: RULE-ARCH-007
 title: Multiplatform Target Specifications and Developer Tooling Automation
+trigger: "Triggered when configuring platform runners, build targets, runner manifests, or native dependencies for Web, macOS, Windows, Android, and iOS."
 category: architecture
 severity: blocking
 scope:

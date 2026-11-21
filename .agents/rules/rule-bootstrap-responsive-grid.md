@@ -1,6 +1,7 @@
 ---
 id: RULE-UI-002
 title: Bootstrap Responsive Grid Layout Engine
+trigger: "Triggered when designing, modifying, or reviewing screen layouts across mobile, tablet, desktop, and web breakpoints using BsContainer, BsRow, and BsCol."
 category: presentation
 severity: blocking
 scope:

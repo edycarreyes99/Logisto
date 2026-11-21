@@ -1,6 +1,7 @@
 ---
 id: RULE-DATA-006
 title: Absolute Prohibition of Mock Data in Production Code
+trigger: "Triggered when authoring production code, models, repositories, providers, or screens to ensure zero hardcoded fake or mock data enters production."
 category: data
 severity: blocking
 scope:

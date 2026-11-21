@@ -1,6 +1,7 @@
 ---
 id: RULE-UI-007
 title: Adaptive View Representation - Desktop Data Tables versus Mobile-Tablet Card Lists
+trigger: "Triggered when rendering catalog collections, entity lists, data grids, or detail screens across desktop, tablet, and mobile platforms."
 category: presentation
 severity: blocking
 scope:

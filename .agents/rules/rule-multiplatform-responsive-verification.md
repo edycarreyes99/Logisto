@@ -1,6 +1,7 @@
 ---
 id: RULE-QUAL-002
 title: Universal Multiplatform Execution & 100% Responsive Orientation Verification
+trigger: "Triggered when verifying UI layout resilience, testing screen orientations (portrait and landscape), and auditing breakpoint adaptations."
 category: quality
 severity: blocking
 scope:

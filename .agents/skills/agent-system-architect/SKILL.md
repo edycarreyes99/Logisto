@@ -200,6 +200,7 @@ Rules define deterministic, invariant constraints that must be observed across t
 ---
 id: RULE-[CATEGORY]-[NUMBER]
 title: [Short Imperative Rule Title]
+trigger: [Trigger condition describing when and why agents must activate and enforce this rule]
 category: [architecture | presentation | data | domain | theme | l10n | lint | quality]
 severity: [blocking | critical | warning]
 scope:

@@ -1,6 +1,7 @@
 ---
 id: RULE-CODE-001
 title: English Code and Enterprise Dart Doc Standards
+trigger: "Triggered when writing or modifying Dart code, classes, functions, docstrings, or inline technical comments."
 category: quality
 severity: blocking
 scope:

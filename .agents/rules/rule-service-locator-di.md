@@ -1,6 +1,7 @@
 ---
 id: RULE-ARCH-002
 title: Service Locator and Dependency Injection
+trigger: "Triggered when registering or injecting dependencies, services, repositories, or providers via GetIt."
 category: architecture
 severity: blocking
 scope:

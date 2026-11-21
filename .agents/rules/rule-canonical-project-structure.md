@@ -1,6 +1,7 @@
 ---
 id: RULE-ARCH-006
 title: Canonical Project Anatomy and Folder Hierarchy Enforcement
+trigger: "Triggered when adding, moving, renaming, or refactoring files and directories across the project architecture."
 category: architecture
 severity: blocking
 scope:

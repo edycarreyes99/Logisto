@@ -1,6 +1,7 @@
 ---
 id: RULE-DATA-001
 title: Offline-First Cloud Firestore Persistence and Real-Time Streams
+trigger: "Triggered when configuring Firestore database instances, offline data persistence, cache size, or sync behaviors."
 category: data
 severity: blocking
 scope:

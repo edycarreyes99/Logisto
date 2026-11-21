@@ -1,6 +1,7 @@
 ---
 id: RULE-DATA-004
 title: Encapsulated Local Key-Value Storage
+trigger: "Triggered when persisting local preferences, tokens, cached settings, or session flags."
 category: data
 severity: blocking
 scope:

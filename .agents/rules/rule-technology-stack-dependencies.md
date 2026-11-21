@@ -1,6 +1,7 @@
 ---
 id: RULE-ARCH-005
 title: Approved Technology Stack and Key Dependencies Specification
+trigger: "Triggered when adding or updating third-party packages in pubspec.yaml, validating compatibility across platforms."
 category: architecture
 severity: blocking
 scope:
