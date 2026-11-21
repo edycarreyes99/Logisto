@@ -87,6 +87,12 @@ When consuming official Firebase UI libraries (`firebase_ui_firestore`, `firebas
      b) All customizable visual builder hooks (`headerBuilder`, `sideBuilder`, `footerBuilder`, `subtitleBuilder`) MUST strictly consume Material Design 3 components (`Card`, `FilledButton`, `Text`, `Badge`) placed within responsive Bootstrap grid structures (`BsContainer`, `BsRow`, `BsCol`).
      c) Desktop wide layout MUST utilize `sideBuilder` to implement a responsive split-screen wireframe, while mobile layout utilizes `headerBuilder`.
 
+### 1.5. Mobile Material Design 3 Primary Action Pattern (Extended FAB):
+On mobile and tablet viewports (`width < BsBreakpoints.lg`), primary creation or submission actions (e.g., 'New Product', 'New Branch', 'New Client', 'New Tab') MUST NOT be rendered as wide buttons with text labels (`FilledButton.icon(label: Text(...))`) inside the `AppBar.actions` slot, as this crowds the toolbar and violates Material Design 3 mobile ergonomics.
+Instead:
+- On desktop viewports (`width >= BsBreakpoints.lg`), primary creation actions are rendered in `AppBar.actions` using `FilledButton.icon`.
+- On mobile and tablet viewports (`width < BsBreakpoints.lg`), primary creation actions MUST be exposed via `FloatingActionButton.extended` attached to `Scaffold.floatingActionButton` (or `LogistoScaffold(floatingActionButton: ...)`).
+
 ---
 
 ## 2. Rationale & Failure Impact

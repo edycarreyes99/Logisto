@@ -28,6 +28,7 @@ Under no circumstances shall:
 1. Feature widgets or components hardcode hexadecimal color values (e.g. `Color(0xFF...)`).
 2. Code reference hardcoded color constants like `Colors.white`, `Colors.black`, or `Colors.grey`.
 3. Widgets assume a static light or dark background without checking `Theme.of(context).brightness` or using adaptive helper methods like `AppColors.surfaceOf(context)`.
+4. Gradients (`LinearGradient`, `RadialGradient`, `SweepGradient`) be used anywhere in the application. All backgrounds, surfaces, appbars, drawer headers, branding cards, and buttons MUST use solid, flat Material Design 3 semantic color tokens (`Theme.of(context).colorScheme`).
 
 ---
 
