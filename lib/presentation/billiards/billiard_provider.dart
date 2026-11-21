@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../core/enums/account_origin_type_enum.dart';
 import '../../core/enums/account_status_enum.dart';
@@ -21,6 +22,7 @@ class BilliardProvider extends ChangeNotifier {
   String? _activeOrgId;
   String? _activeBuId;
   List<BilliardTableModel> _tables = [];
+  StreamSubscription<List<BilliardTableModel>>? _subscription;
 
   BilliardProvider({
     required this.repository,
@@ -31,6 +33,27 @@ class BilliardProvider extends ChangeNotifier {
   FeatureStatusEnum get status => _status;
   String? get errorMessage => _errorMessage;
   List<BilliardTableModel> get tables => List.unmodifiable(_tables);
+
+  void startListening({
+    required String orgId,
+    required String buId,
+  }) {
+    _activeOrgId = orgId;
+    _activeBuId = buId;
+    _subscription?.cancel();
+    _subscription = repository.watchTables(orgId: orgId, buId: buId).listen(
+      (tables) {
+        _tables = tables;
+        _status = FeatureStatusEnum.loaded;
+        notifyListeners();
+      },
+      onError: (e) {
+        _errorMessage = e.toString();
+        _status = FeatureStatusEnum.error;
+        notifyListeners();
+      },
+    );
+  }
 
   Future<void> loadTables({required String orgId, required String buId}) async {
     _activeOrgId = orgId;
@@ -325,5 +348,11 @@ class BilliardProvider extends ChangeNotifier {
       } catch (_) {}
     }
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
   }
 }

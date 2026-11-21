@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../data/repositories/account_payable_repository.dart';
@@ -15,6 +16,7 @@ class AccountsPayableProvider extends ChangeNotifier {
   String? _activeOrgId;
   String? _activeBuId;
   List<AccountPayableModel> _payables = [];
+  StreamSubscription<List<AccountPayableModel>>? _subscription;
 
   AccountsPayableProvider({required this.repository, this.supplierRepository});
 
@@ -24,6 +26,29 @@ class AccountsPayableProvider extends ChangeNotifier {
 
   double get totalLiabilities =>
       _payables.fold(0.0, (acc, p) => acc + p.remainingBalance);
+
+  void startListening({
+    required String orgId,
+    required String buId,
+  }) {
+    _activeOrgId = orgId;
+    _activeBuId = buId;
+    _subscription?.cancel();
+    _subscription = repository
+        .watchAccountsPayable(orgId: orgId, buId: buId)
+        .listen(
+      (payables) {
+        _payables = payables;
+        _status = FeatureStatusEnum.loaded;
+        notifyListeners();
+      },
+      onError: (e) {
+        _errorMessage = e.toString();
+        _status = FeatureStatusEnum.error;
+        notifyListeners();
+      },
+    );
+  }
 
   Future<void> loadPayables({
     required String orgId,
@@ -39,62 +64,12 @@ class AccountsPayableProvider extends ChangeNotifier {
         orgId: orgId,
         buId: buId,
       );
-      if (fetched.isEmpty) {
-        _payables = [
-          AccountPayableModel(
-            id: 'cxp_01',
-            buId: buId,
-            supplierId: 'sup_01',
-            supplierName: 'Compañía Cervecera Nacional',
-            invoiceNumber: 'PROV-INV-9921',
-            amount: 1250.00,
-            paidAmount: 500.00,
-            dueDate: DateTime.now().add(const Duration(days: 10)),
-            createdAt: DateTime.now().subtract(const Duration(days: 20)),
-          ),
-          AccountPayableModel(
-            id: 'cxp_02',
-            buId: buId,
-            supplierId: 'sup_02',
-            supplierName: 'Distribuidora Avícola El Granjero',
-            invoiceNumber: 'PROV-INV-4412',
-            amount: 650.00,
-            paidAmount: 0.00,
-            dueDate: DateTime.now().subtract(const Duration(days: 4)),
-            createdAt: DateTime.now().subtract(const Duration(days: 25)),
-          ),
-        ];
-      } else {
-        _payables = fetched;
-      }
+      _payables = fetched;
       _status = FeatureStatusEnum.loaded;
     } catch (e) {
       _errorMessage = e.toString();
-      _payables = [
-        AccountPayableModel(
-          id: 'cxp_01',
-          buId: buId,
-          supplierId: 'sup_01',
-          supplierName: 'Compañía Cervecera Nacional',
-          invoiceNumber: 'PROV-INV-9921',
-          amount: 1250.00,
-          paidAmount: 500.00,
-          dueDate: DateTime.now().add(const Duration(days: 10)),
-          createdAt: DateTime.now().subtract(const Duration(days: 20)),
-        ),
-        AccountPayableModel(
-          id: 'cxp_02',
-          buId: buId,
-          supplierId: 'sup_02',
-          supplierName: 'Distribuidora Avícola El Granjero',
-          invoiceNumber: 'PROV-INV-4412',
-          amount: 650.00,
-          paidAmount: 0.00,
-          dueDate: DateTime.now().subtract(const Duration(days: 4)),
-          createdAt: DateTime.now().subtract(const Duration(days: 25)),
-        ),
-      ];
-      _status = FeatureStatusEnum.loaded;
+      _payables = [];
+      _status = FeatureStatusEnum.error;
     } finally {
       notifyListeners();
     }
@@ -150,5 +125,11 @@ class AccountsPayableProvider extends ChangeNotifier {
       }
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
   }
 }

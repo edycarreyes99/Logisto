@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../data/repositories/customer_repository.dart';
@@ -12,6 +13,7 @@ class CustomerCatalogProvider extends ChangeNotifier {
   String? _errorMessage;
   String? _activeOrgId;
   List<CustomerModel> _customers = [];
+  StreamSubscription<List<CustomerModel>>? _subscription;
   String _searchQuery = '';
 
   CustomerCatalogProvider({required this.repository});
@@ -35,22 +37,37 @@ class CustomerCatalogProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadCustomers(String orgId) async {
+  void startListening(String orgId) {
+    if (_activeOrgId == orgId && _subscription != null) return;
     _activeOrgId = orgId;
+    _subscription?.cancel();
     _status = FeatureStatusEnum.loading;
     _errorMessage = null;
     notifyListeners();
 
-    try {
-      final fetched = await repository.getCustomers(orgId: orgId);
-      _customers = fetched;
-      _status = FeatureStatusEnum.loaded;
-    } catch (e) {
-      _errorMessage = e.toString();
-      _status = FeatureStatusEnum.error;
-    } finally {
-      notifyListeners();
-    }
+    _subscription = repository.watchCustomers(orgId: orgId).listen(
+      (fetched) {
+        _customers = fetched;
+        _status = FeatureStatusEnum.loaded;
+        notifyListeners();
+      },
+      onError: (e) {
+        _errorMessage = e.toString();
+        _status = FeatureStatusEnum.error;
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> loadCustomers(String orgId) async {
+    startListening(orgId);
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _subscription = null;
+    super.dispose();
   }
 
   Future<void> saveCustomer({

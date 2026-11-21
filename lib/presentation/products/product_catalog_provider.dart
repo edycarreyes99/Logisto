@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/product_type_enum.dart';
@@ -13,6 +14,7 @@ class ProductCatalogProvider extends ChangeNotifier {
   String? _errorMessage;
   String? _activeOrgId;
   List<ProductModel> _products = [];
+  StreamSubscription<List<ProductModel>>? _subscription;
   String _searchQuery = '';
   ProductTypeEnum? _typeFilter;
 
@@ -44,22 +46,37 @@ class ProductCatalogProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadProducts(String orgId) async {
+  void startListening(String orgId) {
+    if (_activeOrgId == orgId && _subscription != null) return;
     _activeOrgId = orgId;
+    _subscription?.cancel();
     _status = FeatureStatusEnum.loading;
     _errorMessage = null;
     notifyListeners();
 
-    try {
-      final fetched = await repository.getProducts(orgId);
-      _products = fetched;
-      _status = FeatureStatusEnum.loaded;
-    } catch (e) {
-      _errorMessage = e.toString();
-      _status = FeatureStatusEnum.error;
-    } finally {
-      notifyListeners();
-    }
+    _subscription = repository.watchProducts(orgId).listen(
+      (fetched) {
+        _products = fetched;
+        _status = FeatureStatusEnum.loaded;
+        notifyListeners();
+      },
+      onError: (e) {
+        _errorMessage = e.toString();
+        _status = FeatureStatusEnum.error;
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> loadProducts(String orgId) async {
+    startListening(orgId);
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _subscription = null;
+    super.dispose();
   }
 
   Future<void> saveProduct({

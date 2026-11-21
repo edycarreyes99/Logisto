@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/user_role_enum.dart';
@@ -14,6 +15,7 @@ class UserManagementProvider extends ChangeNotifier {
   String? _errorMessage;
   List<UserProfileModel> _users = [];
   String _searchQuery = '';
+  StreamSubscription<List<UserProfileModel>>? _subscription;
 
   UserManagementProvider({required this.repository});
 
@@ -35,6 +37,22 @@ class UserManagementProvider extends ChangeNotifier {
   void setSearchQuery(String query) {
     _searchQuery = query;
     notifyListeners();
+  }
+
+  void startListening(String orgId) {
+    _subscription?.cancel();
+    _subscription = repository.watchUsers(orgId).listen(
+      (users) {
+        _users = users;
+        _status = FeatureStatusEnum.loaded;
+        notifyListeners();
+      },
+      onError: (e) {
+        _errorMessage = e.toString();
+        _status = FeatureStatusEnum.error;
+        notifyListeners();
+      },
+    );
   }
 
   Future<void> loadUsers(String orgId) async {
@@ -129,5 +147,11 @@ class UserManagementProvider extends ChangeNotifier {
 
     _users.removeWhere((u) => u.uid == userId);
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
   }
 }

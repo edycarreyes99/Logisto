@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../core/enums/audit_action_enum.dart';
 import '../../core/enums/feature_status_enum.dart';
@@ -14,6 +15,7 @@ class AuditLogProvider extends ChangeNotifier {
   List<AuditLogModel> _logs = [];
   AuditActionEnum? _selectedActionFilter;
   String _searchQuery = '';
+  StreamSubscription<List<AuditLogModel>>? _subscription;
 
   AuditLogProvider({required this.repository});
 
@@ -50,6 +52,22 @@ class AuditLogProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void startListening(String orgId) {
+    _subscription?.cancel();
+    _subscription = repository.watchLogs(orgId: orgId).listen(
+      (logs) {
+        _logs = logs;
+        _status = FeatureStatusEnum.loaded;
+        notifyListeners();
+      },
+      onError: (e) {
+        _errorMessage = e.toString();
+        _status = FeatureStatusEnum.error;
+        notifyListeners();
+      },
+    );
+  }
+
   Future<void> loadAuditLogs(String orgId) async {
     _status = FeatureStatusEnum.loading;
     _errorMessage = null;
@@ -73,5 +91,11 @@ class AuditLogProvider extends ChangeNotifier {
     } catch (_) {}
     _logs = [entry, ..._logs];
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
   }
 }

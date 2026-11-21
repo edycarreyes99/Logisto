@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../core/enums/account_origin_type_enum.dart';
 import '../../core/enums/account_status_enum.dart';
@@ -20,6 +21,7 @@ class OpenAccountsProvider extends ChangeNotifier {
   List<OpenAccountModel> _accounts = [];
   OpenAccountModel? _selectedAccount;
   List<ProductModel> _quickCatalog = [];
+  StreamSubscription<List<OpenAccountModel>>? _subscription;
 
   OpenAccountsProvider({required this.repository, this.productRepository});
 
@@ -28,6 +30,52 @@ class OpenAccountsProvider extends ChangeNotifier {
   List<OpenAccountModel> get accounts => List.unmodifiable(_accounts);
   OpenAccountModel? get selectedAccount => _selectedAccount;
   List<ProductModel> get quickCatalog => List.unmodifiable(_quickCatalog);
+
+  void startListening({
+    required String orgId,
+    required String buId,
+  }) {
+    if (_activeOrgId == orgId && _activeBuId == buId && _subscription != null) {
+      return;
+    }
+    _activeOrgId = orgId;
+    _activeBuId = buId;
+    _subscription?.cancel();
+    _status = FeatureStatusEnum.loading;
+    _errorMessage = null;
+    notifyListeners();
+
+    if (productRepository != null) {
+      productRepository!.getProducts(orgId).then((prods) {
+        _quickCatalog = prods;
+        notifyListeners();
+      }).catchError((_) {});
+    }
+
+    _subscription = repository.watchOpenAccounts(orgId: orgId, buId: buId).listen(
+      (fetched) {
+        _accounts = fetched;
+        if (_accounts.isNotEmpty) {
+          if (_selectedAccount == null ||
+              !_accounts.any((a) => a.id == _selectedAccount!.id)) {
+            _selectedAccount = _accounts.first;
+          } else {
+            _selectedAccount =
+                _accounts.firstWhere((a) => a.id == _selectedAccount!.id);
+          }
+        } else {
+          _selectedAccount = null;
+        }
+        _status = FeatureStatusEnum.loaded;
+        notifyListeners();
+      },
+      onError: (e) {
+        _errorMessage = e.toString();
+        _status = FeatureStatusEnum.error;
+        notifyListeners();
+      },
+    );
+  }
 
   Future<void> loadAccounts({
     required String orgId,
@@ -39,29 +87,42 @@ class OpenAccountsProvider extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
+    if (productRepository != null) {
+      try {
+        _quickCatalog = await productRepository!.getProducts(orgId);
+      } catch (_) {}
+    }
+
     try {
-      final fetched = await repository.getOpenAccounts(
-        orgId: orgId,
-        buId: buId,
-      );
+      final fetched =
+          await repository.getOpenAccounts(orgId: orgId, buId: buId);
       _accounts = fetched;
-
-      if (_accounts.isNotEmpty && _selectedAccount == null) {
-        _selectedAccount = _accounts.first;
+      if (_accounts.isNotEmpty) {
+        if (_selectedAccount == null ||
+            !_accounts.any((a) => a.id == _selectedAccount!.id)) {
+          _selectedAccount = _accounts.first;
+        } else {
+          _selectedAccount =
+              _accounts.firstWhere((a) => a.id == _selectedAccount!.id);
+        }
+      } else {
+        _selectedAccount = null;
       }
-
-      if (productRepository != null) {
-        final prods = await productRepository!.getProducts(orgId);
-        _quickCatalog = prods;
-      }
-
       _status = FeatureStatusEnum.loaded;
     } catch (e) {
       _errorMessage = e.toString();
+      _accounts = [];
       _status = FeatureStatusEnum.error;
     } finally {
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _subscription = null;
+    super.dispose();
   }
 
   void selectAccount(String id) {

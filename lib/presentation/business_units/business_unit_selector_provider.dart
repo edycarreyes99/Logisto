@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../core/enums/business_category_enum.dart';
 import '../../core/enums/business_type_enum.dart';
@@ -19,6 +20,8 @@ class BusinessUnitSelectorProvider extends ChangeNotifier {
   FeatureStatusEnum _status = FeatureStatusEnum.idle;
   String? _errorMessage;
   List<BusinessUnitModel> _units = [];
+  StreamSubscription<List<BusinessUnitModel>>? _subscription;
+  String? _activeOrgId;
 
   BusinessUnitSelectorProvider({
     required this.repository,
@@ -31,29 +34,65 @@ class BusinessUnitSelectorProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   List<BusinessUnitModel> get units => List.unmodifiable(_units);
 
+  void startListening(String orgId) {
+    if (_activeOrgId == orgId && _subscription != null) return;
+    _activeOrgId = orgId;
+    _subscription?.cancel();
+    _status = FeatureStatusEnum.loading;
+    _errorMessage = null;
+    notifyListeners();
+
+    _subscription = repository.watchBusinessUnits(orgId).listen(
+      (fetched) async {
+        final currentUserId = loginProvider?.preferences.getUserId();
+        if (userRepository != null && currentUserId != null && currentUserId.isNotEmpty) {
+          try {
+            final userProfile = await userRepository!.getUser(orgId, currentUserId);
+            if (userProfile != null && !userProfile.isSuperAdmin) {
+              _units = fetched.where((bu) => userProfile.businessUnitRoles.containsKey(bu.id)).toList();
+              _status = FeatureStatusEnum.loaded;
+              notifyListeners();
+              return;
+            }
+          } catch (_) {}
+        }
+        _units = fetched;
+        _status = FeatureStatusEnum.loaded;
+        notifyListeners();
+      },
+      onError: (e) {
+        _errorMessage = e.toString();
+        _status = FeatureStatusEnum.error;
+        notifyListeners();
+      },
+    );
+  }
+
   Future<void> loadBusinessUnits(String orgId) async {
+    _activeOrgId = orgId;
     _status = FeatureStatusEnum.loading;
     _errorMessage = null;
     notifyListeners();
 
     try {
       final fetched = await repository.getBusinessUnits(orgId);
-
-      // Check if user has specific role-based restrictions
       final currentUserId = loginProvider?.preferences.getUserId();
-      if (userRepository != null && currentUserId != null && currentUserId.isNotEmpty) {
+      if (userRepository != null &&
+          currentUserId != null &&
+          currentUserId.isNotEmpty) {
         try {
-          final userProfile = await userRepository!.getUser(orgId, currentUserId);
+          final userProfile =
+              await userRepository!.getUser(orgId, currentUserId);
           if (userProfile != null && !userProfile.isSuperAdmin) {
-            // Filter to only business units where user has an assigned role
-            _units = fetched.where((bu) => userProfile.businessUnitRoles.containsKey(bu.id)).toList();
+            _units = fetched
+                .where((bu) => userProfile.businessUnitRoles.containsKey(bu.id))
+                .toList();
             _status = FeatureStatusEnum.loaded;
             notifyListeners();
             return;
           }
         } catch (_) {}
       }
-
       _units = fetched;
       _status = FeatureStatusEnum.loaded;
     } catch (e) {
@@ -63,6 +102,13 @@ class BusinessUnitSelectorProvider extends ChangeNotifier {
     } finally {
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _subscription = null;
+    super.dispose();
   }
 
   Future<void> selectUnit(BusinessUnitModel unit) async {

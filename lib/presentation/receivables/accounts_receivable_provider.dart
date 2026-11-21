@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../core/enums/payment_method_enum.dart';
@@ -16,6 +17,7 @@ class AccountsReceivableProvider extends ChangeNotifier {
   String? _activeOrgId;
   String? _activeBuId;
   List<AccountReceivableModel> _receivables = [];
+  StreamSubscription<List<AccountReceivableModel>>? _subscription;
 
   AccountsReceivableProvider({
     required this.repository,
@@ -29,6 +31,29 @@ class AccountsReceivableProvider extends ChangeNotifier {
 
   double get totalOutstandingDebt =>
       _receivables.fold(0.0, (acc, r) => acc + r.balance);
+
+  void startListening({
+    required String orgId,
+    required String buId,
+  }) {
+    _activeOrgId = orgId;
+    _activeBuId = buId;
+    _subscription?.cancel();
+    _subscription = repository
+        .watchAccountsReceivable(orgId: orgId, buId: buId)
+        .listen(
+      (receivables) {
+        _receivables = receivables;
+        _status = FeatureStatusEnum.loaded;
+        notifyListeners();
+      },
+      onError: (e) {
+        _errorMessage = e.toString();
+        _status = FeatureStatusEnum.error;
+        notifyListeners();
+      },
+    );
+  }
 
   Future<void> loadReceivables({
     required String orgId,
@@ -44,66 +69,12 @@ class AccountsReceivableProvider extends ChangeNotifier {
         orgId: orgId,
         buId: buId,
       );
-      if (fetched.isEmpty) {
-        _receivables = [
-          AccountReceivableModel(
-            id: 'cxc_01',
-            buId: buId,
-            customerId: 'cust_01',
-            customerName: 'Roberto Gómez',
-            invoiceId: 'inv_01',
-            invoiceNumber: 'FAC-001-000194',
-            originalAmount: 8.81,
-            pendingAmount: 8.81,
-            dueDate: DateTime.now().add(const Duration(days: 15)),
-            createdAt: DateTime.now().subtract(const Duration(days: 2)),
-          ),
-          AccountReceivableModel(
-            id: 'cxc_02',
-            buId: buId,
-            customerId: 'cust_02',
-            customerName: 'Elena Torres',
-            invoiceId: 'inv_old_01',
-            invoiceNumber: 'FAC-001-000110',
-            originalAmount: 980.00,
-            pendingAmount: 780.00,
-            dueDate: DateTime.now().subtract(const Duration(days: 20)),
-            createdAt: DateTime.now().subtract(const Duration(days: 50)),
-          ),
-        ];
-      } else {
-        _receivables = fetched;
-      }
+      _receivables = fetched;
       _status = FeatureStatusEnum.loaded;
     } catch (e) {
       _errorMessage = e.toString();
-      _receivables = [
-        AccountReceivableModel(
-          id: 'cxc_01',
-          buId: buId,
-          customerId: 'cust_01',
-          customerName: 'Roberto Gómez',
-          invoiceId: 'inv_01',
-          invoiceNumber: 'FAC-001-000194',
-          originalAmount: 8.81,
-          pendingAmount: 8.81,
-          dueDate: DateTime.now().add(const Duration(days: 15)),
-          createdAt: DateTime.now().subtract(const Duration(days: 2)),
-        ),
-        AccountReceivableModel(
-          id: 'cxc_02',
-          buId: buId,
-          customerId: 'cust_02',
-          customerName: 'Elena Torres',
-          invoiceId: 'inv_old_01',
-          invoiceNumber: 'FAC-001-000110',
-          originalAmount: 980.00,
-          pendingAmount: 780.00,
-          dueDate: DateTime.now().subtract(const Duration(days: 20)),
-          createdAt: DateTime.now().subtract(const Duration(days: 50)),
-        ),
-      ];
-      _status = FeatureStatusEnum.loaded;
+      _receivables = [];
+      _status = FeatureStatusEnum.error;
     } finally {
       notifyListeners();
     }
@@ -163,5 +134,11 @@ class AccountsReceivableProvider extends ChangeNotifier {
       }
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
   }
 }
