@@ -119,20 +119,23 @@ class _BilliardFloorPlanScreenState extends State<BilliardFloorPlanScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
     final occupied = _provider.tables
         .where((t) => t.status == TableStatusEnum.occupied)
         .length;
 
     return LogistoScaffold(
       title: l10n.billiardFloorPlanTitle,
-      actions: [
-        Chip(
-          label: Text(
-            '$occupied / ${_provider.tables.length} ${l10n.tableStatusOccupied}',
-          ),
-          visualDensity: VisualDensity.compact,
-        ),
-      ],
+      actions: isDesktop
+          ? [
+              Chip(
+                label: Text(
+                  '$occupied / ${_provider.tables.length} ${l10n.tableStatusOccupied}',
+                ),
+                visualDensity: VisualDensity.compact,
+              ),
+            ]
+          : null,
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

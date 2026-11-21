@@ -117,20 +117,23 @@ class _AccountsReceivableScreenState extends State<AccountsReceivableScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
     return LogistoScaffold(
       title: l10n.receivables,
-      actions: [
-        Chip(
-          label: Text(
-            '${l10n.totalDebt}: \$${_provider.totalOutstandingDebt.toStringAsFixed(2)}',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
-          ),
-          visualDensity: VisualDensity.compact,
-        ),
-      ],
+      actions: isDesktop
+          ? [
+              Chip(
+                label: Text(
+                  '${l10n.totalDebt}: \$${_provider.totalOutstandingDebt.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+                visualDensity: VisualDensity.compact,
+              ),
+            ]
+          : null,
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

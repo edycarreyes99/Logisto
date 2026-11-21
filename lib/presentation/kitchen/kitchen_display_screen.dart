@@ -41,22 +41,46 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
+    final filters = [
+      (null, l10n.allFilter),
+      (KdsStatusEnum.pending, l10n.pendingFilter),
+      (KdsStatusEnum.preparing, l10n.inPrepFilter),
+      (KdsStatusEnum.ready, l10n.readyFilter),
+    ];
+
     return LogistoScaffold(
       title: l10n.kitchenKdsTitle,
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 12.0),
-          child: Wrap(
-            spacing: 4,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              _buildFilterBtn(l10n.allFilter, null),
-              _buildFilterBtn(l10n.pendingFilter, KdsStatusEnum.pending),
-              _buildFilterBtn(l10n.inPrepFilter, KdsStatusEnum.preparing),
-              _buildFilterBtn(l10n.readyFilter, KdsStatusEnum.ready),
-            ],
+        if (!isDesktop)
+          PopupMenuButton<KdsStatusEnum?>(
+            icon: const Icon(Icons.filter_list_rounded),
+            tooltip: l10n.allFilter,
+            initialValue: _provider.filterStatus,
+            onSelected: _provider.setFilterStatus,
+            itemBuilder: (context) => filters
+                .map(
+                  (f) => PopupMenuItem(
+                    value: f.$1,
+                    child: Text(f.$2),
+                  ),
+                )
+                .toList(),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: Wrap(
+              spacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                _buildFilterBtn(l10n.allFilter, null),
+                _buildFilterBtn(l10n.pendingFilter, KdsStatusEnum.pending),
+                _buildFilterBtn(l10n.inPrepFilter, KdsStatusEnum.preparing),
+                _buildFilterBtn(l10n.readyFilter, KdsStatusEnum.ready),
+              ],
+            ),
           ),
-        ),
       ],
       body: BsContainer.fluid(
         child: SingleChildScrollView(

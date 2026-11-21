@@ -118,22 +118,25 @@ class _AccountsPayableScreenState extends State<AccountsPayableScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
     return LogistoScaffold(
       title: l10n.payables,
-      actions: [
-        Chip(
-          label: Text(
-            l10n.totalLiabilitiesAmount(
-              _provider.totalLiabilities.toStringAsFixed(2),
-            ),
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
-          ),
-          visualDensity: VisualDensity.compact,
-        ),
-      ],
+      actions: isDesktop
+          ? [
+              Chip(
+                label: Text(
+                  l10n.totalLiabilitiesAmount(
+                    _provider.totalLiabilities.toStringAsFixed(2),
+                  ),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+                visualDensity: VisualDensity.compact,
+              ),
+            ]
+          : null,
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

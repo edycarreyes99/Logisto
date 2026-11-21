@@ -49,15 +49,23 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
     return Scaffold(
       appBar: LogistoAppBar(
         title: 'Logisto',
         actions: [
-          TextButton.icon(
-            onPressed: _showInfoModal,
-            icon: const Icon(Icons.info_outline, size: 16),
-            label: Text(l10n.systemInfo),
-          ),
+          if (isDesktop)
+            TextButton.icon(
+              onPressed: _showInfoModal,
+              icon: const Icon(Icons.info_outline, size: 16),
+              label: Text(l10n.systemInfo),
+            )
+          else
+            IconButton(
+              onPressed: _showInfoModal,
+              icon: const Icon(Icons.info_outline, size: 20),
+              tooltip: l10n.systemInfo,
+            ),
         ],
       ),
       body: BsContainer.fluid(

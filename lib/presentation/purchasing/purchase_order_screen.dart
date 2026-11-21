@@ -133,18 +133,28 @@ class _PurchaseOrderScreenState extends State<PurchaseOrderScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
     return LogistoScaffold(
       title: l10n.purchasing,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: FilledButton.icon(
-            icon: const Icon(Icons.add, size: 18),
-            label: Text(l10n.createPurchaseOrderAction),
-            onPressed: _showCreateOrderModal,
-          ),
-        ),
-      ],
+      actions: isDesktop
+          ? [
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: FilledButton.icon(
+                  icon: const Icon(Icons.add, size: 18),
+                  label: Text(l10n.createPurchaseOrderAction),
+                  onPressed: _showCreateOrderModal,
+                ),
+              ),
+            ]
+          : null,
+      floatingActionButton: isDesktop
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _showCreateOrderModal,
+              icon: const Icon(Icons.add),
+              label: Text(l10n.createPurchaseOrderAction),
+            ),
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

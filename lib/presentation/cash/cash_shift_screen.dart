@@ -226,16 +226,27 @@ class _CashShiftScreenState extends State<CashShiftScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
+    final canOpenShift = !_provider.hasActiveShift;
+
     return LogistoScaffold(
       title: l10n.cashShiftsTitle,
-      actions: [
-        if (!_provider.hasActiveShift)
-          FilledButton.icon(
-            icon: const Icon(Icons.add, size: 18),
-            label: Text(l10n.openNewShift),
-            onPressed: () => _showOpenShiftModal(l10n),
-          ),
-      ],
+      actions: isDesktop && canOpenShift
+          ? [
+              FilledButton.icon(
+                icon: const Icon(Icons.add, size: 18),
+                label: Text(l10n.openNewShift),
+                onPressed: () => _showOpenShiftModal(l10n),
+              ),
+            ]
+          : null,
+      floatingActionButton: !isDesktop && canOpenShift
+          ? FloatingActionButton.extended(
+              onPressed: () => _showOpenShiftModal(l10n),
+              icon: const Icon(Icons.add),
+              label: Text(l10n.openNewShift),
+            )
+          : null,
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

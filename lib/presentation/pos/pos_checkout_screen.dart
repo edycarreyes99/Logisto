@@ -267,16 +267,26 @@ class _PosCheckoutScreenState extends State<PosCheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDesktop = MediaQuery.sizeOf(context).width >= BsBreakpoints.lg;
 
     return LogistoScaffold(
       title: l10n.pos,
-      actions: [
-        FilledButton.icon(
-          icon: const Icon(Icons.add_shopping_cart, size: 18),
-          label: Text(l10n.addItem),
-          onPressed: _showAddProductModal,
-        ),
-      ],
+      actions: isDesktop
+          ? [
+              FilledButton.icon(
+                icon: const Icon(Icons.add_shopping_cart, size: 18),
+                label: Text(l10n.addItem),
+                onPressed: _showAddProductModal,
+              ),
+            ]
+          : null,
+      floatingActionButton: isDesktop
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _showAddProductModal,
+              icon: const Icon(Icons.add_shopping_cart),
+              label: Text(l10n.addItem),
+            ),
       body: BsContainer.fluid(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

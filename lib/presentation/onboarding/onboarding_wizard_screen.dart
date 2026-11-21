@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../core/enums/feature_status_enum.dart';
 import '../../l10n/app_localizations.dart';
 import '../../locator.dart';
-import '../auth/logout_dialog.dart';
 import '../common/app_feedback.dart';
 import '../common/logisto_scaffold.dart';
 import '../navigation/app_routes.dart';
@@ -70,15 +69,6 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
         title: l10n.onboardingWizardTitle,
         isChild: _provider.currentStep > 1,
         onBack: _provider.previousStep,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout_rounded),
-            color: Theme.of(context).colorScheme.error,
-            tooltip: l10n.logout,
-            onPressed: () => showLogoutDialog(context),
-          ),
-          const SizedBox(width: 8),
-        ],
         body: BsContainer.fluid(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
